@@ -156,6 +156,31 @@
             background: rgba(255, 68, 68, 0.1);
             display: none;
         }
+
+        .input-url-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        #inputUrl {
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            font-size: 14px;
+            width: 200px;
+        }
+
+        .action-button-url {
+            padding: 8px 16px;
+            background: #444;
+            border: 1px solid white;
+            color: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
     </style>
 </head>
 <body>
@@ -163,6 +188,10 @@
         <button class="action-button" id="runBtn">Run</button>
         <button class="action-button" id="previewBtn">Open Preview</button>
         <button class="action-button" id="clearBtn">Clear All</button>
+    </div>
+    <div class="input-url-container">
+        <input type="text" id="inputUrl" placeholder="Enter a website URL" />
+        <button class="action-button-url" id="loadHtmlBtn">Load HTML</button>
     </div>
     <div class="main-content">
         <div class="editors-container" id="editorsContainer">
@@ -303,6 +332,21 @@
                 code.css = '';
                 code.javascript = '';
                 editor.setValue('');
+            });
+
+            document.getElementById('loadHtmlBtn').addEventListener('click', () => {
+                const url = document.getElementById('inputUrl').value;
+                if (url) {
+                    fetch(`/fetch-html?url=${encodeURIComponent(url)}`)
+                        .then(response => response.text())
+                        .then(data => {
+                            code.html = data; // Set the HTML content in the editor
+                            editor.setValue(code.html);
+                        })
+                        .catch(error => {
+                            alert('Error loading HTML: ' + error);
+                        });
+                }
             });
 
             updatePreview();
