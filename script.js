@@ -30,16 +30,11 @@
     }
   });
 
-  function loadFromLocalStorage() {
-    try {
-      const saved = localStorage.getItem('editorContent');
-      if (saved) {
-        state.code = JSON.parse(saved);
-        state.editor.setValue(state.code[state.currentLang] || '');
-        updatePreview(true);
-      }
-    } catch (err) {
-      console.error('Error loading saved content:', err);
+  function loadThemeFromLocalStorage() {
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+      state.editor.setOption('theme', savedTheme);
+      document.getElementById('themeSelector').value = savedTheme; 
     }
   }
 
@@ -96,7 +91,6 @@
     });
   }
 
-  // Tab switching
   document.querySelectorAll('.tab-button').forEach(button => {
     button.addEventListener('click', () => {
       const lang = button.dataset.lang;
@@ -112,21 +106,18 @@
     });
   });
 
-  // Editor change listener
   state.editor.on('change', (cm) => {
     state.code[state.currentLang] = cm.getValue();
     updatePreview();
     saveToLocalStorage();
   });
 
-  // Run button
   document.getElementById('runBtn').addEventListener('click', () => {
     state.code[state.currentLang] = state.editor.getValue();
     updatePreview(true);
     showSuccessMessage('Code executed!');
   });
 
-  // Preview button
   document.getElementById('previewBtn').addEventListener('click', () => {
     const win = window.open('', '_blank');
     win.document.write(`
@@ -145,12 +136,10 @@
     win.document.close();
   });
 
-  // Save button
   document.getElementById('saveBtn').addEventListener('click', () => {
     saveToLocalStorage();
     showSuccessMessage('Saved!');
 
-    // Save as files
     const htmlContent = `
       <!DOCTYPE html>
       <html>
@@ -178,7 +167,6 @@
     saveFile(state.code.javascript || '', 'application/javascript', 'script.js');
   });
 
-  // Clear button
   document.getElementById('clearBtn').addEventListener('click', () => {
     state.code = { html: '', css: '', javascript: '' };
     state.editor.setValue('');
@@ -187,14 +175,15 @@
     showSuccessMessage('Cleared!');
   });
 
-  // Theme selector
   const themeSelector = document.getElementById('themeSelector');
   themeSelector.addEventListener('change', (e) => {
     const selectedTheme = e.target.value;
     state.editor.setOption('theme', selectedTheme);
+    localStorage.setItem('theme', selectedTheme); 
     showSuccessMessage(`Theme switched to ${selectedTheme}`);
   });
 
   loadFromLocalStorage();
+  loadThemeFromLocalStorage(); 
   updatePreview(true);
 })();
