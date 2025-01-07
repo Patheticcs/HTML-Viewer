@@ -1,351 +1,312 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-Content-Type-Options" content="nosniff">
     <title>Synprev</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/dracula.min.css" rel="stylesheet">
     <style>
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-      body {
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-        height: 100vh;
-        background: black;
-        color: white;
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
-      }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            height: 100vh;
+            background: black;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
 
-      .toolbar {
-        background: black;
-        padding: 12px;
-        display: flex;
-        gap: 12px;
-        border-bottom: 1px solid white;
-      }
+        .toolbar {
+            background: black;
+            padding: 12px;
+            display: flex;
+            gap: 12px;
+            border-bottom: 1px solid white;
+        }
 
-      .action-button {
-        padding: 8px 16px;
-        background: black;
-        border: 1px solid white;
-        color: white;
-        border-radius: 60px;
-        cursor: pointer;
-        font-size: 14px;
-        font-weight: 500;
-        transition: transform 0.2s, background-color 0.2s;
-      }
+        .action-button {
+            padding: 8px 16px;
+            background: black;
+            border: 1px solid white;
+            color: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: transform 0.2s, background-color 0.2s;
+        }
 
-      .action-button:hover {
-        background: white;
-        color: black;
-      }
+        .action-button:hover {
+            background: white;
+            color: black;
+        }
 
-      .main-content {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
-      }
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
 
-      .editors-container {
-        height: 60%;
-        display: flex;
-        flex-direction: column;
-        min-height: 100px;
-      }
+        .editors-container {
+            height: 60%;
+            display: flex;
+            flex-direction: column;
+            min-height: 100px;
+        }
 
-      .tab-buttons {
-        display: flex;
-        background: black;
-        padding: 5px 5px 0;
-      }
+        .tab-buttons {
+            display: flex;
+            background: black;
+            padding: 5px 5px 0;
+        }
 
-      .tab-button {
-        padding: 10px 24px;
-        background: #333;
-        border: none;
-        color: white;
-        cursor: pointer;
-        margin-right: 5px;
-        margin-left: 5px;
-        border-top-left-radius: 4px;
-        border-top-right-radius: 4px;
-        font-size: 14px;
-        transition: all 0.2s;
-      }
+        .tab-button {
+            padding: 10px 24px;
+            background: #333;
+            border: none;
+            color: white;
+            cursor: pointer;
+            margin-right: 5px;
+            margin-left: 5px;
+            border-top-left-radius: 4px;
+            border-top-right-radius: 4px;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
 
-      .tab-button:hover {
-        background: #444;
-      }
+        .tab-button:hover {
+            background: #444;
+        }
 
-      .tab-button.active {
-        background: #1f1f1e;
-        color: white;
-      }
+        .tab-button.active {
+            background: #1f1f1e;
+            color: white;
+        }
 
-      .editor-wrapper {
-        flex: 1;
-        overflow: hidden;
-        position: relative;
-        display: flex;
-        flex-direction: column;
-      }
+        .editor-wrapper {
+            flex: 1;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
 
-      #editor {
-        flex: 1;
-        height: 100%;
-        overflow-y: auto;
-      }
+        #editor {
+            flex: 1;
+            height: 100%;
+            overflow-y: auto;
+        }
 
-      .CodeMirror {
-        height: 100%;
-        font-family: 'Fira Code', 'Consolas', monospace;
-        font-size: 14px;
-        line-height: 1.6;
-        overflow: hidden;
-      }
+        .CodeMirror {
+            height: 100%;
+            font-family: 'Fira Code', 'Consolas', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            overflow: hidden;
+        }
 
-      .resize-handle {
-        height: 8px;
-        background: #333;
-        cursor: ns-resize;
-        position: relative;
-      }
+        .resize-handle {
+            height: 8px;
+            background: #333;
+            cursor: ns-resize;
+            position: relative;
+        }
 
-      .resize-handle:hover {
-        background: #444;
-      }
+        .resize-handle:hover {
+            background: #444;
+        }
 
-      .resize-handle::after {
-        content: '';
-        position: absolute;
-        left: 50%;
-        top: 50%;
-        transform: translate(-50%, -50%);
-        width: 50px;
-        height: 2px;
-        background: #666;
-        border-radius: 1px;
-      }
+        .resize-handle::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 50px;
+            height: 2px;
+            background: #666;
+            border-radius: 1px;
+        }
 
-      .preview-container {
-        flex: 1;
-        background: white;
-        min-height: 100px;
-      }
+        .preview-container {
+            flex: 1;
+            background: white;
+            min-height: 100px;
+        }
 
-      #preview {
-        width: 100%;
-        height: 100%;
-        border: none;
-      }
+        #preview {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
 
-      .error-message {
-        color: #ff4444;
-        padding: 8px;
-        margin: 8px;
-        border-radius: 4px;
-        background: rgba(255, 68, 68, 0.1);
-        display: none;
-      }
-
-      .file-upload {
-        padding: 8px 16px;
-        background: black;
-        border: 1px solid white;
-        color: white;
-        border-radius: 60px;
-        cursor: pointer;
-        font-size: 14px;
-        font-weight: 500;
-        transition: transform 0.2s, background-color 0.2s;
-      }    
+        .error-message {
+            color: #ff4444;
+            padding: 8px;
+            margin: 8px;
+            border-radius: 4px;
+            background: rgba(255, 68, 68, 0.1);
+            display: none;
+        }
     </style>
-  </head>
-  <body>
+</head>
+<body>
     <div class="toolbar">
-      <button class="action-button" id="runBtn" type="button" aria-label="Run">Run</button>
-      <button class="action-button" id="previewBtn" type="button" aria-label="Open Preview">Open Preview</button>
-      <button class="action-button" id="clearBtn" type="button" aria-label="Clear All">Clear All</button>
-      <input type="file" id="fileInput" style="display: none;" aria-label="Import File">
-      <button class="file-upload" id="importBtn" type="button" aria-label="Import File">Import File</button>
-      <button class="action-button" id="exportBtn" type="button" aria-label="Export File">Export File</button>
+        <button class="action-button" id="runBtn">Run</button>
+        <button class="action-button" id="previewBtn">Open Preview</button>
+        <button class="action-button" id="clearBtn">Clear All</button>
     </div>
     <div class="main-content">
-      <div class="editors-container" id="editorsContainer">
-        <div class="tab-buttons" role="tablist" aria-label="Code tabs">
-          <button class="tab-button active" data-lang="html" role="tab" aria-selected="true">HTML</button>
-          <button class="tab-button" data-lang="css" role="tab" aria-selected="false">CSS</button>
-          <button class="tab-button" data-lang="javascript" role="tab" aria-selected="false">JavaScript</button>
+        <div class="editors-container" id="editorsContainer">
+            <div class="tab-buttons">
+                <button class="tab-button active" data-lang="html">HTML</button>
+                <button class="tab-button" data-lang="css">CSS</button>
+                <button class="tab-button" data-lang="javascript">JavaScript</button>
+            </div>
+            <div class="editor-wrapper">
+                <div id="editor"></div>
+            </div>
+            <div class="error-message" id="errorMessage"></div>
         </div>
-        <div class="editor-wrapper" role="tabpanel" aria-labelledby="htmlTab">
-          <div id="editor" role="textbox" aria-placeholder="Start coding here..."></div>
+        <div class="resize-handle" id="resizeHandle"></div>
+        <div class="preview-container">
+            <iframe id="preview"></iframe>
         </div>
-        <div class="error-message" id="errorMessage" role="alert"></div>
-      </div>
-      <div class="resize-handle" id="resizeHandle" aria-label="Resize editor"></div>
-      <div class="preview-container">
-        <iframe id="preview" aria-label="Live preview"></iframe>
-      </div>
     </div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/xml/xml.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/javascript/javascript.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/css/css.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/htmlmixed/htmlmixed.min.js"></script>
+
     <script>
-      (function() {
-        const code = {
-          html: '',
-          css: '',
-          javascript: ''
-        };
-        let currentLang = 'html';
-        let editor;
-        editor = CodeMirror(document.getElementById('editor'), {
-          mode: 'htmlmixed',
-          theme: 'dracula',
-          lineNumbers: true,
-          autoCloseTags: true,
-          autoCloseBrackets: true,
-          matchBrackets: true,
-          lineWrapping: true,
-          tabSize: 2,
-          indentWithTabs: false,
-          extraKeys: {
-            'Ctrl-Space': 'autocomplete'
-          }
-        });
+        (function() {
+            const code = { html: '', css: '', javascript: '' };
+            let currentLang = 'html';
+            let editor;
 
-        editor.on('change', () => {
-          code[currentLang] = editor.getValue();
-          updatePreview();
-        });
+            editor = CodeMirror(document.getElementById('editor'), {
+                mode: 'htmlmixed',
+                theme: 'dracula',
+                lineNumbers: true,
+                autoCloseTags: true,
+                autoCloseBrackets: true,
+                matchBrackets: true,
+                lineWrapping: true,
+                tabSize: 2,
+                indentWithTabs: false,
+                extraKeys: { 'Ctrl-Space': 'autocomplete' }
+            });
 
-        document.querySelectorAll('.tab-button').forEach(button => {
-          button.addEventListener('click', () => {
-            const lang = button.dataset.lang;
-            if (currentLang === lang) return;
-            code[currentLang] = editor.getValue();
-            document.querySelector('.tab-button.active').classList.remove('active');
-            button.classList.add('active');
-            currentLang = lang;
-            editor.setOption('mode', lang === 'html' ? 'htmlmixed' : lang);
-            editor.setValue(code[lang]);
-          });
-        });
+            editor.on('change', () => {
+                code[currentLang] = editor.getValue();
+                updatePreview();
+            });
 
-        const resizeHandle = document.getElementById('resizeHandle');
-        const editorsContainer = document.getElementById('editorsContainer');
-        let isDragging = false;
-        resizeHandle.addEventListener('mousedown', (e) => {
-          isDragging = true;
-          document.body.style.cursor = 'ns-resize';
-          e.preventDefault();
-        });
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.addEventListener('click', () => {
+                    const lang = button.dataset.lang;
+                    if (currentLang === lang) return;
 
-        document.addEventListener('mousemove', (e) => {
-          if (!isDragging) return;
-          const containerHeight = document.querySelector('.main-content').offsetHeight;
-          const minHeight = 100;
-          const maxHeight = containerHeight - minHeight;
-          const newHeight = Math.min(maxHeight, Math.max(minHeight, e.clientY));
-          editorsContainer.style.height = newHeight + 'px';
-        });
+                    code[currentLang] = editor.getValue();
 
-        document.addEventListener('mouseup', () => {
-          isDragging = false;
-          document.body.style.cursor = '';
-        });
+                    document.querySelector('.tab-button.active').classList.remove('active');
+                    button.classList.add('active');
 
-        function updatePreview() {
-          try {
-            const previewContent = `
-              <!DOCTYPE html>
-              <html>
-                <head>
-                  <meta charset="UTF-8">
-                  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                  <style>${code.css}</style>
-                </head>
-                <body>
-                  ${code.html}
-                  <script>${code.javascript}<\/script>
-                </body>
-              </html>
-            `;
-            const preview = document.getElementById('preview');
-            const previewDoc = preview.contentDocument || preview.contentWindow.document;
-            previewDoc.open();
-            previewDoc.write(previewContent);
-            previewDoc.close();
-            document.getElementById('errorMessage').style.display = 'none';
-          } catch (error) {
-            document.getElementById('errorMessage').innerText = error.message;
-            document.getElementById('errorMessage').style.display = 'block';
-          }
-        }
+                    currentLang = lang;
+                    editor.setOption('mode', lang === 'html' ? 'htmlmixed' : lang);
+                    editor.setValue(code[lang]);
+                });
+            });
 
-        document.getElementById('runBtn').addEventListener('click', updatePreview);
-        document.getElementById('previewBtn').addEventListener('click', () => {
-          const win = window.open('', '_blank');
-          win.document.write(`
-            <!DOCTYPE html>
-            <html>
-              <head>
-                <meta charset="UTF-8">
-                <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <style>${code.css}</style>
-              </head>
-              <body>
-                ${code.html}
-                <script>${code.javascript}<\/script>
-              </body>
-            </html>
-          `);
-          win.document.close();
-        });
-        document.getElementById('clearBtn').addEventListener('click', () => {
-          code.html = '';
-          code.css = '';
-          code.javascript = '';
-          editor.setValue('');
-        });
-        document.getElementById('importBtn').addEventListener('click', () => {
-          document.getElementById('fileInput').click();
-        });
-        document.getElementById('fileInput').addEventListener('change', (e) => {
-          const file = e.target.files[0];
-          if (file) {
-            const reader = new FileReader();
-            reader.onload = () => {
-              const content = reader.result;
-              code.html = content;
-              editor.setValue(content);
-              updatePreview();
-            };
-            reader.readAsText(file);
-          }
-        });
-        document.getElementById('exportBtn').addEventListener('click', () => {
-          const blob = new Blob([code.html], { type: 'text/html' });
-          const link = document.createElement('a');
-          link.href = URL.createObjectURL(blob);
-          link.download = 'index.html';
-          link.click();
-        });
+            const resizeHandle = document.getElementById('resizeHandle');
+            const editorsContainer = document.getElementById('editorsContainer');
+            let isDragging = false;
 
-        updatePreview();
-      })();
+            resizeHandle.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                document.body.style.cursor = 'ns-resize';
+                e.preventDefault();
+            });
+
+            document.addEventListener('mousemove', (e) => {
+                if (!isDragging) return;
+
+                const containerHeight = document.querySelector('.main-content').offsetHeight;
+                const minHeight = 100;
+                const maxHeight = containerHeight - minHeight;
+
+                const newHeight = Math.min(maxHeight, Math.max(minHeight, e.clientY));
+                editorsContainer.style.height = newHeight + 'px';
+            });
+
+            document.addEventListener('mouseup', () => {
+                isDragging = false;
+                document.body.style.cursor = '';
+            });
+
+            function updatePreview() {
+                const previewContent = `
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                        <meta charset="UTF-8">
+                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                        <style>${code.css}</style>
+                    </head>
+                    <body>
+                        ${code.html}
+                        <script>${code.javascript}<\/script>
+                    </body>
+                    </html>
+                `;
+
+                const preview = document.getElementById('preview');
+                const previewDoc = preview.contentDocument || preview.contentWindow.document;
+                previewDoc.open();
+                previewDoc.write(previewContent);
+                previewDoc.close();
+            }
+
+            document.getElementById('runBtn').addEventListener('click', updatePreview);
+
+            document.getElementById('previewBtn').addEventListener('click', () => {
+                const win = window.open('', '_blank');
+                win.document.write(`
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                        <meta charset="UTF-8">
+                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                        <style>${code.css}</style>
+                    </head>
+                    <body>
+                        ${code.html}
+                        <script>${code.javascript}<\/script>
+                    </body>
+                    </html>
+                `);
+                win.document.close();
+            });
+
+            document.getElementById('clearBtn').addEventListener('click', () => {
+                code.html = '';
+                code.css = '';
+                code.javascript = '';
+                editor.setValue('');
+            });
+
+            updatePreview();
+        })();
     </script>
-  </body>
+</body>
 </html>
