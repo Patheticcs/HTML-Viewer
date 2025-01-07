@@ -318,12 +318,6 @@
           code.javascript = '';
           editor.setValue('');
         });
-        document.getElementById('themeSelect').addEventListener('change', (e) => {
-          editor.setOption('theme', e.target.value);
-        });
-        document.getElementById('fontSizeRange').addEventListener('input', (e) => {
-          editor.getWrapperElement().style.fontSize = `${e.target.value}px`;
-        });
         document.getElementById('importBtn').addEventListener('click', () => {
           document.getElementById('fileInput').click();
         });
