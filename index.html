@@ -7,15 +7,6 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/dracula.min.css" rel="stylesheet">
     <style>
-        :root {
-            --bg-primary: #1e1e1e;
-            --bg-secondary: #252526;
-            --border-color: #444;
-            --accent-color: #0078D4;
-            --text-primary: #fff;
-            --text-secondary: #858585;
-        }
-
         * {
             margin: 0;
             padding: 0;
@@ -25,25 +16,25 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             height: 100vh;
-            background: var(--bg-primary);
-            color: var(--text-primary);
+            background: black;
+            color: white;
             display: flex;
             flex-direction: column;
             overflow: hidden;
         }
 
         .toolbar {
-            background: var(--bg-secondary);
+            background: black;
             padding: 12px;
             display: flex;
             gap: 12px;
-            border-bottom: 1px solid var(--border-color);
+            border-bottom: 1px solid white;
         }
 
         .action-button {
             padding: 8px 16px;
-            background: var(--accent-color);
-            border: none;
+            background: black;
+            border: 1px solid white;
             color: white;
             border-radius: 6px;
             cursor: pointer;
@@ -53,8 +44,8 @@
         }
 
         .action-button:hover {
-            background: #106EBE;
-            transform: translateY(-1px);
+            background: white;
+            color: black;
         }
 
         .main-content {
@@ -73,7 +64,7 @@
 
         .tab-buttons {
             display: flex;
-            background: var(--bg-secondary);
+            background: black;
             padding: 5px 5px 0;
         }
 
@@ -81,9 +72,10 @@
             padding: 10px 24px;
             background: #333;
             border: none;
-            color: var(--text-secondary);
+            color: white;
             cursor: pointer;
-            margin-right: 2px;
+            margin-right: 5px;
+            margin-left: 5px;
             border-top-left-radius: 4px;
             border-top-right-radius: 4px;
             font-size: 14px;
@@ -95,8 +87,8 @@
         }
 
         .tab-button.active {
-            background: var(--bg-primary);
-            color: var(--text-primary);
+            background: #1f1f1e;
+            color: white;
         }
 
         .editor-wrapper {
@@ -109,16 +101,16 @@
 
         #editor {
             flex: 1;
-            height: 100%; /* Ensures the editor takes the full space */
-            overflow-y: auto; /* Scroll only vertically */
+            height: 100%;
+            overflow-y: auto;
         }
 
         .CodeMirror {
-            height: auto !important;
+            height: 100%;
             font-family: 'Fira Code', 'Consolas', monospace;
             font-size: 14px;
             line-height: 1.6;
-            overflow: hidden; /* Disable horizontal overflow */
+            overflow: hidden;
         }
 
         .resize-handle {
