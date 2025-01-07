@@ -4,6 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tabbed Code Editor</title>
+    
+    <!-- Prism.js CSS for syntax highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/themes/prism-okaidia.min.css" rel="stylesheet" />
+
+    <!-- Prism.js JavaScript for syntax highlighting -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-markup.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-css.min.js"></script>
+
     <style>
       * {
         box-sizing: border-box;
@@ -90,7 +100,7 @@
         overflow-y: hidden;
       }
 
-      textarea {
+      .code-box {
         flex: 1;
         padding: 10px;
         font-family: 'Consolas', monospace;
@@ -104,25 +114,9 @@
         white-space: pre;
         overflow-y: auto;
         scrollbar-width: thin;
-        scrollbar-color: #444 #1e1e1e;
-      }
-
-      textarea::-webkit-scrollbar {
-        width: 8px;
-        height: 8px;
-      }
-
-      textarea::-webkit-scrollbar-track {
-        background: #1e1e1e;
-      }
-
-      textarea::-webkit-scrollbar-thumb {
-        background: #444;
-        border-radius: 4px;
-      }
-
-      textarea::-webkit-scrollbar-thumb:hover {
-        background: #555;
+        overflow-wrap: break-word;
+        min-height: 200px;
+        white-space: pre-wrap;
       }
 
       .preview-section {
@@ -184,13 +178,14 @@
         </div>
         <div class="editor-container">
           <div class="line-numbers" id="lineNumbers"></div>
-          <textarea id="editor" spellcheck="false"></textarea>
+          <div class="code-box" id="editor" contenteditable="true" spellcheck="false"></div>
         </div>
       </div>
       <div class="preview-section">
         <iframe id="preview"></iframe>
       </div>
     </div>
+
     <script>
       const editor = document.getElementById('editor');
       const preview = document.getElementById('preview');
@@ -204,7 +199,7 @@
       let currentLanguage = 'html';
 
       function updateLineNumbers() {
-        const lines = editor.value.split('\n');
+        const lines = editor.innerText.split('\n');
         const numbers = Array.from({ length: Math.max(lines.length, 1) }, (_, i) => i + 1).join('\n');
         lineNumbers.innerText = numbers;
       }
@@ -232,49 +227,30 @@
 
       function switchLanguage(lang) {
         if (currentLanguage === lang) return;
-        code[currentLanguage] = editor.value;
+        code[currentLanguage] = editor.innerText;
         currentLanguage = lang;
-        editor.value = code[lang];
+        editor.innerText = code[lang];
         updateLineNumbers();
         tabButtons.forEach(btn => {
           btn.classList.toggle('active', btn.dataset.editor === lang);
         });
+        highlightCode();
+      }
+
+      function highlightCode() {
+        editor.className = `code-box language-${currentLanguage}`;
+        Prism.highlightElement(editor);
       }
 
       editor.addEventListener('input', () => {
         updateLineNumbers();
-        code[currentLanguage] = editor.value;
+        code[currentLanguage] = editor.innerText;
+        highlightCode();
         updatePreview();
       });
 
       editor.addEventListener('scroll', () => {
         lineNumbers.scrollTop = editor.scrollTop;
-      });
-
-      editor.addEventListener('keydown', (e) => {
-        if (e.key === 'Tab') {
-          e.preventDefault();
-          const start = editor.selectionStart;
-          const end = editor.selectionEnd;
-
-          if (e.shiftKey) {
-
-            const beforeSelection = editor.value.substring(0, start);
-            const afterSelection = editor.value.substring(end);
-            const selectedText = editor.value.substring(start, end);
-            const unindentedText = selectedText.replace(/^    /gm, '');
-            editor.value = beforeSelection + unindentedText + afterSelection;
-            editor.selectionStart = start;
-            editor.selectionEnd = start + unindentedText.length;
-          } else {
-
-            editor.value = editor.value.substring(0, start) + '    ' + editor.value.substring(end);
-            editor.selectionStart = editor.selectionEnd = start + 4;
-          }
-
-          updateLineNumbers();
-          code[currentLanguage] = editor.value;
-        }
       });
 
       tabButtons.forEach(button => {
@@ -308,17 +284,18 @@
       document.getElementById('runBtn').addEventListener('click', updatePreview);
 
       document.getElementById('clearBtn').addEventListener('click', () => {
-        if (confirm('Are you sure you want to clear all code?')) {
-          code.html = '';
-          code.css = '';
-          code.js = '';
-          editor.value = code[currentLanguage];
-          updateLineNumbers();
-          updatePreview();
-        }
+        // Directly clear the code without prompt
+        code.html = '';
+        code.css = '';
+        code.js = '';
+        editor.innerText = code[currentLanguage];
+        updateLineNumbers();
+        highlightCode();
+        updatePreview();
       });
 
       updateLineNumbers();
+      highlightCode();
       updatePreview();
     </script>
   </body>
