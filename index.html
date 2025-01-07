@@ -11,9 +11,6 @@
             display: flex;
             flex-direction: column;
             height: 100vh;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(10px);
-            color: #ffffff;
         }
 
         #editor {
@@ -25,12 +22,11 @@
             border: none;
             resize: none;
             outline: none;
-            background: rgba(255, 255, 255, 0.1);
-            color: #ffffff;
+            background-color: #1e1e1e;
+            color: #d4d4d4;
             overflow: auto;
-            white-space: pre;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            white-space: pre-wrap; /* Ensures line breaks are preserved */
+            word-wrap: break-word;
         }
 
         .highlight {
@@ -49,48 +45,27 @@
             width: 100%;
             height: 50%;
             border: none;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-            overflow: hidden;
         }
 
-        .buttons {
-            display: flex;
-            justify-content: space-around;
-            padding: 10px;
-        }
-
-        button {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 5px;
-            color: #ffffff;
-            padding: 10px 20px;
-            cursor: pointer;
-        }
-
-        button:hover {
-            background: rgba(255, 255, 255, 0.2);
+        #highlighted {
+            display: none; /* Hidden div for syntax highlighting */
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-family: monospace;
         }
     </style>
 </head>
 <body>
     <div contenteditable="true" id="editor" spellcheck="false"></div>
     <iframe id="preview"></iframe>
-    <div class="buttons">
-        <button id="previewButton">Preview Full Code</button>
-        <button id="saveEditor">Save Editor</button>
-        <button id="saveHTML">Save Full HTML</button>
-    </div>
+    <div id="highlighted"></div> <!-- Hidden div for syntax highlighting -->
 
     <script>
         const editor = document.getElementById('editor');
         const preview = document.getElementById('preview');
-        const previewButton = document.getElementById('previewButton');
-        const saveEditorButton = document.getElementById('saveEditor');
-        const saveHTMLButton = document.getElementById('saveHTML');
+        const highlightedDiv = document.getElementById('highlighted');
 
+        // Function to highlight HTML syntax
         function syntaxHighlight(code) {
             return code
                 .replace(/(<\/?[a-zA-Z]+\s*)/g, '<span class="highlight">$1</span>') // Tags
@@ -98,51 +73,45 @@
                 .replace(/(".*?"|\'.*?\')/g, '<span class="value">$1</span>'); // Attribute values
         }
 
-        function generateRandomPath() {
-            return Math.random().toString(36).substr(2, 8);
+        // Function to get and set cursor position
+        function getCursorPosition() {
+            const selection = window.getSelection();
+            const range = selection.getRangeAt(0);
+            return range.startOffset;
+        }
+
+        function setCursorPosition(offset) {
+            const range = document.createRange();
+            const selection = window.getSelection();
+            range.setStart(editor.firstChild, offset);
+            range.collapse(true);
+            selection.removeAllRanges();
+            selection.addRange(range);
         }
 
         editor.addEventListener('input', () => {
-            const content = editor.textContent;
+            // Get the plain text (preserving line breaks)
+            const rawContent = editor.innerText;
+
+            // Highlight the content
+            highlightedDiv.innerHTML = syntaxHighlight(rawContent);
+
+            // Copy back the plain text into the editor for real-time editing
+            editor.innerText = rawContent;
+
+            // Preserve cursor position
+            const cursorPos = getCursorPosition();
+            setCursorPosition(cursorPos);
+
+            // Update the iframe preview
             const doc = preview.contentDocument || preview.contentWindow.document;
             doc.open();
-            doc.write(content);
+            doc.write(rawContent);
             doc.close();
-
-            // Apply syntax highlighting
-            const cursorPos = window.getSelection().getRangeAt(0).startOffset;
-            editor.innerHTML = syntaxHighlight(content);
-            const range = document.createRange();
-            const sel = window.getSelection();
-            range.setStart(editor.firstChild, cursorPos);
-            range.collapse(true);
-            sel.removeAllRanges();
-            sel.addRange(range);
         });
 
-        previewButton.addEventListener('click', () => {
-            const newWindow = window.open('about:blank', '_blank');
-            if (newWindow) {
-                newWindow.document.open();
-                newWindow.document.write(editor.textContent);
-                newWindow.document.close();
-            }
-        });
-
-        saveEditorButton.addEventListener('click', () => {
-            const path = generateRandomPath();
-            localStorage.setItem(`editor-${path}`, editor.textContent);
-            alert(`Editor saved! Path: ${path}`);
-        });
-
-        saveHTMLButton.addEventListener('click', () => {
-            const path = generateRandomPath();
-            localStorage.setItem(`html-${path}`, editor.textContent);
-            alert(`HTML saved! Path: ${path}`);
-        });
-
-        // Initialize
-        editor.textContent = '<!DOCTYPE html>\n<html>\n  <head>\n    <title>Example</title>\n  </head>\n  <body>\n    <h1>Hello, world!</h1>\n  </body>\n</html>';
+        // Initialize with an example
+        editor.innerText = '<!DOCTYPE html>\n<html>\n  <head>\n    <title>Example</title>\n  </head>\n  <body>\n    <h1>Hello, world!</h1>\n  </body>\n</html>';
     </script>
 </body>
 </html>
