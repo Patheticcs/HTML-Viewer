@@ -30,6 +30,19 @@
     }
   });
 
+  function loadFromLocalStorage() {
+    try {
+      const saved = localStorage.getItem('editorContent');
+      if (saved) {
+        state.code = JSON.parse(saved);
+        state.editor.setValue(state.code[state.currentLang] || '');
+        updatePreview(true);
+      }
+    } catch (err) {
+      console.error('Error loading saved content:', err);
+    }
+  }
+
   function loadThemeFromLocalStorage() {
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme) {
