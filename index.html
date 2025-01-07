@@ -225,6 +225,7 @@
                     currentLang = lang;
                     editor.setOption('mode', lang === 'html' ? 'htmlmixed' : lang);
                     editor.setValue(code[lang]);
+                    updatePreview();
                 });
             });
 
@@ -303,6 +304,9 @@
                 code.css = '';
                 code.javascript = '';
                 editor.setValue('');
+                document.querySelector('.tab-button.active').classList.remove('active');
+                document.querySelector('[data-lang="html"]').classList.add('active');
+                currentLang = 'html';
             });
 
             updatePreview();
