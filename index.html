@@ -103,13 +103,23 @@
             flex: 1;
             overflow: hidden;
             position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #editor {
+            flex: 1;
+            height: 100%; /* Ensures the editor takes the full space */
+            overflow-y: auto; /* Scroll only vertically */
         }
 
         .CodeMirror {
-            height: 100% !important;
+            height: auto !important;
+            min-height: 100%; /* Full height within the container */
             font-family: 'Fira Code', 'Consolas', monospace;
             font-size: 14px;
             line-height: 1.6;
+            overflow: hidden; /* Disable horizontal overflow */
         }
 
         .resize-handle {
@@ -245,7 +255,6 @@
 
             const newHeight = Math.min(maxHeight, Math.max(minHeight, e.clientY));
             editorsContainer.style.height = newHeight + 'px';
-            editor.refresh();
         });
 
         document.addEventListener('mouseup', () => {
