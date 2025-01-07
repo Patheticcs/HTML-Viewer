@@ -3,6 +3,7 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
     <title>Synprev</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/dracula.min.css" rel="stylesheet">
@@ -172,29 +173,28 @@
   </head>
   <body>
     <div class="toolbar">
-      <button class="action-button" id="runBtn">Run</button>
-      <button class="action-button" id="previewBtn">Open Preview</button>
-      <button class="action-button" id="clearBtn">Clear All</button>
-      <input type="file" id="fileInput" style="display: none;">
-      <button class="file-upload" id="importBtn">Import File</button>
-      <button class="action-button" id="exportBtn">Export File</button>
-      </select>
+      <button class="action-button" id="runBtn" type="button" aria-label="Run">Run</button>
+      <button class="action-button" id="previewBtn" type="button" aria-label="Open Preview">Open Preview</button>
+      <button class="action-button" id="clearBtn" type="button" aria-label="Clear All">Clear All</button>
+      <input type="file" id="fileInput" style="display: none;" aria-label="Import File">
+      <button class="file-upload" id="importBtn" type="button" aria-label="Import File">Import File</button>
+      <button class="action-button" id="exportBtn" type="button" aria-label="Export File">Export File</button>
     </div>
     <div class="main-content">
       <div class="editors-container" id="editorsContainer">
-        <div class="tab-buttons">
-          <button class="tab-button active" data-lang="html">HTML</button>
-          <button class="tab-button" data-lang="css">CSS</button>
-          <button class="tab-button" data-lang="javascript">JavaScript</button>
+        <div class="tab-buttons" role="tablist" aria-label="Code tabs">
+          <button class="tab-button active" data-lang="html" role="tab" aria-selected="true">HTML</button>
+          <button class="tab-button" data-lang="css" role="tab" aria-selected="false">CSS</button>
+          <button class="tab-button" data-lang="javascript" role="tab" aria-selected="false">JavaScript</button>
         </div>
-        <div class="editor-wrapper">
-          <div id="editor"></div>
+        <div class="editor-wrapper" role="tabpanel" aria-labelledby="htmlTab">
+          <div id="editor" role="textbox" aria-placeholder="Start coding here..."></div>
         </div>
-        <div class="error-message" id="errorMessage"></div>
+        <div class="error-message" id="errorMessage" role="alert"></div>
       </div>
-      <div class="resize-handle" id="resizeHandle"></div>
+      <div class="resize-handle" id="resizeHandle" aria-label="Resize editor"></div>
       <div class="preview-container">
-        <iframe id="preview"></iframe>
+        <iframe id="preview" aria-label="Live preview"></iframe>
       </div>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
@@ -265,21 +265,19 @@
         function updatePreview() {
           try {
             const previewContent = `
-                        
-							<!DOCTYPE html>
-							<html>
-								<head>
-									<meta charset="UTF-8">
-										<meta name="viewport" content="width=device-width, initial-scale=1.0">
-											<style>${code.css}</style>
-										</head>
-										<body>
-                            ${code.html}
-                            
-											<script>${code.javascript}<\/script>
-											</body>
-										</html>
-                    `;
+              <!DOCTYPE html>
+              <html>
+                <head>
+                  <meta charset="UTF-8">
+                  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                  <style>${code.css}</style>
+                </head>
+                <body>
+                  ${code.html}
+                  <script>${code.javascript}<\/script>
+                </body>
+              </html>
+            `;
             const preview = document.getElementById('preview');
             const previewDoc = preview.contentDocument || preview.contentWindow.document;
             previewDoc.open();
@@ -291,25 +289,24 @@
             document.getElementById('errorMessage').style.display = 'block';
           }
         }
+
         document.getElementById('runBtn').addEventListener('click', updatePreview);
         document.getElementById('previewBtn').addEventListener('click', () => {
           const win = window.open('', '_blank');
           win.document.write(`
-                    
-										<!DOCTYPE html>
-										<html>
-											<head>
-												<meta charset="UTF-8">
-													<meta name="viewport" content="width=device-width, initial-scale=1.0">
-														<style>${code.css}</style>
-													</head>
-													<body>
-                        ${code.html}
-                        
-														<script>${code.javascript}<\/script>
-														</body>
-													</html>
-                `);
+            <!DOCTYPE html>
+            <html>
+              <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <style>${code.css}</style>
+              </head>
+              <body>
+                ${code.html}
+                <script>${code.javascript}<\/script>
+              </body>
+            </html>
+          `);
           win.document.close();
         });
         document.getElementById('clearBtn').addEventListener('click', () => {
@@ -327,7 +324,6 @@
             const reader = new FileReader();
             reader.onload = () => {
               const content = reader.result;
-              // Example for HTML
               code.html = content;
               editor.setValue(content);
               updatePreview();
@@ -336,14 +332,13 @@
           }
         });
         document.getElementById('exportBtn').addEventListener('click', () => {
-          const blob = new Blob([code.html], {
-            type: 'text/html'
-          });
+          const blob = new Blob([code.html], { type: 'text/html' });
           const link = document.createElement('a');
           link.href = URL.createObjectURL(blob);
           link.download = 'index.html';
           link.click();
         });
+
         updatePreview();
       })();
     </script>
