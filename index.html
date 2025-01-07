@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Synprev</title>
-<meta name="description" content="Synprev simplifies web development by providing a real-time preview of HTML, CSS, and JavaScript code, helping both beginners and experienced developers experiment, learn, and troubleshoot with ease. Join us for a faster, smoother development experience.">
-<meta property="og:title" content="Synprev">
-<link rel="icon" href="/favicon.gif" type="image/gif">
-<meta property="og:type" content="website">
-<meta property="og:site_name" content="Synprev">
-<meta property="og:locale" content="en_US">
-<meta property="og:description" content="Synprev simplifies web development with real-time previews of HTML, CSS, and JavaScript code. Ideal for beginners and experienced developers alike.">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Synprev</title>
+    <meta name="description" content="Synprev simplifies web development by providing a real-time preview of HTML, CSS, and JavaScript code, helping both beginners and experienced developers experiment, learn, and troubleshoot with ease. Join us for a faster, smoother development experience.">
+    <meta property="og:title" content="Synprev">
+    <link rel="icon" href="/favicon.gif" type="image/gif">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Synprev">
+    <meta property="og:locale" content="en_US">
+    <meta property="og:description" content="Synprev simplifies web development with real-time previews of HTML, CSS, and JavaScript code. Ideal for beginners and experienced developers alike.">
     <style>
       * {
         box-sizing: border-box;
@@ -265,7 +265,6 @@
           const end = editor.selectionEnd;
 
           if (e.shiftKey) {
-
             const beforeSelection = editor.value.substring(0, start);
             const afterSelection = editor.value.substring(end);
             const selectedText = editor.value.substring(start, end);
@@ -274,7 +273,6 @@
             editor.selectionStart = start;
             editor.selectionEnd = start + unindentedText.length;
           } else {
-
             editor.value = editor.value.substring(0, start) + '    ' + editor.value.substring(end);
             editor.selectionStart = editor.selectionEnd = start + 4;
           }
@@ -315,14 +313,12 @@
       document.getElementById('runBtn').addEventListener('click', updatePreview);
 
       document.getElementById('clearBtn').addEventListener('click', () => {
-        if (confirm('Are you sure you want to clear all code?')) {
-          code.html = '';
-          code.css = '';
-          code.js = '';
-          editor.value = code[currentLanguage];
-          updateLineNumbers();
-          updatePreview();
-        }
+        code.html = '';
+        code.css = '';
+        code.js = '';
+        editor.value = '';
+        updateLineNumbers();
+        updatePreview();
       });
 
       updateLineNumbers();
