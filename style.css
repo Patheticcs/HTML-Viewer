@@ -191,11 +191,11 @@
         }
 
         .CodeMirror {
-            height: 100%;
             font-family: 'JetBrains Mono', 'Fira Code', monospace;
             font-size: 14px;
             line-height: 1.6;
             padding: 8px 0;
+            height: 91.63vh;
         }
 
         .notification {
