@@ -156,20 +156,36 @@
             background: rgba(255, 68, 68, 0.1);
             display: none;
         }
+
+        @media (max-width: 768px) {
+            .toolbar {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .tab-buttons {
+                flex-direction: column;
+            }
+
+            .tab-button {
+                width: 100%;
+                text-align: center;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="toolbar">
-        <button class="action-button" id="runBtn">Run</button>
-        <button class="action-button" id="previewBtn">Open Preview</button>
-        <button class="action-button" id="clearBtn">Clear All</button>
+        <button class="action-button" id="runBtn" aria-label="Run the code">Run</button>
+        <button class="action-button" id="previewBtn" aria-label="Open Preview">Open Preview</button>
+        <button class="action-button" id="clearBtn" aria-label="Clear All">Clear All</button>
     </div>
     <div class="main-content">
         <div class="editors-container" id="editorsContainer">
             <div class="tab-buttons">
-                <button class="tab-button active" data-lang="html">HTML</button>
-                <button class="tab-button" data-lang="css">CSS</button>
-                <button class="tab-button" data-lang="javascript">JavaScript</button>
+                <button class="tab-button active" data-lang="html" aria-label="HTML editor">HTML</button>
+                <button class="tab-button" data-lang="css" aria-label="CSS editor">CSS</button>
+                <button class="tab-button" data-lang="javascript" aria-label="JavaScript editor">JavaScript</button>
             </div>
             <div class="editor-wrapper">
                 <div id="editor"></div>
@@ -193,8 +209,8 @@
             const code = { html: '', css: '', javascript: '' };
             let currentLang = 'html';
             let editor;
-            let isTabSwitching = false;
 
+            // Initialize the CodeMirror editor
             editor = CodeMirror(document.getElementById('editor'), {
                 mode: 'htmlmixed',
                 theme: 'dracula',
@@ -208,31 +224,30 @@
                 extraKeys: { 'Ctrl-Space': 'autocomplete' }
             });
 
+            // Update code and preview on every change in the editor
             editor.on('change', () => {
-                if (isTabSwitching) return; // Don't update the preview during tab switch
                 code[currentLang] = editor.getValue();
-                updatePreview(); // Automatically update the preview when content changes
+                updatePreview(); // Real-time preview update
             });
 
+            // Switching between the tabs (HTML, CSS, JavaScript)
             document.querySelectorAll('.tab-button').forEach(button => {
                 button.addEventListener('click', () => {
                     const lang = button.dataset.lang;
                     if (currentLang === lang) return;
 
-                    isTabSwitching = true;
-                    code[currentLang] = editor.getValue(); // Save the current code before switching
+                    code[currentLang] = editor.getValue(); // Save current code
 
-                    // Set the active tab and change editor language mode
+                    // Change active tab and update editor language mode
                     document.querySelector('.tab-button.active').classList.remove('active');
                     button.classList.add('active');
                     currentLang = lang;
                     editor.setOption('mode', lang === 'html' ? 'htmlmixed' : lang);
                     editor.setValue(code[lang]);
-
-                    isTabSwitching = false; // Reset flag after switching
                 });
             });
 
+            // Resizing editor area
             const resizeHandle = document.getElementById('resizeHandle');
             const editorsContainer = document.getElementById('editorsContainer');
             let isDragging = false;
@@ -259,6 +274,7 @@
                 document.body.style.cursor = '';
             });
 
+            // Real-time preview update function
             function updatePreview() {
                 const previewContent = `
                     <!DOCTYPE html>
@@ -282,6 +298,7 @@
                 previewDoc.close();
             }
 
+            // Button handlers
             document.getElementById('runBtn').addEventListener('click', updatePreview);
 
             document.getElementById('previewBtn').addEventListener('click', () => {
@@ -308,9 +325,11 @@
                 code.css = '';
                 code.javascript = '';
                 editor.setValue('');
+                updatePreview(); // Clear the preview as well
             });
 
-            updatePreview(); // Initial preview
+            // Initial preview update
+            updatePreview();
         })();
     </script>
 </body>
