@@ -255,28 +255,33 @@
                 document.body.style.cursor = '';
             });
 
-            function updatePreview() {
-                const previewContent = `
-                    <!DOCTYPE html>
-                    <html>
-                    <head>
-                        <meta charset="UTF-8">
-                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                        <style>${code.css}</style>
-                    </head>
-                    <body>
-                        ${code.html}
-                        <script>${code.javascript}<\/script>
-                    </body>
-                    </html>
-                `;
+function updatePreview() {
+    const previewContent = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <style>${code.css}</style>
+        </head>
+        <body>
+            ${code.html}
+            <script>
+                // Wait for DOMContentLoaded to ensure elements are available
+                document.addEventListener('DOMContentLoaded', function() {
+                    ${code.javascript}
+                });
+            </script>
+        </body>
+        </html>
+    `;
 
-                const preview = document.getElementById('preview');
-                const previewDoc = preview.contentDocument || preview.contentWindow.document;
-                previewDoc.open();
-                previewDoc.write(previewContent);
-                previewDoc.close();
-            }
+    const preview = document.getElementById('preview');
+    const previewDoc = preview.contentDocument || preview.contentWindow.document;
+    previewDoc.open();
+    previewDoc.write(previewContent);
+    previewDoc.close();
+}
 
             document.getElementById('runBtn').addEventListener('click', updatePreview);
 
