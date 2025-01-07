@@ -1,12 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Synprev</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/nord.min.css" rel="stylesheet">
-   <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/theme/nord.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/theme/monokai.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/theme/material.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/theme/solarized.css">
+    <link rel="stylesheet" href="/style.css">
   </head>
   <body>
     <div class="toolbar">
@@ -28,13 +32,21 @@
             <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
             <polyline points="17 21 17 13 7 13 7 21" />
             <polyline points="7 3 7 8 15 8" />
-          </svg> Save </button>
+          </svg> Export </button>
         <button class="action-button" id="clearBtn" title="Clear All">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M3 6h18" />
             <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
           </svg> Clear </button>
       </div>
+      <select id="themeSelector">
+        <option value="default">Default</option>
+        <option value="nord">Nord</option>
+        <option value="monokai">Monokai</option>
+        <option value="material">Material</option>
+        <option value="solarized light">Solarized Light</option>
+        <option value="solarized dark">Solarized Dark</option>
+      </select>
     </div>
     <div class="main-content">
       <div class="split-view">
@@ -71,6 +83,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closetag.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
-  <script src="/script.js"></script>
+    <script src="/script.js"></script>
   </body>
 </html>
