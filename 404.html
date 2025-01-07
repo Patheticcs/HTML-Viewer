@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>404 Page Not Found</title>
+    <link rel="icon" type="image/x-icon" href="/favicon">
+    <style>
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes gradientMove {
+        0% {
+          background-position: 0% 50%;
+        }
+
+        50% {
+          background-position: 100% 50%;
+        }
+
+        100% {
+          background-position: 0% 50%;
+        }
+      }
+
+      @keyframes glowPulse {
+
+        0%,
+        100% {
+          box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+        }
+
+        50% {
+          box-shadow: 0 0 40px rgba(255, 255, 255, 0.4);
+        }
+      }
+
+      @keyframes borderFlow {
+        0% {
+          background-position: 0% 0%;
+        }
+
+        100% {
+          background-position: 200% 0%;
+        }
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        background: linear-gradient(135deg, #f5f7fa 0, #c3cfe2 100%);
+        min-height: 100vh;
+        display: flex;
+        color: #2d3436;
+        min-height: 100vh;
+        justify-content: center;
+        align-items: center;
+        margin: 0;
+        overflow: hidden;
+        position: relative
+      }
+
+      .glass-overlay {
+        position: fixed;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle at center, transparent 0, rgba(0, 0, 0, .4) 100%);
+        pointer-events: none;
+        z-index: 1
+      }
+
+      .container {
+        border-radius: 40px;
+        background: rgba(255, 255, 255, .25);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, .3);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, .3);
+        text-align: center;
+        transition: all .5s ease-out;
+        min-height: 450px;
+        width: 650px;
+        position: relative;
+        overflow: hidden
+      }
+
+      .container::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(120deg, transparent, rgba(255, 255, 255, .3), transparent);
+        transition: .5s
+      }
+
+      .container:hover::before {
+        left: 100%
+      }
+
+      .container h1 {
+        font-size: 100px;
+        color: #000;
+        margin-top: 40px;
+        text-shadow: 0 0 200px #fff, 0 0 60px #fff, 0 0 3px #fff;
+        animation: fadeIn 0.8s ease-out 0.6s backwards;
+      }
+
+      .container p {
+        font-size: 18px;
+        text-align: center;
+        margin-bottom: 50px;
+        margin-top: -10px;
+        flex-grow: 1;
+        color: #000;
+        animation: fadeIn 0.8s ease-out 0.6s backwards;
+      }
+
+      .container a {
+        font-size: 16px;
+        background-color: #fff;
+        color: #000;
+        text-decoration: none;
+        padding: 9px 16px;
+        border-radius: 20px;
+        transition: all 0.3s ease;
+        display: inline-block;
+        margin-top: 20px;
+        margin-bottom: 40px;
+        animation: fadeIn 0.8s ease-out 0.6s backwards;
+      }
+
+      .container a:hover {
+        transform: scale(1.03);
+        box-shadow: 0 0 25px rgba(255, 255, 255, 0.4), 0 0 20px rgba(255, 255, 255, 0.5);
+      }
+    </style>
+  </head>
+  <body>
+    </div>
+    <div class="container" aria-label="404 error container">
+      <h1>404</h1>
+      <p>Oops! The page you're looking for is not here.</p>
+      <a href="home" aria-label="Go back to the home page">Go Back to Home</a>
+    </div>
+    <script>
+      const container = document.querySelector('.container');
+      container.addEventListener('mousemove', function(e) {
+        const {
+          offsetWidth: width,
+          offsetHeight: height
+        } = container;
+        const rect = container.getBoundingClientRect();
+        const offsetX = e.clientX - rect.left;
+        const offsetY = e.clientY - rect.top;
+        const x = (offsetX / width) * 2 - 1;
+        const y = (offsetY / height) * 2 - 1;
+        container.style.transform = perspective(1000 px) scale(1.03) rotateX($ {
+            y * -5
+          }
+          deg) rotateY($ {
+            x * 5
+          }
+          deg);
+      });
+      container.addEventListener('mouseleave', function() {
+        container.style.transform = perspective(1000 px) scale(1) rotateX(0 deg) rotateY(0 deg);
+      });
+      container.style.transition = 'transform 0.3s ease-out';
+      document.addEventListener('contextmenu', function(e) {
+        e.preventDefault();
+      });
+      document.addEventListener('mousedown', function(e) {
+        if (e.target.tagName === 'A' || e.target.tagName === 'BUTTON') {
+          e.preventDefault();
+        }
+      });
+      document.addEventListener('touchstart', function(e) {
+        if (e.target.tagName === 'A' || e.target.tagName === 'BUTTON') {
+          e.preventDefault();
+        }
+      });
+      const links = document.querySelectorAll("a");
+      links.forEach(link => {
+        link.addEventListener("contextmenu", (event) => {
+          event.preventDefault();
+        });
+      });
+      document.addEventListener("keydown", function(event) {
+        if (event.ctrlKey || event.keyCode === 123) {
+          event.preventDefault();
+        }
+      });
+    </script>
+  </body>
+</html>
