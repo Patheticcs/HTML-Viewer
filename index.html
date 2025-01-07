@@ -156,6 +156,25 @@
             background: rgba(255, 68, 68, 0.1);
             display: none;
         }
+
+        .theme-select, .font-size-range {
+            background: black;
+            color: white;
+            padding: 5px;
+            border: 1px solid white;
+            border-radius: 4px;
+            margin-right: 10px;
+        }
+
+        .file-upload {
+            background: black;
+            padding: 5px;
+            border: 1px solid white;
+            color: white;
+            cursor: pointer;
+            border-radius: 6px;
+            margin-left: 10px;
+        }
     </style>
 </head>
 <body>
@@ -163,7 +182,16 @@
         <button class="action-button" id="runBtn">Run</button>
         <button class="action-button" id="previewBtn">Open Preview</button>
         <button class="action-button" id="clearBtn">Clear All</button>
+        <input type="file" id="fileInput" style="display: none;">
+        <button class="file-upload" id="importBtn">Import File</button>
+        <button class="action-button" id="exportBtn">Export File</button>
+        <select id="themeSelect" class="theme-select">
+            <option value="dracula">Dracula</option>
+            <option value="default">Default</option>
+        </select>
+        <input type="range" id="fontSizeRange" class="font-size-range" min="10" max="24" value="14">
     </div>
+
     <div class="main-content">
         <div class="editors-container" id="editorsContainer">
             <div class="tab-buttons">
@@ -187,7 +215,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/javascript/javascript.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/css/css.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/htmlmixed/htmlmixed.min.js"></script>
-
     <script>
         (function() {
             const code = { html: '', css: '', javascript: '' };
@@ -255,33 +282,40 @@
             });
 
             function updatePreview() {
-                const previewContent = 
-                    <!DOCTYPE html>
-                    <html>
-                    <head>
-                        <meta charset="UTF-8">
-                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                        <style>${code.css}</style>
-                    </head>
-                    <body>
-                        ${code.html}
-                        <script>${code.javascript}<\/script>
-                    </body>
-                    </html>
-                ;
-
-                const preview = document.getElementById('preview');
-                const previewDoc = preview.contentDocument || preview.contentWindow.document;
-                previewDoc.open();
-                previewDoc.write(previewContent);
-                previewDoc.close();
+                try {
+                    const previewContent = `
+                        <!DOCTYPE html>
+                        <html>
+                        <head>
+                            <meta charset="UTF-8">
+                            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                            <style>${code.css}</style>
+                        </head>
+                        <body>
+                            ${code.html}
+                            <script>${code.javascript}<\/script>
+                        </body>
+                        </html>
+                    `;
+    
+                    const preview = document.getElementById('preview');
+                    const previewDoc = preview.contentDocument || preview.contentWindow.document;
+                    previewDoc.open();
+                    previewDoc.write(previewContent);
+                    previewDoc.close();
+    
+                    document.getElementById('errorMessage').style.display = 'none';
+                } catch (error) {
+                    document.getElementById('errorMessage').innerText = error.message;
+                    document.getElementById('errorMessage').style.display = 'block';
+                }
             }
 
             document.getElementById('runBtn').addEventListener('click', updatePreview);
 
             document.getElementById('previewBtn').addEventListener('click', () => {
                 const win = window.open('', '_blank');
-                win.document.write(
+                win.document.write(`
                     <!DOCTYPE html>
                     <html>
                     <head>
@@ -294,7 +328,7 @@
                         <script>${code.javascript}<\/script>
                     </body>
                     </html>
-                );
+                `);
                 win.document.close();
             });
 
@@ -303,6 +337,41 @@
                 code.css = '';
                 code.javascript = '';
                 editor.setValue('');
+            });
+
+            document.getElementById('themeSelect').addEventListener('change', (e) => {
+                editor.setOption('theme', e.target.value);
+            });
+
+            document.getElementById('fontSizeRange').addEventListener('input', (e) => {
+                editor.getWrapperElement().style.fontSize = `${e.target.value}px`;
+            });
+
+            document.getElementById('importBtn').addEventListener('click', () => {
+                document.getElementById('fileInput').click();
+            });
+
+            document.getElementById('fileInput').addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = () => {
+                        const content = reader.result;
+                        // Example for HTML
+                        code.html = content;
+                        editor.setValue(content);
+                        updatePreview();
+                    };
+                    reader.readAsText(file);
+                }
+            });
+
+            document.getElementById('exportBtn').addEventListener('click', () => {
+                const blob = new Blob([code.html], { type: 'text/html' });
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = 'index.html';
+                link.click();
             });
 
             updatePreview();
