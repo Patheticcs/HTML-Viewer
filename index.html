@@ -163,8 +163,6 @@
         <button class="action-button" id="runBtn">Run</button>
         <button class="action-button" id="previewBtn">Open Preview</button>
         <button class="action-button" id="clearBtn">Clear All</button>
-        <button class="action-button" id="loadHtmlBtn">Load HTML from URL</button>
-        <input type="text" id="inputUrl" placeholder="Enter URL" style="padding: 8px; flex: 1;">
     </div>
     <div class="main-content">
         <div class="editors-container" id="editorsContainer">
@@ -257,7 +255,7 @@
             });
 
             function updatePreview() {
-                const previewContent = `
+                const previewContent = 
                     <!DOCTYPE html>
                     <html>
                     <head>
@@ -270,7 +268,7 @@
                         <script>${code.javascript}<\/script>
                     </body>
                     </html>
-                `;
+                ;
 
                 const preview = document.getElementById('preview');
                 const previewDoc = preview.contentDocument || preview.contentWindow.document;
@@ -283,7 +281,7 @@
 
             document.getElementById('previewBtn').addEventListener('click', () => {
                 const win = window.open('', '_blank');
-                win.document.write(`
+                win.document.write(
                     <!DOCTYPE html>
                     <html>
                     <head>
@@ -296,7 +294,7 @@
                         <script>${code.javascript}<\/script>
                     </body>
                     </html>
-                `);
+                );
                 win.document.close();
             });
 
@@ -307,21 +305,7 @@
                 editor.setValue('');
             });
 
-            document.getElementById('loadHtmlBtn').addEventListener('click', () => {
-                const url = document.getElementById('inputUrl').value;
-                if (url) {
-                    fetch(`/fetch-html?url=${encodeURIComponent(url)}`)
-                        .then(response => response.text())
-                        .then(html => {
-                            code.html = html;
-                            editor.setValue(html);
-                        })
-                        .catch(err => {
-                            document.getElementById('errorMessage').innerText = 'Failed to load HTML.';
-                            document.getElementById('errorMessage').style.display = 'block';
-                        });
-                }
-            });
+            updatePreview();
         })();
     </script>
 </body>
