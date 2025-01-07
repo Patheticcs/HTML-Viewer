@@ -3,7 +3,13 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tabbed Code Editor</title>
+    <title>Synprev</title>
+    <meta name="description" content="Synprev simplifies web development by providing a real-time preview of HTML, CSS, and JavaScript code, helping both beginners and experienced developers experiment, learn, and troubleshoot with ease. Join us for a faster, smoother development experience.">
+    <meta property="og:title" content="Pathetic">
+    <meta property="og:image" content="/favicon">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Synprev">
+    <meta property="og:locale" content="en_US">
     <style>
       * {
         box-sizing: border-box;
@@ -12,21 +18,42 @@
       }
 
       body {
-        font-family: Arial, sans-serif;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: #1e1e1e;
+        color: #f1f1f1;
         height: 100vh;
         display: flex;
         flex-direction: column;
         overflow: hidden;
-        background: #1e1e1e;
-        color: white;
       }
 
       .toolbar {
-        padding: 8px;
         display: flex;
-        gap: 10px;
+        gap: 12px;
+        padding: 12px;
         border-bottom: 1px solid #444;
-        background: #252526;
+        align-items: center;
+        justify-content: flex-start;
+      }
+
+      .action-button {
+        padding: 8px 16px;
+        background-color: #5c5c5b;
+        color: white;
+        border: none;
+        border-radius: 100px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: all 0.2s ease-in;
+      }
+
+      .action-button:hover {
+        background-color: #242424;
+      }
+
+      .action-button:active {
+        background: #5c5c5b;
+        transform: scale(0.98);
       }
 
       .main-content {
@@ -34,69 +61,69 @@
         flex-direction: column;
         flex: 1;
         overflow: hidden;
+        height: calc(100vh - 60px);
       }
 
       .code-section {
-        height: 50%;
-        position: relative;
-        background: #1e1e1e;
         display: flex;
         flex-direction: column;
-        min-height: 200px;
-        border-bottom: 1px solid #444;
+        flex: 1;
+        overflow: hidden;
+        border-bottom: 2px solid #444;
       }
 
       .tab-buttons {
         display: flex;
-        background: #252526;
-        padding: 5px 5px 0 5px;
+        background: #2c2c2c;
+        padding: 5px 0;
         overflow-x: auto;
         scrollbar-width: thin;
       }
 
       .tab-button {
-        padding: 8px 20px;
         background: #333;
+        color: #8c8c8c;
+        padding: 8px 20px;
+        margin-right: 5px;
         border: none;
-        color: #858585;
+        border-radius: 4px 4px 0 0;
         cursor: pointer;
-        margin-right: 2px;
-        border-top-left-radius: 4px;
-        border-top-right-radius: 4px;
         white-space: nowrap;
+        transition: background 0.2s, color 0.2s;
       }
 
       .tab-button.active {
         background: #1e1e1e;
-        color: white;
+        color: #f0f0f0;
+      }
+
+      .tab-button:hover {
+        background: #444;
       }
 
       .editor-container {
+        display: flex;
         flex: 1;
         position: relative;
-        display: flex;
-        overflow: hidden;
       }
 
       .line-numbers {
-        padding: 10px 8px;
-        background: #252526;
-        color: #858585;
+        background-color: #2e2e2e;
+        color: #888;
         font-family: 'Consolas', monospace;
         font-size: 14px;
+        padding: 10px;
         text-align: right;
         user-select: none;
         min-width: 45px;
-        overflow-y: hidden;
       }
 
       textarea {
         flex: 1;
-        padding: 10px;
+        padding: 12px;
         font-family: 'Consolas', monospace;
         font-size: 14px;
-        line-height: 1.5;
-        color: #ffffff;
+        color: white;
         background: #1e1e1e;
         border: none;
         resize: none;
@@ -104,7 +131,7 @@
         white-space: pre;
         overflow-y: auto;
         scrollbar-width: thin;
-        scrollbar-color: #444 #1e1e1e;
+        transition: background 0.3s ease;
       }
 
       textarea::-webkit-scrollbar {
@@ -128,33 +155,14 @@
       .preview-section {
         flex: 1;
         background: white;
-        min-height: 200px;
+        overflow: hidden;
+        border-top: 2px solid #444;
       }
 
       #preview {
         width: 100%;
         height: 100%;
         border: none;
-        background: white;
-      }
-
-      .action-button {
-        padding: 6px 12px;
-        background: #0078D4;
-        border: none;
-        color: white;
-        border-radius: 4px;
-        cursor: pointer;
-        font-size: 14px;
-        transition: background-color 0.2s;
-      }
-
-      .action-button:hover {
-        background: #106EBE;
-      }
-
-      .action-button:active {
-        background: #005A9E;
       }
 
       @media (max-width: 600px) {
@@ -164,7 +172,7 @@
 
         .action-button {
           flex: 1;
-          min-width: 80px;
+          min-width: 100px;
         }
       }
     </style>
@@ -214,6 +222,7 @@
       function updatePreview() {
         const combinedHTML = `
 
+          
 					<!DOCTYPE html>
 					<html>
 						<head>
@@ -223,7 +232,7 @@
 								</head>
 								<body>
               ${code.html}
-
+              
 									<script>${code.js}<\/script>
 									</body>
 								</html>
@@ -283,6 +292,7 @@
         if (previewWindow) {
           const combinedHTML = `
 
+            
 								<!DOCTYPE html>
 								<html>
 									<head>
@@ -292,7 +302,7 @@
 											</head>
 											<body>
                 ${code.html}
-
+                
 												<script>${code.js}<\/script>
 												</body>
 											</html>
@@ -303,14 +313,13 @@
       });
       document.getElementById('runBtn').addEventListener('click', updatePreview);
       document.getElementById('clearBtn').addEventListener('click', () => {
-        if (confirm('Are you sure you want to clear all code?')) {
-          code.html = '';
-          code.css = '';
-          code.js = '';
-          editor.value = code[currentLanguage];
-          updateLineNumbers();
-          updatePreview();
-        }
+        // Remove confirmation prompt, just clear the code
+        code.html = '';
+        code.css = '';
+        code.js = '';
+        editor.value = code[currentLanguage];
+        updateLineNumbers();
+        updatePreview();
       });
       updateLineNumbers();
       updatePreview();
