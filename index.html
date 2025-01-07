@@ -3,10 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Synprev</title>
+    <title>Modern Code Editor</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/dracula.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/nord.min.css" rel="stylesheet">
     <style>
+        :root {
+            --primary-bg: #1a1b26;
+            --secondary-bg: #24283b;
+            --accent-color: #7aa2f7;
+            --text-primary: #c0caf5;
+            --text-secondary: #9aa5ce;
+            --border-color: #414868;
+            --error-color: #f7768e;
+            --success-color: #9ece6a;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -16,93 +27,162 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             height: 100vh;
-            background: black;
-            color: white;
+            background: var(--primary-bg);
+            color: var(--text-primary);
             display: flex;
             flex-direction: column;
             overflow: hidden;
         }
 
         .toolbar {
-            background: black;
-            padding: 12px;
+            background: var(--secondary-bg);
+            padding: 16px;
             display: flex;
             gap: 12px;
-            border-bottom: 1px solid white;
+            border-bottom: 1px solid var(--border-color);
+            align-items: center;
+        }
+
+        .toolbar-group {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .toolbar-group:not(:last-child) {
+            margin-right: 16px;
+            padding-right: 16px;
+            border-right: 1px solid var(--border-color);
         }
 
         .action-button {
             padding: 8px 16px;
-            background: black;
-            border: 1px solid white;
-            color: white;
+            background: transparent;
+            border: 1px solid var(--accent-color);
+            color: var(--accent-color);
             border-radius: 6px;
             cursor: pointer;
             font-size: 14px;
             font-weight: 500;
-            transition: transform 0.2s, background-color 0.2s;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
 
         .action-button:hover {
-            background: white;
-            color: black;
+            background: var(--accent-color);
+            color: var(--primary-bg);
+        }
+
+        .action-button svg {
+            width: 16px;
+            height: 16px;
         }
 
         .main-content {
             flex: 1;
             display: flex;
-            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .split-view {
+            display: flex;
+            flex: 1;
             overflow: hidden;
         }
 
         .editors-container {
-            height: 60%;
+            flex: 1;
             display: flex;
             flex-direction: column;
-            min-height: 100px;
+            min-width: 300px;
+            background: var(--primary-bg);
+            border-right: 1px solid var(--border-color);
         }
 
         .tab-buttons {
             display: flex;
-            background: black;
-            padding: 5px 5px 0;
+            background: var(--secondary-bg);
+            padding: 0 8px;
+            gap: 4px;
         }
 
         .tab-button {
-            padding: 10px 24px;
-            background: #333;
+            padding: 12px 24px;
+            background: transparent;
             border: none;
-            color: white;
+            color: var(--text-secondary);
             cursor: pointer;
-            margin-right: 5px;
-            margin-left: 5px;
-            border-top-left-radius: 4px;
-            border-top-right-radius: 4px;
             font-size: 14px;
             transition: all 0.2s;
+            border-bottom: 2px solid transparent;
+            position: relative;
         }
 
         .tab-button:hover {
-            background: #444;
+            color: var(--text-primary);
         }
 
         .tab-button.active {
-            background: #1f1f1e;
-            color: white;
+            color: var(--accent-color);
+            border-bottom-color: var(--accent-color);
+        }
+
+        .tab-button .file-icon {
+            margin-right: 8px;
+            opacity: 0.7;
         }
 
         .editor-wrapper {
             flex: 1;
             overflow: hidden;
             position: relative;
-            display: flex;
-            flex-direction: column;
         }
 
-        #editor {
+        .preview-container {
             flex: 1;
+            background: white;
+            position: relative;
+            min-width: 300px;
+        }
+
+        #preview {
+            width: 100%;
             height: 100%;
-            overflow-y: auto;
+            border: none;
+            background: white;
+        }
+
+        .preview-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 8px 16px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            font-size: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .preview-container:hover .preview-overlay {
+            opacity: 1;
+        }
+
+        .resize-handle {
+            width: 4px;
+            background: var(--border-color);
+            cursor: ew-resize;
+            transition: background 0.2s;
+        }
+
+        .resize-handle:hover {
+            background: var(--accent-color);
         }
 
         .CodeMirror {
@@ -110,110 +190,161 @@
             font-family: 'Fira Code', 'Consolas', monospace;
             font-size: 14px;
             line-height: 1.6;
-            overflow: hidden;
-        }
-
-        .resize-handle {
-            height: 8px;
-            background: #333;
-            cursor: ns-resize;
-            position: relative;
-        }
-
-        .resize-handle:hover {
-            background: #444;
-        }
-
-        .resize-handle::after {
-            content: '';
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
-            width: 50px;
-            height: 2px;
-            background: #666;
-            border-radius: 1px;
-        }
-
-        .preview-container {
-            flex: 1;
-            background: white;
-            min-height: 100px;
-        }
-
-        #preview {
-            width: 100%;
-            height: 100%;
-            border: none;
         }
 
         .error-message {
-            color: #ff4444;
-            padding: 8px;
-            margin: 8px;
-            border-radius: 4px;
-            background: rgba(255, 68, 68, 0.1);
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 12px 20px;
+            border-radius: 8px;
+            background: var(--error-color);
+            color: white;
+            font-size: 14px;
             display: none;
+            animation: slideIn 0.3s ease;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .success-message {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 12px 20px;
+            border-radius: 8px;
+            background: var(--success-color);
+            color: white;
+            font-size: 14px;
+            display: none;
+            animation: slideIn 0.3s ease;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
         }
 
         @media (max-width: 768px) {
-            .toolbar {
-                flex-direction: column;
-                gap: 8px;
-            }
-
-            .tab-buttons {
+            .split-view {
                 flex-direction: column;
             }
 
-            .tab-button {
+            .resize-handle {
+                height: 4px;
                 width: 100%;
-                text-align: center;
+                cursor: ns-resize;
+            }
+
+            .editors-container,
+            .preview-container {
+                min-height: 300px;
+                width: 100%;
             }
         }
     </style>
 </head>
 <body>
     <div class="toolbar">
-        <button class="action-button" id="runBtn" aria-label="Run the code">Run</button>
-        <button class="action-button" id="previewBtn" aria-label="Open Preview">Open Preview</button>
-        <button class="action-button" id="clearBtn" aria-label="Clear All">Clear All</button>
+        <div class="toolbar-group">
+            <button class="action-button" id="runBtn" title="Run (Ctrl+Enter)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polygon points="5 3 19 12 5 21 5 3"/>
+                </svg>
+                Run
+            </button>
+            <button class="action-button" id="previewBtn" title="Open in New Window">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+                    <polyline points="15 3 21 3 21 9"/>
+                    <line x1="10" y1="14" x2="21" y2="3"/>
+                </svg>
+                Preview
+            </button>
+        </div>
+        <div class="toolbar-group">
+            <button class="action-button" id="saveBtn" title="Save (Ctrl+S)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+                    <polyline points="17 21 17 13 7 13 7 21"/>
+                    <polyline points="7 3 7 8 15 8"/>
+                </svg>
+                Save
+            </button>
+            <button class="action-button" id="clearBtn" title="Clear All">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 6h18"/>
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                </svg>
+                Clear
+            </button>
+        </div>
     </div>
     <div class="main-content">
-        <div class="editors-container" id="editorsContainer">
-            <div class="tab-buttons">
-                <button class="tab-button active" data-lang="html" aria-label="HTML editor">HTML</button>
-                <button class="tab-button" data-lang="css" aria-label="CSS editor">CSS</button>
-                <button class="tab-button" data-lang="javascript" aria-label="JavaScript editor">JavaScript</button>
+        <div class="split-view">
+            <div class="editors-container">
+                <div class="tab-buttons">
+                    <button class="tab-button active" data-lang="html">
+                        <span class="file-icon">📄</span>HTML
+                    </button>
+                    <button class="tab-button" data-lang="css">
+                        <span class="file-icon">🎨</span>CSS
+                    </button>
+                    <button class="tab-button" data-lang="javascript">
+                        <span class="file-icon">⚡</span>JavaScript
+                    </button>
+                </div>
+                <div class="editor-wrapper">
+                    <div id="editor"></div>
+                </div>
             </div>
-            <div class="editor-wrapper">
-                <div id="editor"></div>
+            <div class="resize-handle" id="resizeHandle"></div>
+            <div class="preview-container">
+                <div class="preview-overlay">
+                    <span>Preview</span>
+                    <span id="previewSize"></span>
+                </div>
+                <iframe id="preview"></iframe>
             </div>
-            <div class="error-message" id="errorMessage"></div>
-        </div>
-        <div class="resize-handle" id="resizeHandle"></div>
-        <div class="preview-container">
-            <iframe id="preview"></iframe>
         </div>
     </div>
+    <div class="error-message" id="errorMessage"></div>
+    <div class="success-message" id="successMessage"></div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/xml/xml.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/javascript/javascript.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/css/css.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/htmlmixed/htmlmixed.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closetag.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
 
     <script>
         (function() {
-            const code = { html: '', css: '', javascript: '' };
-            let currentLang = 'html';
-            let editor;
+            // State management
+            const state = {
+                code: { html: '', css: '', javascript: '' },
+                currentLang: 'html',
+                editor: null,
+                previewUpdateTimeout: null,
+                isDragging: false,
+                initialX: 0,
+                initialWidth: 0
+            };
 
-            // Initialize the CodeMirror editor
-            editor = CodeMirror(document.getElementById('editor'), {
+            // Initialize CodeMirror editor
+            state.editor = CodeMirror(document.getElementById('editor'), {
                 mode: 'htmlmixed',
-                theme: 'dracula',
+                theme: 'nord',
                 lineNumbers: true,
                 autoCloseTags: true,
                 autoCloseBrackets: true,
@@ -221,87 +352,175 @@
                 lineWrapping: true,
                 tabSize: 2,
                 indentWithTabs: false,
-                extraKeys: { 'Ctrl-Space': 'autocomplete' }
+                extraKeys: {
+                    'Ctrl-Space': 'autocomplete',
+                    'Ctrl-Enter': () => document.getElementById('runBtn').click(),
+                    'Ctrl-S': (cm) => {
+                        saveToLocalStorage();
+                        showSuccessMessage('Changes saved successfully!');
+                        return false;
+                    }
+                }
             });
 
-            // Update code and preview on every change in the editor
-            editor.on('change', () => {
-                code[currentLang] = editor.getValue();
-                updatePreview(); // Real-time preview update
-            });
+            // Load saved code from localStorage
+            function loadFromLocalStorage() {
+                try {
+                    const saved = localStorage.getItem('editorContent');
+                    if (saved) {
+                        state.code = JSON.parse(saved);
+                        state.editor.setValue(state.code[state.currentLang]);
+                        updatePreview();
+                    }
+                } catch (err) {
+                    showErrorMessage('Error loading saved content');
+                }
+            }
 
-            // Switching between the tabs (HTML, CSS, JavaScript)
+            // Save code to localStorage
+            function saveToLocalStorage() {
+                try {
+                    state.code[state.currentLang] = state.editor.getValue();
+                    localStorage.setItem('editorContent', JSON.stringify(state.code));
+                } catch (err) {
+                    showErrorMessage('Error saving content');
+                }
+            }
+
+            // Show error message
+            function showErrorMessage(message) {
+                const errorEl = document.getElementById('errorMessage');
+                errorEl.textContent = message;
+                errorEl.style.display = 'block';
+                setTimeout(() => {
+                    errorEl.style.display = 'none';
+                }, 3000);
+            }
+
+            // Show success message
+            function showSuccessMessage(message) {
+                const successEl = document.getElementById('successMessage');
+                successEl.textContent = message;
+                successEl.style.display = 'block';
+                setTimeout(() => {
+                    successEl.style.display = 'none';
+                }, 3000);
+            }
+
+            // Update preview with debounce
+            function updatePreview() {
+                clearTimeout(state.previewUpdateTimeout);
+                state.previewUpdateTimeout = setTimeout(() => {
+                    try {
+                        const previewContent = `
+                            <!DOCTYPE html>
+                            <html>
+                            <head>
+                                <meta charset="UTF-8">
+                                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                                <style>${state.code.css}</style>
+                            </head>
+                            <body>
+                                ${state.code.html}
+                                <script>${state.code.javascript}<\/script>
+                            </body>
+                            </html>
+                        `;
+
+                        const preview = document.getElementById('preview');
+                        const previewDoc = preview.contentDocument || preview.contentWindow.document;
+                        previewDoc.open();
+                        previewDoc.write(previewContent);
+                        previewDoc.close();
+
+                        // Update preview size indicator
+                        const previewSize = document.getElementById('previewSize');
+                        previewSize.textContent = `${preview.offsetWidth}x${preview.offsetHeight}`;
+                    } catch (err) {
+                        showErrorMessage('Error updating preview: ' + err.message);
+                    }
+                }, 500);
+            }
+
+            // Tab switching logic
             document.querySelectorAll('.tab-button').forEach(button => {
                 button.addEventListener('click', () => {
                     const lang = button.dataset.lang;
-                    if (currentLang === lang) return;
+                    if (state.currentLang === lang) return;
 
-                    code[currentLang] = editor.getValue(); // Save current code
+                    // Save current code before switching
+                    state.code[state.currentLang] = state.editor.getValue();
 
-                    // Change active tab and update editor language mode
+                    // Update UI
                     document.querySelector('.tab-button.active').classList.remove('active');
                     button.classList.add('active');
-                    currentLang = lang;
-                    editor.setOption('mode', lang === 'html' ? 'htmlmixed' : lang);
-                    editor.setValue(code[lang]);
+                    
+                    // Switch editor mode and content
+                    state.currentLang = lang;
+                    state.editor.setOption('mode', lang === 'html' ? 'htmlmixed' : lang);
+                    state.editor.setValue(state.code[lang]);
                 });
             });
 
-            // Resizing editor area
+            // Resizable split view logic
             const resizeHandle = document.getElementById('resizeHandle');
-            const editorsContainer = document.getElementById('editorsContainer');
-            let isDragging = false;
+            const editorsContainer = document.querySelector('.editors-container');
+            const splitView = document.querySelector('.split-view');
 
-            resizeHandle.addEventListener('mousedown', (e) => {
-                isDragging = true;
-                document.body.style.cursor = 'ns-resize';
+            function startResize(e) {
+                state.isDragging = true;
+                state.initialX = e.clientX;
+                state.initialWidth = editorsContainer.offsetWidth;
+                document.body.style.cursor = 'ew-resize';
+                document.addEventListener('mousemove', handleResize);
+                document.addEventListener('mouseup', stopResize);
                 e.preventDefault();
-            });
-
-            document.addEventListener('mousemove', (e) => {
-                if (!isDragging) return;
-
-                const containerHeight = document.querySelector('.main-content').offsetHeight;
-                const minHeight = 100;
-                const maxHeight = containerHeight - minHeight;
-
-                const newHeight = Math.min(maxHeight, Math.max(minHeight, e.clientY));
-                editorsContainer.style.height = newHeight + 'px';
-            });
-
-            document.addEventListener('mouseup', () => {
-                isDragging = false;
-                document.body.style.cursor = '';
-            });
-
-            // Real-time preview update function
-            function updatePreview() {
-                const previewContent = `
-                    <!DOCTYPE html>
-                    <html>
-                    <head>
-                        <meta charset="UTF-8">
-                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                        <style>${code.css}</style>
-                    </head>
-                    <body>
-                        ${code.html}
-                        <script>${code.javascript}<\/script>
-                    </body>
-                    </html>
-                `;
-
-                const preview = document.getElementById('preview');
-                const previewDoc = preview.contentDocument || preview.contentWindow.document;
-                previewDoc.open();
-                previewDoc.write(previewContent);
-                previewDoc.close();
             }
 
+            function handleResize(e) {
+                if (!state.isDragging) return;
+
+                const deltaX = e.clientX - state.initialX;
+                const newWidth = Math.max(300, Math.min(
+                    state.initialWidth + deltaX,
+                    splitView.offsetWidth - 300
+                ));
+                
+                editorsContainer.style.width = `${newWidth}px`;
+                updatePreview();
+            }
+
+            function stopResize() {
+                state.isDragging = false;
+                document.body.style.cursor = '';
+                document.removeEventListener('mousemove', handleResize);
+                document.removeEventListener('mouseup', stopResize);
+            }
+
+            resizeHandle.addEventListener('mousedown', startResize);
+
+            // Mobile/responsive layout handler
+            function handleResponsiveLayout() {
+                const isMobile = window.innerWidth <= 768;
+                if (isMobile) {
+                    editorsContainer.style.width = '100%';
+                } else {
+                    editorsContainer.style.width = '50%';
+                }
+                updatePreview();
+            }
+
+            window.addEventListener('resize', handleResponsiveLayout);
+
             // Button handlers
-            document.getElementById('runBtn').addEventListener('click', updatePreview);
+            document.getElementById('runBtn').addEventListener('click', () => {
+                state.code[state.currentLang] = state.editor.getValue();
+                updatePreview();
+                showSuccessMessage('Code executed successfully!');
+            });
 
             document.getElementById('previewBtn').addEventListener('click', () => {
+                state.code[state.currentLang] = state.editor.getValue();
                 const win = window.open('', '_blank');
                 win.document.write(`
                     <!DOCTYPE html>
@@ -309,27 +528,43 @@
                     <head>
                         <meta charset="UTF-8">
                         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                        <style>${code.css}</style>
+                        <style>${state.code.css}</style>
                     </head>
                     <body>
-                        ${code.html}
-                        <script>${code.javascript}<\/script>
+                        ${state.code.html}
+                        <script>${state.code.javascript}<\/script>
                     </body>
                     </html>
                 `);
                 win.document.close();
             });
 
-            document.getElementById('clearBtn').addEventListener('click', () => {
-                code.html = '';
-                code.css = '';
-                code.javascript = '';
-                editor.setValue('');
-                updatePreview(); // Clear the preview as well
+            document.getElementById('saveBtn').addEventListener('click', () => {
+                saveToLocalStorage();
+                showSuccessMessage('Changes saved successfully!');
             });
 
-            // Initial preview update
-            updatePreview();
+            document.getElementById('clearBtn').addEventListener('click', () => {
+                if (confirm('Are you sure you want to clear all code? This action cannot be undone.')) {
+                    state.code.html = '';
+                    state.code.css = '';
+                    state.code.javascript = '';
+                    state.editor.setValue('');
+                    localStorage.removeItem('editorContent');
+                    updatePreview();
+                    showSuccessMessage('All code cleared!');
+                }
+            });
+
+            // Editor change handler
+            state.editor.on('change', () => {
+                state.code[state.currentLang] = state.editor.getValue();
+                updatePreview();
+            });
+
+            // Initialize the application
+            loadFromLocalStorage();
+            handleResponsiveLayout();
         })();
     </script>
 </body>
