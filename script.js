@@ -1,4 +1,4 @@
-(function() {
+      (function() {
         const state = {
           code: {
             html: '',
@@ -9,7 +9,6 @@
           editor: null,
           isUpdating: false
         };
-
         state.editor = CodeMirror(document.getElementById('editor'), {
           mode: 'htmlmixed',
           theme: 'default',
@@ -25,14 +24,6 @@
             'Ctrl-S': (cm) => {
               saveToLocalStorage();
               showSuccessMessage('Changes saved!');
-              return false;
-            },
-            'Ctrl-Shift-S': () => {
-              downloadAllFiles();
-              return false;
-            },
-            'Ctrl-P': () => {
-              toggleShortcutsPanel();
               return false;
             }
           }
@@ -74,18 +65,24 @@
           requestAnimationFrame(() => {
             try {
               const previewContent = `
-                <!DOCTYPE html>
-                <html>
-                  <head>
-                    <meta charset="UTF-8">
-                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                    <style>${state.code.css || ''}</style>
-                  </head>
-                  <body>
-                    ${state.code.html || ''}
-                    <script>${state.code.javascript || ''}<\/script>
-                  </body>
-                </html>`;
+
+												
+												
+												<!DOCTYPE html>
+												<html>
+													<head>
+														<meta charset="UTF-8">
+															<meta name="viewport" content="width=device-width, initial-scale=1.0">
+																<style>${state.code.css || ''}</style>
+															</head>
+															<body>
+  ${state.code.html || ''}
+
+																
+																
+																<script>${state.code.javascript || ''}<\/script>
+																</body>
+															</html>`;
               const preview = document.getElementById('preview');
               const previewDoc = preview.contentDocument || preview.contentWindow.document;
               previewDoc.open();
@@ -100,45 +97,6 @@
             }
           });
         }
-
-        function toggleShortcutsPanel() {
-          const panel = document.querySelector('.shortcuts-panel');
-          panel.classList.toggle('visible');
-        }
-
-        function downloadAllFiles() {
-          const htmlContent = `
-            <!DOCTYPE html>
-            <html>
-              <head>
-                <meta charset="UTF-8">
-                <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <style>${state.code.css || ''}</style>
-              </head>
-              <body>
-                ${state.code.html || ''}
-                <script>${state.code.javascript || ''}<\/script>
-              </body>
-            </html>`;
-          const htmlBlob = new Blob([htmlContent], { type: 'text/html' });
-          const htmlLink = document.createElement('a');
-          htmlLink.href = URL.createObjectURL(htmlBlob);
-          htmlLink.download = 'index.html';
-          htmlLink.click();
-
-          const cssBlob = new Blob([state.code.css || ''], { type: 'text/css' });
-          const cssLink = document.createElement('a');
-          cssLink.href = URL.createObjectURL(cssBlob);
-          cssLink.download = 'style.css';
-          cssLink.click();
-
-          const jsBlob = new Blob([state.code.javascript || ''], { type: 'application/javascript' });
-          const jsLink = document.createElement('a');
-          jsLink.href = URL.createObjectURL(jsBlob);
-          jsLink.download = 'script.js';
-          jsLink.click();
-        }
-
         document.querySelectorAll('.tab-button').forEach(button => {
           button.addEventListener('click', () => {
             const lang = button.dataset.lang;
@@ -151,37 +109,83 @@
             state.editor.setValue(state.code[lang] || '');
           });
         });
-
         state.editor.on('change', (cm, change) => {
           state.code[state.currentLang] = cm.getValue();
           updatePreview();
           saveToLocalStorage();
         });
-
         document.getElementById('runBtn').addEventListener('click', () => {
           state.code[state.currentLang] = state.editor.getValue();
           updatePreview(true);
           showSuccessMessage('Code executed!');
         });
-
         document.getElementById('previewBtn').addEventListener('click', () => {
           const win = window.open('', '_blank');
           win.document.write(`
-            <!DOCTYPE html>
-            <html>
-              <head>
-                <meta charset="UTF-8">
-                <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <style>${state.code.css || ''}</style>
-              </head>
-              <body>
-                ${state.code.html || ''}
-                <script>${state.code.javascript || ''}<\/script>
-              </body>
-            </html>`);
+
+															
+															
+															<!DOCTYPE html>
+															<html>
+																<head>
+																	<meta charset="UTF-8">
+																		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+																			<style>${state.code.css || ''}</style>
+																		</head>
+																		<body>
+  ${state.code.html || ''}
+
+																			
+																			
+																			<script>${state.code.javascript || ''}<\/script>
+																			</body>
+																		</html>`);
           win.document.close();
         });
+        document.getElementById('saveBtn').addEventListener('click', () => {
+          saveToLocalStorage();
+          showSuccessMessage('Saved!');
+          const htmlContent = `
 
+																		
+																		
+																		<!DOCTYPE html>
+																		<html>
+																			<head>
+																				<meta charset="UTF-8">
+																					<meta name="viewport" content="width=device-width, initial-scale=1.0">
+																						<style>${state.code.css || ''}</style>
+																					</head>
+																					<body>
+  ${state.code.html || ''}
+
+																						
+																						
+																						<script>${state.code.javascript || ''}<\/script>
+																						</body>
+																					</html>`;
+          const htmlBlob = new Blob([htmlContent], {
+            type: 'text/html'
+          });
+          const htmlLink = document.createElement('a');
+          htmlLink.href = URL.createObjectURL(htmlBlob);
+          htmlLink.download = 'index.html';
+          htmlLink.click();
+          const cssBlob = new Blob([state.code.css || ''], {
+            type: 'text/css'
+          });
+          const cssLink = document.createElement('a');
+          cssLink.href = URL.createObjectURL(cssBlob);
+          cssLink.download = 'style.css';
+          cssLink.click();
+          const jsBlob = new Blob([state.code.javascript || ''], {
+            type: 'application/javascript'
+          });
+          const jsLink = document.createElement('a');
+          jsLink.href = URL.createObjectURL(jsBlob);
+          jsLink.download = 'script.js';
+          jsLink.click();
+        });
         document.getElementById('clearBtn').addEventListener('click', () => {
           state.code = {
             html: '',
@@ -193,4 +197,12 @@
           updatePreview(true);
           showSuccessMessage('Cleared!');
         });
+        const themeSelector = document.getElementById('themeSelector');
+        themeSelector.addEventListener('change', (e) => {
+          const selectedTheme = e.target.value;
+          state.editor.setOption('theme', selectedTheme);
+          showSuccessMessage(`Theme switched to ${selectedTheme}`);
+        });
+        loadFromLocalStorage();
+        updatePreview(true);
       })();
