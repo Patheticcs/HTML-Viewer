@@ -1,117 +1,325 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Real-Time HTML Editor with Syntax Highlighting</title>
+    <title>Tabbed Code Editor</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: Arial, sans-serif;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        background: #1e1e1e;
+        color: white;
+      }
+
+      .toolbar {
+        padding: 8px;
+        display: flex;
+        gap: 10px;
+        border-bottom: 1px solid #444;
+        background: #252526;
+      }
+
+      .main-content {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        overflow: hidden;
+      }
+
+      .code-section {
+        height: 50%;
+        position: relative;
+        background: #1e1e1e;
+        display: flex;
+        flex-direction: column;
+        min-height: 200px;
+        border-bottom: 1px solid #444;
+      }
+
+      .tab-buttons {
+        display: flex;
+        background: #252526;
+        padding: 5px 5px 0 5px;
+        overflow-x: auto;
+        scrollbar-width: thin;
+      }
+
+      .tab-button {
+        padding: 8px 20px;
+        background: #333;
+        border: none;
+        color: #858585;
+        cursor: pointer;
+        margin-right: 2px;
+        border-top-left-radius: 4px;
+        border-top-right-radius: 4px;
+        white-space: nowrap;
+      }
+
+      .tab-button.active {
+        background: #1e1e1e;
+        color: white;
+      }
+
+      .editor-container {
+        flex: 1;
+        position: relative;
+        display: flex;
+        overflow: hidden;
+      }
+
+      .line-numbers {
+        padding: 10px 8px;
+        background: #252526;
+        color: #858585;
+        font-family: 'Consolas', monospace;
+        font-size: 14px;
+        text-align: right;
+        user-select: none;
+        min-width: 45px;
+        overflow-y: hidden;
+      }
+
+      textarea {
+        flex: 1;
+        padding: 10px;
+        font-family: 'Consolas', monospace;
+        font-size: 14px;
+        line-height: 1.5;
+        color: #ffffff;
+        background: #1e1e1e;
+        border: none;
+        resize: none;
+        outline: none;
+        white-space: pre;
+        overflow-y: auto;
+        scrollbar-width: thin;
+        scrollbar-color: #444 #1e1e1e;
+      }
+
+      textarea::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+
+      textarea::-webkit-scrollbar-track {
+        background: #1e1e1e;
+      }
+
+      textarea::-webkit-scrollbar-thumb {
+        background: #444;
+        border-radius: 4px;
+      }
+
+      textarea::-webkit-scrollbar-thumb:hover {
+        background: #555;
+      }
+
+      .preview-section {
+        flex: 1;
+        background: white;
+        min-height: 200px;
+      }
+
+      #preview {
+        width: 100%;
+        height: 100%;
+        border: none;
+        background: white;
+      }
+
+      .action-button {
+        padding: 6px 12px;
+        background: #0078D4;
+        border: none;
+        color: white;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: background-color 0.2s;
+      }
+
+      .action-button:hover {
+        background: #106EBE;
+      }
+
+      .action-button:active {
+        background: #005A9E;
+      }
+
+      @media (max-width: 600px) {
+        .toolbar {
+          flex-wrap: wrap;
         }
 
-        #editor {
-            width: 100%;
-            height: 50%;
-            padding: 10px;
-            font-family: monospace;
-            font-size: 16px;
-            border: none;
-            resize: none;
-            outline: none;
-            background-color: #1e1e1e;
-            color: #d4d4d4;
-            overflow: auto;
-            white-space: pre-wrap; /* Ensures line breaks are preserved */
-            word-wrap: break-word;
+        .action-button {
+          flex: 1;
+          min-width: 80px;
         }
-
-        .highlight {
-            color: #569cd6; /* Default color for tags */
-        }
-
-        .attribute {
-            color: #9cdcfe; /* Attribute names */
-        }
-
-        .value {
-            color: #ce9178; /* Attribute values */
-        }
-
-        iframe {
-            width: 100%;
-            height: 50%;
-            border: none;
-        }
-
-        #highlighted {
-            display: none; /* Hidden div for syntax highlighting */
-            white-space: pre-wrap;
-            word-wrap: break-word;
-            font-family: monospace;
-        }
+      }
     </style>
-</head>
-<body>
-    <div contenteditable="true" id="editor" spellcheck="false"></div>
-    <iframe id="preview"></iframe>
-    <div id="highlighted"></div> <!-- Hidden div for syntax highlighting -->
-
+  </head>
+  <body>
+    <div class="toolbar">
+      <button class="action-button" id="previewBtn">Open Preview</button>
+      <button class="action-button" id="runBtn">Run</button>
+      <button class="action-button" id="clearBtn">Clear All</button>
+    </div>
+    <div class="main-content">
+      <div class="code-section">
+        <div class="tab-buttons">
+          <button class="tab-button active" data-editor="html">HTML</button>
+          <button class="tab-button" data-editor="css">CSS</button>
+          <button class="tab-button" data-editor="js">JavaScript</button>
+        </div>
+        <div class="editor-container">
+          <div class="line-numbers" id="lineNumbers"></div>
+          <textarea id="editor" spellcheck="false"></textarea>
+        </div>
+      </div>
+      <div class="preview-section">
+        <iframe id="preview"></iframe>
+      </div>
+    </div>
     <script>
-        const editor = document.getElementById('editor');
-        const preview = document.getElementById('preview');
-        const highlightedDiv = document.getElementById('highlighted');
+      const editor = document.getElementById('editor');
+      const preview = document.getElementById('preview');
+      const lineNumbers = document.getElementById('lineNumbers');
+      const tabButtons = document.querySelectorAll('.tab-button');
+      const code = {
+        html: '',
+        css: '',
+        js: ''
+      };
+      let currentLanguage = 'html';
 
-        // Function to highlight HTML syntax
-        function syntaxHighlight(code) {
-            return code
-                .replace(/(<\/?[a-zA-Z]+\s*)/g, '<span class="highlight">$1</span>') // Tags
-                .replace(/(\s[a-zA-Z-]+)(?=\=)/g, '<span class="attribute">$1</span>') // Attributes
-                .replace(/(".*?"|\'.*?\')/g, '<span class="value">$1</span>'); // Attribute values
-        }
+      function updateLineNumbers() {
+        const lines = editor.value.split('\n');
+        const numbers = Array.from({ length: Math.max(lines.length, 1) }, (_, i) => i + 1).join('\n');
+        lineNumbers.innerText = numbers;
+      }
 
-        // Function to get and set cursor position
-        function getCursorPosition() {
-            const selection = window.getSelection();
-            const range = selection.getRangeAt(0);
-            return range.startOffset;
-        }
+      function updatePreview() {
+        const combinedHTML = `
+          <!DOCTYPE html>
+          <html>
+            <head>
+              <meta charset="UTF-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              <style>${code.css}</style>
+            </head>
+            <body>
+              ${code.html}
+              <script>${code.js}<\/script>
+            </body>
+          </html>
+        `;
+        const doc = preview.contentDocument || preview.contentWindow.document;
+        doc.open();
+        doc.write(combinedHTML);
+        doc.close();
+      }
 
-        function setCursorPosition(offset) {
-            const range = document.createRange();
-            const selection = window.getSelection();
-            range.setStart(editor.firstChild, offset);
-            range.collapse(true);
-            selection.removeAllRanges();
-            selection.addRange(range);
-        }
-
-        editor.addEventListener('input', () => {
-            // Get the plain text (preserving line breaks)
-            const rawContent = editor.innerText;
-
-            // Highlight the content
-            highlightedDiv.innerHTML = syntaxHighlight(rawContent);
-
-            // Copy back the plain text into the editor for real-time editing
-            editor.innerText = rawContent;
-
-            // Preserve cursor position
-            const cursorPos = getCursorPosition();
-            setCursorPosition(cursorPos);
-
-            // Update the iframe preview
-            const doc = preview.contentDocument || preview.contentWindow.document;
-            doc.open();
-            doc.write(rawContent);
-            doc.close();
+      function switchLanguage(lang) {
+        if (currentLanguage === lang) return;
+        code[currentLanguage] = editor.value;
+        currentLanguage = lang;
+        editor.value = code[lang];
+        updateLineNumbers();
+        tabButtons.forEach(btn => {
+          btn.classList.toggle('active', btn.dataset.editor === lang);
         });
+      }
 
-        // Initialize with an example
-        editor.innerText = '<!DOCTYPE html>\n<html>\n  <head>\n    <title>Example</title>\n  </head>\n  <body>\n    <h1>Hello, world!</h1>\n  </body>\n</html>';
+      editor.addEventListener('input', () => {
+        updateLineNumbers();
+        code[currentLanguage] = editor.value;
+        updatePreview();
+      });
+
+      editor.addEventListener('scroll', () => {
+        lineNumbers.scrollTop = editor.scrollTop;
+      });
+
+      editor.addEventListener('keydown', (e) => {
+        if (e.key === 'Tab') {
+          e.preventDefault();
+          const start = editor.selectionStart;
+          const end = editor.selectionEnd;
+
+          if (e.shiftKey) {
+
+            const beforeSelection = editor.value.substring(0, start);
+            const afterSelection = editor.value.substring(end);
+            const selectedText = editor.value.substring(start, end);
+            const unindentedText = selectedText.replace(/^    /gm, '');
+            editor.value = beforeSelection + unindentedText + afterSelection;
+            editor.selectionStart = start;
+            editor.selectionEnd = start + unindentedText.length;
+          } else {
+
+            editor.value = editor.value.substring(0, start) + '    ' + editor.value.substring(end);
+            editor.selectionStart = editor.selectionEnd = start + 4;
+          }
+
+          updateLineNumbers();
+          code[currentLanguage] = editor.value;
+        }
+      });
+
+      tabButtons.forEach(button => {
+        button.addEventListener('click', () => {
+          switchLanguage(button.dataset.editor);
+        });
+      });
+
+      document.getElementById('previewBtn').addEventListener('click', () => {
+        const previewWindow = window.open('about:blank', '_blank');
+        if (previewWindow) {
+          const combinedHTML = `
+            <!DOCTYPE html>
+            <html>
+              <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <style>${code.css}</style>
+              </head>
+              <body>
+                ${code.html}
+                <script>${code.js}<\/script>
+              </body>
+            </html>
+          `;
+          previewWindow.document.write(combinedHTML);
+          previewWindow.document.close();
+        }
+      });
+
+      document.getElementById('runBtn').addEventListener('click', updatePreview);
+
+      document.getElementById('clearBtn').addEventListener('click', () => {
+        if (confirm('Are you sure you want to clear all code?')) {
+          code.html = '';
+          code.css = '';
+          code.js = '';
+          editor.value = code[currentLanguage];
+          updateLineNumbers();
+          updatePreview();
+        }
+      });
+
+      updateLineNumbers();
+      updatePreview();
     </script>
-</body>
+  </body>
 </html>
