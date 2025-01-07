@@ -168,7 +168,7 @@
         font-size: 14px;
         font-weight: 500;
         transition: transform 0.2s, background-color 0.2s;
-      }
+      }    
     </style>
   </head>
   <body>
@@ -225,10 +225,12 @@
             'Ctrl-Space': 'autocomplete'
           }
         });
+
         editor.on('change', () => {
           code[currentLang] = editor.getValue();
           updatePreview();
         });
+
         document.querySelectorAll('.tab-button').forEach(button => {
           button.addEventListener('click', () => {
             const lang = button.dataset.lang;
@@ -241,6 +243,7 @@
             editor.setValue(code[lang]);
           });
         });
+
         const resizeHandle = document.getElementById('resizeHandle');
         const editorsContainer = document.getElementById('editorsContainer');
         let isDragging = false;
@@ -249,6 +252,7 @@
           document.body.style.cursor = 'ns-resize';
           e.preventDefault();
         });
+
         document.addEventListener('mousemove', (e) => {
           if (!isDragging) return;
           const containerHeight = document.querySelector('.main-content').offsetHeight;
@@ -257,6 +261,7 @@
           const newHeight = Math.min(maxHeight, Math.max(minHeight, e.clientY));
           editorsContainer.style.height = newHeight + 'px';
         });
+
         document.addEventListener('mouseup', () => {
           isDragging = false;
           document.body.style.cursor = '';
