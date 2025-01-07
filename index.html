@@ -181,6 +181,7 @@
           <button class="tab-button active" data-editor="html">HTML</button>
           <button class="tab-button" data-editor="css">CSS</button>
           <button class="tab-button" data-editor="js">JavaScript</button>
+          <button class="tab-button" data-editor="json">JSON</button> <!-- New Tab for JSON -->
         </div>
         <div class="editor-container">
           <div class="line-numbers" id="lineNumbers"></div>
@@ -199,7 +200,8 @@
       const code = {
         html: '',
         css: '',
-        js: ''
+        js: '',
+        json: '' // New JSON code section
       };
       let currentLanguage = 'html';
 
@@ -239,11 +241,30 @@
         tabButtons.forEach(btn => {
           btn.classList.toggle('active', btn.dataset.editor === lang);
         });
+        
+        if (lang === 'json') {
+          try {
+            JSON.parse(editor.value);  // Try parsing JSON to validate it
+            editor.style.backgroundColor = '#1e1e1e';  // Valid JSON
+          } catch (error) {
+            editor.style.backgroundColor = '#3e3e3e';  // Invalid JSON
+          }
+        }
       }
 
       editor.addEventListener('input', () => {
         updateLineNumbers();
         code[currentLanguage] = editor.value;
+        
+        if (currentLanguage === 'json') {
+          try {
+            JSON.parse(editor.value);  // Try parsing JSON to validate it
+            editor.style.backgroundColor = '#1e1e1e';  // Valid JSON
+          } catch (error) {
+            editor.style.backgroundColor = '#3e3e3e';  // Invalid JSON
+          }
+        }
+
         updatePreview();
       });
 
@@ -258,7 +279,6 @@
           const end = editor.selectionEnd;
 
           if (e.shiftKey) {
-
             const beforeSelection = editor.value.substring(0, start);
             const afterSelection = editor.value.substring(end);
             const selectedText = editor.value.substring(start, end);
@@ -267,7 +287,6 @@
             editor.selectionStart = start;
             editor.selectionEnd = start + unindentedText.length;
           } else {
-
             editor.value = editor.value.substring(0, start) + '    ' + editor.value.substring(end);
             editor.selectionStart = editor.selectionEnd = start + 4;
           }
@@ -312,6 +331,7 @@
           code.html = '';
           code.css = '';
           code.js = '';
+          code.json = ''; // Clear JSON code
           editor.value = code[currentLanguage];
           updateLineNumbers();
           updatePreview();
