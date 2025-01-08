@@ -887,6 +887,9 @@
       runButton.style.backgroundColor = accentColor;
       runButton.style.color = secondaryBg;
      }
+     if (state.editor) {
+      state.editor.setOption('theme', theme);
+     }
      localStorage.setItem('selectedTheme', theme);
     }
     window.addEventListener('DOMContentLoaded', () => {
