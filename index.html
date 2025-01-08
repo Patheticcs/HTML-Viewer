@@ -181,7 +181,7 @@
     .editor-wrapper {
       flex: 1;
       position: relative;
-      overflow: visible;
+      overflow: hidden;
     }
 
     .preview-container {
@@ -247,6 +247,7 @@
       font-family: 'JetBrains Mono', 'Fira Code', monospace;
       font-size: 14px;
       line-height: 1.6;
+      overflow: visible;
     }
 
     .notification {
@@ -570,7 +571,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/hint/css-hint.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/hint/javascript-hint.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/comment/comment.min.js"></script>
-  
+
   <script>
     (function() {
       const state = {
@@ -588,7 +589,6 @@
         }
       };
 
-      // Initialize CodeMirror
       state.editor = CodeMirror(document.getElementById('editor'), {
         mode: 'htmlmixed',
         theme: state.settings.theme,
@@ -611,10 +611,8 @@
         }
       });
 
-      // Set initial font size
       document.querySelector('.CodeMirror').style.fontSize = `${state.settings.fontSize}px`;
 
-      // Load saved content
       function loadFromLocalStorage() {
         try {
           const saved = localStorage.getItem('editorContent');
@@ -628,7 +626,6 @@
         }
       }
 
-      // Save content
       function saveToLocalStorage() {
         try {
           localStorage.setItem('editorContent', JSON.stringify(state.code));
@@ -637,23 +634,21 @@
         }
       }
 
-      // Show notification
       function showNotification(message, type = 'success') {
         const notification = document.createElement('div');
         notification.className = `notification ${type}`;
         notification.textContent = message;
         document.body.appendChild(notification);
-        
+
         setTimeout(() => {
           notification.remove();
         }, 3000);
       }
 
-      // Update preview
       function updatePreview(force = false) {
         if (state.isUpdating && !force) return;
         state.isUpdating = true;
-        
+
         requestAnimationFrame(() => {
           try {
             const previewContent = `
@@ -686,14 +681,12 @@
         });
       }
 
-      // Update preview size display
       function updatePreviewSize() {
         const preview = document.getElementById('preview');
         const previewSize = document.getElementById('previewSize');
         previewSize.textContent = `${preview.offsetWidth}x${preview.offsetHeight}`;
       }
 
-      // Tab switching
       document.querySelectorAll('.tab-button').forEach(button => {
         button.addEventListener('click', () => {
           const lang = button.dataset.lang;
@@ -709,19 +702,17 @@
         });
       });
 
-      // Editor change handler
       state.editor.on('change', (cm) => {
         state.code[state.currentLang] = cm.getValue();
         updatePreview();
         saveToLocalStorage();
       });
 
-      // Device preview buttons
       document.querySelectorAll('.device-button').forEach(button => {
         button.addEventListener('click', () => {
           document.querySelector('.device-button.active').classList.remove('active');
           button.classList.add('active');
-          
+
           const preview = document.getElementById('preview');
           preview.style.width = button.dataset.width;
           preview.style.height = button.dataset.height;
@@ -729,7 +720,6 @@
         });
       });
 
-// Settings panel
       const settingsPanel = document.getElementById('settingsPanel');
       const settingsBtn = document.getElementById('settingsBtn');
       const closeSettings = document.getElementById('closeSettings');
@@ -742,7 +732,6 @@
         settingsPanel.classList.remove('visible');
       });
 
-      // Theme selector
       const themeSelect = document.getElementById('themeSelect');
       themeSelect.value = state.settings.theme;
 
@@ -753,7 +742,6 @@
         localStorage.setItem('editorTheme', theme);
       });
 
-      // Font size selector
       const fontSizeSelect = document.getElementById('fontSizeSelect');
       fontSizeSelect.value = state.settings.fontSize;
 
@@ -764,7 +752,6 @@
         localStorage.setItem('editorFontSize', fontSize);
       });
 
-      // Button handlers
       document.getElementById('runBtn').addEventListener('click', () => {
         state.code[state.currentLang] = state.editor.getValue();
         updatePreview(true);
@@ -798,7 +785,7 @@
         zip.file('index.html', state.code.html);
         zip.file('styles.css', state.code.css);
         zip.file('script.js', state.code.javascript);
-        
+
         zip.generateAsync({type: 'blob'}).then(content => {
           const url = URL.createObjectURL(content);
           const a = document.createElement('a');
@@ -811,7 +798,6 @@
         });
       });
 
-      // Share functionality
       document.getElementById('shareBtn').addEventListener('click', async () => {
         try {
           const shareData = {
@@ -819,9 +805,9 @@
             css: state.code.css,
             javascript: state.code.javascript
           };
-          
+
           const shareUrl = `${window.location.origin}${window.location.pathname}?share=${btoa(JSON.stringify(shareData))}`;
-          
+
           await navigator.clipboard.writeText(shareUrl);
           showNotification('Share URL copied to clipboard!', 'success');
         } catch (err) {
@@ -829,7 +815,6 @@
         }
       });
 
-      // Resize handler
       const resizeHandle = document.getElementById('resizeHandle');
       let isResizing = false;
       let startX;
@@ -843,7 +828,7 @@
 
       document.addEventListener('mousemove', (e) => {
         if (!isResizing) return;
-        
+
         const diff = e.pageX - startX;
         const newWidth = startWidth + diff;
         document.querySelector('.editors-container').style.width = `${newWidth}px`;
@@ -854,11 +839,10 @@
         isResizing = false;
       });
 
-      // Load shared content from URL if present
       function loadSharedContent() {
         const urlParams = new URLSearchParams(window.location.search);
         const shareData = urlParams.get('share');
-        
+
         if (shareData) {
           try {
             const decodedData = JSON.parse(atob(shareData));
@@ -872,11 +856,9 @@
         }
       }
 
-      // Initialize
       loadFromLocalStorage();
       loadSharedContent();
 
-      // Handle window resize
       window.addEventListener('resize', updatePreviewSize);
     })();
   </script>
