@@ -628,8 +628,7 @@
           requestAnimationFrame(() => {
             try {
               const previewContent = `
-
-											
+          
 											<!DOCTYPE html>
 											<html>
 												<head>
@@ -639,8 +638,7 @@
 														</head>
 														<body>
               ${state.code.html || ''}
-
-															
+              
 															<script>${state.code.javascript || ''}<\/script>
 															</body>
 														</html>`;
@@ -704,7 +702,7 @@
         themeSelect.value = state.settings.theme;
         themeSelect.addEventListener('change', (e) => {
           const theme = e.target.value;
-          state.editor.setOption('theme', theme);
+          applyTheme(theme);
           state.settings.theme = theme;
           localStorage.setItem('editorTheme', theme);
         });
@@ -724,8 +722,7 @@
         document.getElementById('previewBtn').addEventListener('click', () => {
           const win = window.open('', '_blank');
           win.document.write(`
-
-														
+      
 														<!DOCTYPE html>
 														<html>
 															<head>
@@ -735,8 +732,7 @@
 																	</head>
 																	<body>
           ${state.code.html || ''}
-
-																		
+          
 																		<script>${state.code.javascript || ''}<\/script>
 																		</body>
 																	</html>`);
@@ -806,90 +802,81 @@
         loadFromLocalStorage();
         loadSharedContent();
         window.addEventListener('resize', updatePreviewSize);
-      })();
 
-      function applyTheme(theme) {
-        const body = document.body;
-        const header = document.querySelector('.header');
-        const toolbar = document.querySelector('.toolbar');
-        const buttons = document.querySelectorAll('.button');
-        const settingsPanel = document.querySelector('.settings-panel');
-        state.editor.setOption('theme', theme);
-        switch (theme) {
-          case 'nord':
-            body.style.setProperty('--primary-bg', '#2E3440');
-            body.style.setProperty('--secondary-bg', '#3B4252');
-            body.style.setProperty('--accent-color', '#88C0D0');
-            body.style.setProperty('--text-primary', '#ECEFF4');
-            body.style.setProperty('--text-secondary', '#D8DEE9');
-            body.style.setProperty('--border-color', '#434C5E');
-            break;
-          case 'monokai':
-            body.style.setProperty('--primary-bg', '#272822');
-            body.style.setProperty('--secondary-bg', '#383830');
-            body.style.setProperty('--accent-color', '#F92672');
-            body.style.setProperty('--text-primary', '#F8F8F2');
-            body.style.setProperty('--text-secondary', '#75715E');
-            body.style.setProperty('--border-color', '#3E3D32');
-            break;
-          case 'material':
-            body.style.setProperty('--primary-bg', '#263238');
-            body.style.setProperty('--secondary-bg', '#37474F');
-            body.style.setProperty('--accent-color', '#FF4081');
-            body.style.setProperty('--text-primary', '#ECEFF1');
-            body.style.setProperty('--text-secondary', '#B0BEC5');
-            body.style.setProperty('--border-color', '#455A64');
-            break;
-          case 'dracula':
-            body.style.setProperty('--primary-bg', '#282a36');
-            body.style.setProperty('--secondary-bg', '#44475a');
-            body.style.setProperty('--accent-color', '#ff79c6');
-            body.style.setProperty('--text-primary', '#f8f8f2');
-            body.style.setProperty('--text-secondary', '#6272a4');
-            body.style.setProperty('--border-color', '#6272a4');
-            break;
-          case 'tomorrow-night-bright':
-            body.style.setProperty('--primary-bg', '#1d1f21');
-            body.style.setProperty('--secondary-bg', '#282c34');
-            body.style.setProperty('--accent-color', '#e0e0e0');
-            body.style.setProperty('--text-primary', '#f0f0f0');
-            body.style.setProperty('--text-secondary', '#b0b0b0');
-            body.style.setProperty('--border-color', '#4e5b67');
-            break;
-          default:
-            body.style.setProperty('--primary-bg', '#1a1b26');
-            body.style.setProperty('--secondary-bg', '#24283b');
-            body.style.setProperty('--accent-color', '#7aa2f7');
-            body.style.setProperty('--text-primary', '#c0caf5');
-            body.style.setProperty('--text-secondary', '#9aa5ce');
-            body.style.setProperty('--border-color', '#414868');
+        function applyTheme(theme) {
+          const body = document.body;
+          const header = document.querySelector('.header');
+          const toolbar = document.querySelector('.toolbar');
+          const buttons = document.querySelectorAll('.button');
+          const settingsPanel = document.querySelector('.settings-panel');
+          const themeColors = {
+            nord: {
+              '--primary-bg': '#2E3440',
+              '--secondary-bg': '#3B4252',
+              '--accent-color': '#88C0D0',
+              '--text-primary': '#ECEFF4',
+              '--text-secondary': '#D8DEE9',
+              '--border-color': '#434C5E'
+            },
+            monokai: {
+              '--primary-bg': '#272822',
+              '--secondary-bg': '#383830',
+              '--accent-color': '#F92672',
+              '--text-primary': '#F8F8F2',
+              '--text-secondary': '#75715E',
+              '--border-color': '#3E3D32'
+            },
+            material: {
+              '--primary-bg': '#263238',
+              '--secondary-bg': '#37474F',
+              '--accent-color': '#FF4081',
+              '--text-primary': '#ECEFF1',
+              '--text-secondary': '#B0BEC5',
+              '--border-color': '#455A64'
+            },
+            dracula: {
+              '--primary-bg': '#282a36',
+              '--secondary-bg': '#44475a',
+              '--accent-color': '#ff79c6',
+              '--text-primary': '#f8f8f2',
+              '--text-secondary': '#6272a4',
+              '--border-color': '#6272a4'
+            },
+            'tomorrow-night-bright': {
+              '--primary-bg': '#1d1f21',
+              '--secondary-bg': '#282c34',
+              '--accent-color': '#e0e0e0',
+              '--text-primary': '#f0f0f0',
+              '--text-secondary': '#b0b0b0',
+              '--border-color': '#4e5b67'
+            },
+            default: {
+              '--primary-bg': '#1a1b26',
+              '--secondary-bg': '#24283b',
+              '--accent-color': '#7aa2f7',
+              '--text-primary': '#c0caf5',
+              '--text-secondary': '#9aa5ce',
+              '--border-color': '#414868'
+            }
+          };
+          const selectedThemeColors = themeColors[theme] || themeColors.default;
+          for (const [key, value] of Object.entries(selectedThemeColors)) {
+            body.style.setProperty(key, value);
+          }
+          const secondaryBg = getComputedStyle(body).getPropertyValue('--secondary-bg');
+          const accentColor = getComputedStyle(body).getPropertyValue('--accent-color');
+          const textPrimary = getComputedStyle(body).getPropertyValue('--text-primary');
+          header.style.backgroundColor = secondaryBg;
+          toolbar.style.backgroundColor = secondaryBg;
+          settingsPanel.style.backgroundColor = secondaryBg;
+          buttons.forEach(button => {
+            button.style.backgroundColor = secondaryBg;
+            button.style.borderColor = accentColor;
+            button.style.color = textPrimary;
+          });
+          state.editor.setOption('theme', theme);
         }
-        header.style.backgroundColor = getComputedStyle(body).getPropertyValue('--secondary-bg');
-        toolbar.style.backgroundColor = getComputedStyle(body).getPropertyValue('--secondary-bg');
-        settingsPanel.style.backgroundColor = getComputedStyle(body).getPropertyValue('--secondary-bg');
-        buttons.forEach(button => {
-          button.style.backgroundColor = getComputedStyle(body).getPropertyValue('--secondary-bg');
-          button.style.borderColor = getComputedStyle(body).getPropertyValue('--accent-color');
-          button.style.color = getComputedStyle(body).getPropertyValue('--text-primary');
-        });
-      }
-      document.getElementById('themeSelect').addEventListener('change', (event) => {
-        const selectedTheme = event.target.value;
-        applyTheme(selectedTheme);
-        localStorage.setItem('editorTheme', selectedTheme);
-      });
-      document.addEventListener('DOMContentLoaded', () => {
-        const savedTheme = localStorage.getItem('editorTheme') || 'default';
-        applyTheme(savedTheme);
-        const state = {
-          editor: CodeMirror(document.getElementById('editor'), {
-            mode: 'javascript',
-            theme: savedTheme,
-            lineNumbers: true,
-            tabSize: 1
-          })
-        };
-      });
+      })();
     </script>
   </body>
 </html>
