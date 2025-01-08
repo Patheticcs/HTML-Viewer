@@ -247,7 +247,7 @@
         font-family: 'JetBrains Mono', 'Fira Code', monospace;
         font-size: 14px;
         line-height: 1.6;
-        overflow: visible
+        overflow: hidden
       }
 
       .notification {
@@ -628,6 +628,7 @@
             try {
               const previewContent = `
               
+											
 											<!DOCTYPE html>
 											<html>
 												<head>
@@ -638,6 +639,7 @@
 														<body>
                   ${state.code.html || ''}
                   
+															
 															<script>${state.code.javascript || ''}<\/script>
 															</body>
 														</html>`;
@@ -722,6 +724,7 @@
           const win = window.open('', '_blank');
           win.document.write(`
           
+														
 														<!DOCTYPE html>
 														<html>
 															<head>
@@ -732,6 +735,7 @@
 																	<body>
               ${state.code.html || ''}
               
+																		
 																		<script>${state.code.javascript || ''}<\/script>
 																		</body>
 																	</html>`);
