@@ -628,7 +628,8 @@
           requestAnimationFrame(() => {
             try {
               const previewContent = `
-          
+
+											
 											<!DOCTYPE html>
 											<html>
 												<head>
@@ -638,7 +639,8 @@
 														</head>
 														<body>
               ${state.code.html || ''}
-              
+
+															
 															<script>${state.code.javascript || ''}<\/script>
 															</body>
 														</html>`;
@@ -722,7 +724,8 @@
         document.getElementById('previewBtn').addEventListener('click', () => {
           const win = window.open('', '_blank');
           win.document.write(`
-      
+
+														
 														<!DOCTYPE html>
 														<html>
 															<head>
@@ -732,7 +735,8 @@
 																	</head>
 																	<body>
           ${state.code.html || ''}
-          
+
+																		
 																		<script>${state.code.javascript || ''}<\/script>
 																		</body>
 																	</html>`);
@@ -798,80 +802,6 @@
         loadFromLocalStorage();
         loadSharedContent();
         window.addEventListener('resize', updatePreviewSize);
-
-        function applyTheme(theme) {
-          const body = document.body;
-          const header = document.querySelector('.header');
-          const toolbar = document.querySelector('.toolbar');
-          const buttons = document.querySelectorAll('.button');
-          const settingsPanel = document.querySelector('.settings-panel');
-          const themeColors = {
-            nord: {
-              '--primary-bg': '#2E3440',
-              '--secondary-bg': '#3B4252',
-              '--accent-color': '#88C0D0',
-              '--text-primary': '#ECEFF4',
-              '--text-secondary': '#D8DEE9',
-              '--border-color': '#434C5E'
-            },
-            monokai: {
-              '--primary-bg': '#272822',
-              '--secondary-bg': '#383830',
-              '--accent-color': '#F92672',
-              '--text-primary': '#F8F8F2',
-              '--text-secondary': '#75715E',
-              '--border-color': '#3E3D32'
-            },
-            material: {
-              '--primary-bg': '#263238',
-              '--secondary-bg': '#37474F',
-              '--accent-color': '#FF4081',
-              '--text-primary': '#ECEFF1',
-              '--text-secondary': '#B0BEC5',
-              '--border-color': '#455A64'
-            },
-            dracula: {
-              '--primary-bg': '#282a36',
-              '--secondary-bg': '#44475a',
-              '--accent-color': '#ff79c6',
-              '--text-primary': '#f8f8f2',
-              '--text-secondary': '#6272a4',
-              '--border-color': '#6272a4'
-            },
-            'tomorrow-night-bright': {
-              '--primary-bg': '#1d1f21',
-              '--secondary-bg': '#282c34',
-              '--accent-color': '#e0e0e0',
-              '--text-primary': '#f0f0f0',
-              '--text-secondary': '#b0b0b0',
-              '--border-color': '#4e5b67'
-            },
-            default: {
-              '--primary-bg': '#1a1b26',
-              '--secondary-bg': '#24283b',
-              '--accent-color': '#7aa2f7',
-              '--text-primary': '#c0caf5',
-              '--text-secondary': '#9aa5ce',
-              '--border-color': '#414868'
-            }
-          };
-          const selectedThemeColors = themeColors[theme] || themeColors.default;
-          for (const [key, value] of Object.entries(selectedThemeColors)) {
-            body.style.setProperty(key, value);
-          }
-          const secondaryBg = getComputedStyle(body).getPropertyValue('--secondary-bg');
-          const accentColor = getComputedStyle(body).getPropertyValue('--accent-color');
-          const textPrimary = getComputedStyle(body).getPropertyValue('--text-primary');
-          header.style.backgroundColor = secondaryBg;
-          toolbar.style.backgroundColor = secondaryBg;
-          settingsPanel.style.backgroundColor = secondaryBg;
-          buttons.forEach(button => {
-            button.style.backgroundColor = secondaryBg;
-            button.style.borderColor = accentColor;
-            button.style.color = textPrimary;
-          });
-          state.editor.setOption('theme', theme);
-        }
         document.getElementById('saveBtn').addEventListener('click', () => {
           const htmlContent = state.code.html || '';
           const cssContent = state.code.css || '';
@@ -902,6 +832,89 @@
           });
         });
       })();
+
+      function applyTheme(theme) {
+        const body = document.body;
+        const header = document.querySelector('.header');
+        const toolbar = document.querySelector('.toolbar');
+        const buttons = document.querySelectorAll('.button');
+        const settingsPanel = document.querySelector('.settings-panel');
+        const themeColors = {
+          nord: {
+            '--primary-bg': '#2E3440',
+            '--secondary-bg': '#3B4252',
+            '--accent-color': '#88C0D0',
+            '--text-primary': '#ECEFF4',
+            '--text-secondary': '#D8DEE9',
+            '--border-color': '#434C5E'
+          },
+          monokai: {
+            '--primary-bg': '#272822',
+            '--secondary-bg': '#383830',
+            '--accent-color': '#F92672',
+            '--text-primary': '#F8F8F2',
+            '--text-secondary': '#75715E',
+            '--border-color': '#3E3D32'
+          },
+          material: {
+            '--primary-bg': '#263238',
+            '--secondary-bg': '#37474F',
+            '--accent-color': '#FF4081',
+            '--text-primary': '#ECEFF1',
+            '--text-secondary': '#B0BEC5',
+            '--border-color': '#455A64'
+          },
+          dracula: {
+            '--primary-bg': '#282a36',
+            '--secondary-bg': '#44475a',
+            '--accent-color': '#ff79c6',
+            '--text-primary': '#f8f8f2',
+            '--text-secondary': '#6272a4',
+            '--border-color': '#6272a4'
+          },
+          'tomorrow-night-bright': {
+            '--primary-bg': '#1d1f21',
+            '--secondary-bg': '#282c34',
+            '--accent-color': '#e0e0e0',
+            '--text-primary': '#f0f0f0',
+            '--text-secondary': '#b0b0b0',
+            '--border-color': '#4e5b67'
+          },
+          default: {
+            '--primary-bg': '#1a1b26',
+            '--secondary-bg': '#24283b',
+            '--accent-color': '#7aa2f7',
+            '--text-primary': '#c0caf5',
+            '--text-secondary': '#9aa5ce',
+            '--border-color': '#414868'
+          }
+        };
+        const selectedThemeColors = themeColors[theme] || themeColors.default;
+        for (const [key, value] of Object.entries(selectedThemeColors)) {
+          body.style.setProperty(key, value);
+        }
+        const secondaryBg = getComputedStyle(body).getPropertyValue('--secondary-bg');
+        const accentColor = getComputedStyle(body).getPropertyValue('--accent-color');
+        const textPrimary = getComputedStyle(body).getPropertyValue('--text-primary');
+        const textSecondary = getComputedStyle(body).getPropertyValue('--text-secondary');
+        header.style.backgroundColor = secondaryBg;
+        toolbar.style.backgroundColor = secondaryBg;
+        settingsPanel.style.backgroundColor = secondaryBg;
+        buttons.forEach(button => {
+          button.style.backgroundColor = secondaryBg;
+          button.style.borderColor = accentColor;
+          button.style.color = textPrimary;
+          button.addEventListener('mouseover', () => {
+            button.style.backgroundColor = accentColor;
+            button.style.color = textSecondary;
+          });
+          button.addEventListener('mouseout', () => {
+            button.style.backgroundColor = secondaryBg;
+            button.style.color = textPrimary;
+          });
+        });
+        state.editor.setOption('theme', theme);
+      }
     </script>
   </body>
 </html>
