@@ -1,820 +1,262 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Synprev</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/nord.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/theme/monokai.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/theme/material.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/theme/dracula.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/theme/tomorrow-night-bright.css">
-    <style>
-      :root {
-        --primary-bg: #1a1b26;
-        --secondary-bg: #24283b;
-        --accent-color: #7aa2f7;
-        --text-primary: #c0caf5;
-        --text-secondary: #9aa5ce;
-        --border-color: #414868;
-        --error-color: #f7768e;
-        --success-color: #9ece6a;
-        --warning-color: #e0af68;
-        --panel-bg: rgba(36, 40, 59, 0.8)
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Synprev</title><link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" rel="stylesheet"><link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/nord.min.css" rel="stylesheet"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/theme/monokai.css"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/theme/material.css"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/theme/dracula.css"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/theme/tomorrow-night-bright.css"><style>:root{--primary-bg:#1a1b26;--secondary-bg:#24283b;--accent-color:#7aa2f7;--text-primary:#c0caf5;--text-secondary:#9aa5ce;--border-color:#414868;--error-color:#f7768e;--success-color:#9ece6a;--warning-color:#e0af68;--panel-bg:rgba(36, 40, 59, 0.8)}*{margin:0;padding:0;box-sizing:border-box;font-family:Inter,system-ui,-apple-system,sans-serif}body{height:100vh;background:var(--primary-bg);color:var(--text-primary);display:flex;flex-direction:column;overflow:hidden}.header{background:var(--secondary-bg);padding:12px 20px;border-bottom:1px solid var(--border-color);display:flex;justify-content:space-between;align-items:center}.logo{font-size:1.5rem;font-weight:700;color:var(--accent-color);display:flex;align-items:center;gap:8px}.toolbar{background:var(--secondary-bg);padding:12px 16px;display:flex;gap:16px;border-bottom:1px solid var(--border-color);align-items:center;flex-wrap:wrap}.toolbar-group{display:flex;gap:8px;align-items:center}.toolbar-group:not(:last-child){padding-right:16px;border-right:1px solid var(--border-color)}.button{padding:8px 16px;background:0 0;border:1px solid var(--accent-color);color:var(--accent-color);border-radius:8px;cursor:pointer;font-size:14px;font-weight:500;transition:all .2s ease;display:flex;align-items:center;gap:8px}.button:hover{background:var(--accent-color);color:var(--primary-bg);transform:translateY(-1px)}.button:active{transform:translateY(0)}.button svg{width:16px;height:16px}.button.primary{background:var(--accent-color);color:var(--primary-bg)}.button.primary:hover{opacity:.9}.main-content{flex:1;display:flex;overflow:hidden}.split-view{display:flex;flex:1;overflow:hidden}.editors-container{flex:1;display:flex;flex-direction:column;min-width:300px;background:var(--primary-bg);border-right:1px solid var(--border-color)}.tab-buttons{display:flex;background:var(--secondary-bg);padding:0 8px;gap:4px;overflow-x:auto;scrollbar-width:none}.tab-buttons::-webkit-scrollbar{display:none}.tab-button{padding:12px 24px;background:0 0;border:none;color:var(--text-secondary);cursor:pointer;font-size:14px;transition:all .2s;border-bottom:2px solid transparent;white-space:nowrap;display:flex;align-items:center;gap:8px}.tab-button:hover{color:var(--text-primary);background:rgba(255,255,255,.05)}.tab-button.active{color:var(--accent-color);border-bottom-color:var(--accent-color);background:rgba(122,162,247,.1)}.editor-wrapper{flex:1;position:relative;overflow:auto}.preview-container{flex:1;background:#fff;position:relative;min-width:300px;display:flex;flex-direction:column}.preview-toolbar{background:var(--secondary-bg);padding:8px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border-color)}.device-selector{display:flex;gap:8px}.device-button{padding:4px 8px;background:0 0;border:1px solid var(--text-secondary);color:var(--text-secondary);border-radius:4px;cursor:pointer;font-size:12px;transition:all .2s}.device-button.active{border-color:var(--accent-color);color:var(--accent-color);background:rgba(122,162,247,.1)}#preview{flex:1;border:none;background:#fff;transition:all .3s ease}.resize-handle{width:4px;background:var(--border-color);cursor:ew-resize;transition:background .2s}.resize-handle:hover{background:var(--accent-color)}.CodeMirror{height:100%;font-family:'JetBrains Mono','Fira Code',monospace;font-size:14px;line-height:1.6;overflow:hidden}.notification{position:fixed;bottom:20px;right:20px;padding:12px 20px;border-radius:8px;color:#fff;font-size:14px;display:flex;align-items:center;gap:8px;animation:slideIn .3s ease;z-index:1000;box-shadow:0 4px 20px rgba(0,0,0,.2)}.notification.error{background:var(--error-color)}.notification.success{background:var(--success-color)}.notification.warning{background:var(--warning-color)}.settings-panel{position:fixed;top:0;right:-400px;width:400px;height:100vh;background:var(--panel-bg);backdrop-filter:blur(10px);border-left:1px solid var(--border-color);padding:24px;transition:right .3s ease;z-index:1000;overflow-y:auto}.settings-panel.visible{right:0}.settings-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px}.settings-section{margin-bottom:24px}.settings-section h3{color:var(--accent-color);margin-bottom:16px;font-size:1.1rem}.setting-item{margin-bottom:16px}.setting-item label{display:block;margin-bottom:8px;color:var(--text-secondary)}.setting-item input,.setting-item select{width:100%;padding:8px 12px;background:var(--primary-bg);border:1px solid var(--border-color);color:var(--text-primary);border-radius:6px;font-size:14px}.keyboard-shortcuts{display:grid;grid-template-columns:auto 1fr;gap:12px 24px}.shortcut-key{padding:4px 8px;background:var(--primary-bg);border-radius:4px;font-size:12px;color:var(--text-secondary)}@keyframes slideIn{from{transform:translateY(100%);opacity:0}to{transform:translateY(0);opacity:1}}@media (max-width:768px){.split-view{flex-direction:column}.resize-handle{height:4px;width:100%;cursor:ns-resize}.editors-container,.preview-container{min-height:300px;width:100%}.settings-panel{width:100%;right:-100%}.toolbar{padding:8px}.toolbar-group{flex-wrap:wrap}.button{padding:6px 12px;font-size:13px}}</style></head><body><div class="header"><div class="logo"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 18l6-6-6-6M8 6l-6 6 6 6"/></svg>Synprev</div><div class="toolbar-group"><button class="button" id="shareBtn" title="Share"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>Share</button><button class="button" id="settingsBtn" title="Settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-22h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Settings</button></div></div><div class="toolbar"><div class="toolbar-group"><button class="button primary" id="runBtn" title="Run (Ctrl+Enter)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>Run</button><button class="button" id="previewBtn" title="Open in New Window"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>Preview</button></div><div class="toolbar-group"><button class="button" id="clearBtn" title="Clear"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>Clear</button><button class="button" id="saveBtn" title="Download"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Download</button></div></div><div class="main-content"><div class="split-view"><div class="editors-container"><div class="tab-buttons"><button class="tab-button active" data-lang="html"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>HTML</button><button class="tab-button" data-lang="css"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>CSS</button><button class="tab-button" data-lang="javascript"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>JavaScript</button></div><div class="editor-wrapper"><div id="editor"></div></div></div><div class="resize-handle" id="resizeHandle"></div><div class="preview-container"><div class="preview-toolbar"><div class="device-selector"><button class="device-button active" data-width="100%" data-height="100%">Desktop</button><button class="device-button" data-width="768px" data-height="1024px">Tablet</button><button class="device-button" data-width="375px" data-height="812px">Mobile</button></div><span id="previewSize"></span></div><iframe id="preview"></iframe></div></div></div><div class="settings-panel" id="settingsPanel"><div class="settings-header"><h2>Settings</h2><button class="button" id="closeSettings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div><div class="settings-section"><h3>Editor</h3><div class="setting-item"><label for="themeSelect">Theme</label><select id="themeSelect"><option value="default">Default</option><option value="nord">Nord</option><option value="monokai">Monokai</option><option value="material">Material</option><option value="dracula">Dracula</option><option value="tomorrow-night-bright">Tomorrow Night</option></select></div><div class="setting-item"><label for="fontSizeSelect">Font Size</label><select id="fontSizeSelect"><option value="12">12px</option><option value="14" selected="selected">14px</option><option value="16">16px</option><option value="18">18px</option></select></div></div><div class="settings-section"><h3>Keyboard Shortcuts</h3><div class="keyboard-shortcuts"><span class="shortcut-key">Ctrl + Enter</span><span>Run Code</span><span class="shortcut-key">Ctrl + S</span><span>Save Changes</span><span class="shortcut-key">Ctrl + /</span><span>Toggle Comment</span><span class="shortcut-key">Ctrl + Space</span><span>Show Autocomplete</span></div></div></div><script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/xml/xml.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/javascript/javascript.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/css/css.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/htmlmixed/htmlmixed.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closetag.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/hint/show-hint.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/hint/html-hint.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/hint/css-hint.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/hint/javascript-hint.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/comment/comment.min.js"></script><script>(function() {
+  const state = {
+    code: {
+      html: '',
+      css: '',
+      javascript: ''
+    },
+    currentLang: 'html',
+    editor: null,
+    isUpdating: false,
+    settings: {
+      theme: localStorage.getItem('editorTheme') || 'default',
+      fontSize: localStorage.getItem('editorFontSize') || '14'
+    }
+  };
+
+  state.editor = CodeMirror(document.getElementById('editor'), {
+    mode: 'htmlmixed',
+    theme: state.settings.theme,
+    lineNumbers: true,
+    autoCloseTags: true,
+    autoCloseBrackets: true,
+    matchBrackets: true,
+    lineWrapping: true,
+    tabSize: 2,
+    indentWithTabs: false,
+    extraKeys: {
+      'Ctrl-Enter': () => document.getElementById('runBtn').click(),
+      'Ctrl-S': (cm) => {
+        saveToLocalStorage();
+        showNotification('Changes saved!', 'success');
+        return false;
+      },
+      'Ctrl-Space': 'autocomplete',
+      'Ctrl-/': 'toggleComment'
+    }
+  });
+
+  document.querySelector('.CodeMirror').style.fontSize = `${state.settings.fontSize}px`;
+
+  function loadFromLocalStorage() {
+    try {
+      const saved = localStorage.getItem('editorContent');
+      if (saved) {
+        state.code = JSON.parse(saved);
+        state.editor.setValue(state.code[state.currentLang] || '');
+        updatePreview(true);
       }
+    } catch (err) {
+      console.error('Error loading saved content:', err);
+    }
+  }
 
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-        font-family: Inter, system-ui, -apple-system, sans-serif
-      }
+  function saveToLocalStorage() {
+    try {
+      localStorage.setItem('editorContent', JSON.stringify(state.code));
+    } catch (err) {
+      console.error('Error saving content:', err);
+    }
+  }
 
-      body {
-        height: 100vh;
-        background: var(--primary-bg);
-        color: var(--text-primary);
-        display: flex;
-        flex-direction: column;
-        overflow: hidden
-      }
+  function showNotification(message, type = 'success') {
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    notification.textContent = message;
+    document.body.appendChild(notification);
+    setTimeout(() => {
+      notification.remove();
+    }, 3000);
+  }
 
-      .header {
-        background: var(--secondary-bg);
-        padding: 12px 20px;
-        border-bottom: 1px solid var(--border-color);
-        display: flex;
-        justify-content: space-between;
-        align-items: center
-      }
-
-      .logo {
-        font-size: 1.5rem;
-        font-weight: 700;
-        color: var(--accent-color);
-        display: flex;
-        align-items: center;
-        gap: 8px
-      }
-
-      .toolbar {
-        background: var(--secondary-bg);
-        padding: 12px 16px;
-        display: flex;
-        gap: 16px;
-        border-bottom: 1px solid var(--border-color);
-        align-items: center;
-        flex-wrap: wrap
-      }
-
-      .toolbar-group {
-        display: flex;
-        gap: 8px;
-        align-items: center
-      }
-
-      .toolbar-group:not(:last-child) {
-        padding-right: 16px;
-        border-right: 1px solid var(--border-color)
-      }
-
-      .button {
-        padding: 8px 16px;
-        background: 0 0;
-        border: 1px solid var(--accent-color);
-        color: var(--accent-color);
-        border-radius: 8px;
-        cursor: pointer;
-        font-size: 14px;
-        font-weight: 500;
-        transition: all .2s ease;
-        display: flex;
-        align-items: center;
-        gap: 8px
-      }
-
-      .button:hover {
-        background: var(--accent-color);
-        color: var(--primary-bg);
-        transform: translateY(-1px)
-      }
-
-      .button:active {
-        transform: translateY(0)
-      }
-
-      .button svg {
-        width: 16px;
-        height: 16px
-      }
-
-      .button.primary {
-        background: var(--accent-color);
-        color: var(--primary-bg)
-      }
-
-      .button.primary:hover {
-        opacity: .9
-      }
-
-      .main-content {
-        flex: 1;
-        display: flex;
-        overflow: hidden
-      }
-
-      .split-view {
-        display: flex;
-        flex: 1;
-        overflow: hidden
-      }
-
-      .editors-container {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        min-width: 300px;
-        background: var(--primary-bg);
-        border-right: 1px solid var(--border-color)
-      }
-
-      .tab-buttons {
-        display: flex;
-        background: var(--secondary-bg);
-        padding: 0 8px;
-        gap: 4px;
-        overflow-x: auto;
-        scrollbar-width: none
-      }
-
-      .tab-buttons::-webkit-scrollbar {
-        display: none
-      }
-
-      .tab-button {
-        padding: 12px 24px;
-        background: 0 0;
-        border: none;
-        color: var(--text-secondary);
-        cursor: pointer;
-        font-size: 14px;
-        transition: all .2s;
-        border-bottom: 2px solid transparent;
-        white-space: nowrap;
-        display: flex;
-        align-items: center;
-        gap: 8px
-      }
-
-      .tab-button:hover {
-        color: var(--text-primary);
-        background: rgba(255, 255, 255, .05)
-      }
-
-      .tab-button.active {
-        color: var(--accent-color);
-        border-bottom-color: var(--accent-color);
-        background: rgba(122, 162, 247, .1)
-      }
-
-      .editor-wrapper {
-        flex: 1;
-        position: relative;
-        overflow: auto
-      }
-
-      .preview-container {
-        flex: 1;
-        background: #fff;
-        position: relative;
-        min-width: 300px;
-        display: flex;
-        flex-direction: column
-      }
-
-      .preview-toolbar {
-        background: var(--secondary-bg);
-        padding: 8px 16px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        border-bottom: 1px solid var(--border-color)
-      }
-
-      .device-selector {
-        display: flex;
-        gap: 8px
-      }
-
-      .device-button {
-        padding: 4px 8px;
-        background: 0 0;
-        border: 1px solid var(--text-secondary);
-        color: var(--text-secondary);
-        border-radius: 4px;
-        cursor: pointer;
-        font-size: 12px;
-        transition: all .2s
-      }
-
-      .device-button.active {
-        border-color: var(--accent-color);
-        color: var(--accent-color);
-        background: rgba(122, 162, 247, .1)
-      }
-
-      #preview {
-        flex: 1;
-        border: none;
-        background: #fff;
-        transition: all .3s ease
-      }
-
-      .resize-handle {
-        width: 4px;
-        background: var(--border-color);
-        cursor: ew-resize;
-        transition: background .2s
-      }
-
-      .resize-handle:hover {
-        background: var(--accent-color)
-      }
-
-      .CodeMirror {
-        height: 100%;
-        font-family: 'JetBrains Mono', 'Fira Code', monospace;
-        font-size: 14px;
-        line-height: 1.6;
-        overflow: hidden
-      }
-
-      .notification {
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        padding: 12px 20px;
-        border-radius: 8px;
-        color: #fff;
-        font-size: 14px;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        animation: slideIn .3s ease;
-        z-index: 1000;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, .2)
-      }
-
-      .notification.error {
-        background: var(--error-color)
-      }
-
-      .notification.success {
-        background: var(--success-color)
-      }
-
-      .notification.warning {
-        background: var(--warning-color)
-      }
-
-      .settings-panel {
-        position: fixed;
-        top: 0;
-        right: -400px;
-        width: 400px;
-        height: 100vh;
-        background: var(--panel-bg);
-        backdrop-filter: blur(10px);
-        border-left: 1px solid var(--border-color);
-        padding: 24px;
-        transition: right .3s ease;
-        z-index: 1000;
-        overflow-y: auto
-      }
-
-      .settings-panel.visible {
-        right: 0
-      }
-
-      .settings-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 24px
-      }
-
-      .settings-section {
-        margin-bottom: 24px
-      }
-
-      .settings-section h3 {
-        color: var(--accent-color);
-        margin-bottom: 16px;
-        font-size: 1.1rem
-      }
-
-      .setting-item {
-        margin-bottom: 16px
-      }
-
-      .setting-item label {
-        display: block;
-        margin-bottom: 8px;
-        color: var(--text-secondary)
-      }
-
-      .setting-item input,
-      .setting-item select {
-        width: 100%;
-        padding: 8px 12px;
-        background: var(--primary-bg);
-        border: 1px solid var(--border-color);
-        color: var(--text-primary);
-        border-radius: 6px;
-        font-size: 14px
-      }
-
-      .keyboard-shortcuts {
-        display: grid;
-        grid-template-columns: auto 1fr;
-        gap: 12px 24px
-      }
-
-      .shortcut-key {
-        padding: 4px 8px;
-        background: var(--primary-bg);
-        border-radius: 4px;
-        font-size: 12px;
-        color: var(--text-secondary)
-      }
-
-      @keyframes slideIn {
-        from {
-          transform: translateY(100%);
-          opacity: 0
-        }
-
-        to {
-          transform: translateY(0);
-          opacity: 1
-        }
-      }
-
-      @media (max-width:768px) {
-        .split-view {
-          flex-direction: column
-        }
-
-        .resize-handle {
-          height: 4px;
-          width: 100%;
-          cursor: ns-resize
-        }
-
-        .editors-container,
-        .preview-container {
-          min-height: 300px;
-          width: 100%
-        }
-
-        .settings-panel {
-          width: 100%;
-          right: -100%
-        }
-
-        .toolbar {
-          padding: 8px
-        }
-
-        .toolbar-group {
-          flex-wrap: wrap
-        }
-
-        .button {
-          padding: 6px 12px;
-          font-size: 13px
-        }
-      }
-    </style>
-  </head>
-  <body>
-    <div class="header">
-      <div class="logo">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M16 18l6-6-6-6M8 6l-6 6 6 6" />
-        </svg>Synprev
-      </div>
-      <div class="toolbar-group">
-        <button class="button" id="shareBtn" title="Share">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
-            <polyline points="16 6 12 2 8 6" />
-            <line x1="12" y1="2" x2="12" y2="15" />
-          </svg>Share </button>
-        <button class="button" id="settingsBtn" title="Settings">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="3" />
-            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-22h-.09a1.65 1.65 0 0 0-1.51 1z" />
-          </svg>Settings </button>
-      </div>
-    </div>
-    <div class="toolbar">
-      <div class="toolbar-group">
-        <button class="button primary" id="runBtn" title="Run (Ctrl+Enter)">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <polygon points="5 3 19 12 5 21 5 3" />
-          </svg>Run </button>
-        <button class="button" id="previewBtn" title="Open in New Window">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
-            <polyline points="15 3 21 3 21 9" />
-            <line x1="10" y1="14" x2="21" y2="3" />
-          </svg>Preview </button>
-      </div>
-      <div class="toolbar-group">
-        <button class="button" id="saveBtn" title="Save (Ctrl+S)">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
-            <polyline points="17 21 17 13 7 13 7 21" />
-            <polyline points="7 3 7 8 15 8" />
-          </svg>Save </button>
-        <button class="button" id="exportBtn" title="Export">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-            <polyline points="7 10 12 15 17 10" />
-            <line x1="12" y1="15" x2="12" y2="3" />
-          </svg>Export </button>
-      </div>
-    </div>
-    <div class="main-content">
-      <div class="split-view">
-        <div class="editors-container">
-          <div class="tab-buttons">
-            <button class="tab-button active" data-lang="html">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z" />
-                <polyline points="13 2 13 9 20 9" />
-              </svg>HTML </button>
-            <button class="tab-button" data-lang="css">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                <polyline points="14 2 14 8 20 8" />
-                <line x1="16" y1="13" x2="8" y2="13" />
-                <line x1="16" y1="17" x2="8" y2="17" />
-                <polyline points="10 9 9 9 8 9" />
-              </svg>CSS </button>
-            <button class="tab-button" data-lang="javascript">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                <polyline points="14 2 14 8 20 8" />
-                <line x1="16" y1="13" x2="8" y2="13" />
-                <line x1="16" y1="17" x2="8" y2="17" />
-                <polyline points="10 9 9 9 8 9" />
-              </svg>JavaScript </button>
-          </div>
-          <div class="editor-wrapper">
-            <div id="editor"></div>
-          </div>
-        </div>
-        <div class="resize-handle" id="resizeHandle"></div>
-        <div class="preview-container">
-          <div class="preview-toolbar">
-            <div class="device-selector">
-              <button class="device-button active" data-width="100%" data-height="100%">Desktop</button>
-              <button class="device-button" data-width="768px" data-height="1024px">Tablet</button>
-              <button class="device-button" data-width="375px" data-height="812px">Mobile</button>
-            </div>
-            <span id="previewSize"></span>
-          </div>
-          <iframe id="preview"></iframe>
-        </div>
-      </div>
-    </div>
-    <div class="settings-panel" id="settingsPanel">
-      <div class="settings-header">
-        <h2>Settings</h2>
-        <button class="button" id="closeSettings">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <line x1="18" y1="6" x2="6" y2="18" />
-            <line x1="6" y1="6" x2="18" y2="18" />
-          </svg>
-        </button>
-      </div>
-      <div class="settings-section">
-        <h3>Editor</h3>
-        <div class="setting-item">
-          <label for="themeSelect">Theme</label>
-          <select id="themeSelect">
-            <option value="default">Default</option>
-            <option value="nord">Nord</option>
-            <option value="monokai">Monokai</option>
-            <option value="material">Material</option>
-            <option value="dracula">Dracula</option>
-            <option value="tomorrow-night-bright">Tomorrow Night</option>
-          </select>
-        </div>
-        <div class="setting-item">
-          <label for="fontSizeSelect">Font Size</label>
-          <select id="fontSizeSelect">
-            <option value="12">12px</option>
-            <option value="14" selected="selected">14px</option>
-            <option value="16">16px</option>
-            <option value="18">18px</option>
-          </select>
-        </div>
-      </div>
-      <div class="settings-section">
-        <h3>Keyboard Shortcuts</h3>
-        <div class="keyboard-shortcuts">
-          <span class="shortcut-key">Ctrl + Enter</span>
-          <span>Run Code</span>
-          <span class="shortcut-key">Ctrl + S</span>
-          <span>Save Changes</span>
-          <span class="shortcut-key">Ctrl + /</span>
-          <span>Toggle Comment</span>
-          <span class="shortcut-key">Ctrl + Space</span>
-          <span>Show Autocomplete</span>
-        </div>
-      </div>
-    </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/xml/xml.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/javascript/javascript.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/css/css.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/htmlmixed/htmlmixed.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closetag.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/hint/show-hint.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/hint/html-hint.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/hint/css-hint.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/hint/javascript-hint.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/comment/comment.min.js"></script>
-    <script>
-      (function() {
-        const state = {
-          code: {
-            html: '',
-            css: '',
-            javascript: ''
-          },
-          currentLang: 'html',
-          editor: null,
-          isUpdating: false,
-          settings: {
-            theme: localStorage.getItem('editorTheme') || 'default',
-            fontSize: localStorage.getItem('editorFontSize') || '14'
-          }
-        };
-        state.editor = CodeMirror(document.getElementById('editor'), {
-          mode: 'htmlmixed',
-          theme: state.settings.theme,
-          lineNumbers: true,
-          autoCloseTags: true,
-          autoCloseBrackets: true,
-          matchBrackets: true,
-          lineWrapping: true,
-          tabSize: 2,
-          indentWithTabs: false,
-          extraKeys: {
-            'Ctrl-Enter': () => document.getElementById('runBtn').click(),
-            'Ctrl-S': (cm) => {
-              saveToLocalStorage();
-              showNotification('Changes saved!', 'success');
-              return false;
-            },
-            'Ctrl-Space': 'autocomplete',
-            'Ctrl-/': 'toggleComment'
-          }
-        });
-        document.querySelector('.CodeMirror').style.fontSize = `${state.settings.fontSize}px`;
-
-        function loadFromLocalStorage() {
-          try {
-            const saved = localStorage.getItem('editorContent');
-            if (saved) {
-              state.code = JSON.parse(saved);
-              state.editor.setValue(state.code[state.currentLang] || '');
-              updatePreview(true);
-            }
-          } catch (err) {
-            console.error('Error loading saved content:', err);
-          }
-        }
-
-        function saveToLocalStorage() {
-          try {
-            localStorage.setItem('editorContent', JSON.stringify(state.code));
-          } catch (err) {
-            console.error('Error saving content:', err);
-          }
-        }
-
-        function showNotification(message, type = 'success') {
-          const notification = document.createElement('div');
-          notification.className = `notification ${type}`;
-          notification.textContent = message;
-          document.body.appendChild(notification);
-          setTimeout(() => {
-            notification.remove();
-          }, 3000);
-        }
-
-        function updatePreview(force = false) {
-          if (state.isUpdating && !force) return;
-          state.isUpdating = true;
-          requestAnimationFrame(() => {
-            try {
-              const previewContent = `
-              
-											
-											<!DOCTYPE html>
-											<html>
-												<head>
-													<meta charset="UTF-8">
-														<meta name="viewport" content="width=device-width, initial-scale=1.0">
-															<style>${state.code.css || ''}</style>
-														</head>
-														<body>
-                  ${state.code.html || ''}
-                  
-															
-															<script>${state.code.javascript || ''}<\/script>
-															</body>
-														</html>`;
-              const preview = document.getElementById('preview');
-              const previewDoc = preview.contentDocument || preview.contentWindow.document;
-              previewDoc.open();
-              previewDoc.write(previewContent);
-              previewDoc.close();
-              updatePreviewSize();
-              state.isUpdating = false;
-            } catch (err) {
-              console.error('Preview update error:', err);
-              state.isUpdating = false;
-              showNotification('Error updating preview', 'error');
-            }
-          });
-        }
-
-        function updatePreviewSize() {
-          const preview = document.getElementById('preview');
-          const previewSize = document.getElementById('previewSize');
-          previewSize.textContent = `${preview.offsetWidth}x${preview.offsetHeight}`;
-        }
-        document.querySelectorAll('.tab-button').forEach(button => {
-          button.addEventListener('click', () => {
-            const lang = button.dataset.lang;
-            if (state.currentLang === lang) return;
-            state.code[state.currentLang] = state.editor.getValue();
-            document.querySelector('.tab-button.active').classList.remove('active');
-            button.classList.add('active');
-            state.currentLang = lang;
-            state.editor.setOption('mode', lang === 'html' ? 'htmlmixed' : lang);
-            state.editor.setValue(state.code[lang] || '');
-          });
-        });
-        state.editor.on('change', (cm) => {
-          state.code[state.currentLang] = cm.getValue();
-          updatePreview();
-          saveToLocalStorage();
-        });
-        document.querySelectorAll('.device-button').forEach(button => {
-          button.addEventListener('click', () => {
-            document.querySelector('.device-button.active').classList.remove('active');
-            button.classList.add('active');
-            const preview = document.getElementById('preview');
-            preview.style.width = button.dataset.width;
-            preview.style.height = button.dataset.height;
-            updatePreviewSize();
-          });
-        });
-        const settingsPanel = document.getElementById('settingsPanel');
-        const settingsBtn = document.getElementById('settingsBtn');
-        const closeSettings = document.getElementById('closeSettings');
-        settingsBtn.addEventListener('click', () => {
-          settingsPanel.classList.add('visible');
-        });
-        closeSettings.addEventListener('click', () => {
-          settingsPanel.classList.remove('visible');
-        });
-        const themeSelect = document.getElementById('themeSelect');
-        themeSelect.value = state.settings.theme;
-        themeSelect.addEventListener('change', (e) => {
-          const theme = e.target.value;
-          state.editor.setOption('theme', theme);
-          state.settings.theme = theme;
-          localStorage.setItem('editorTheme', theme);
-        });
-        const fontSizeSelect = document.getElementById('fontSizeSelect');
-        fontSizeSelect.value = state.settings.fontSize;
-        fontSizeSelect.addEventListener('change', (e) => {
-          const fontSize = e.target.value;
-          document.querySelector('.CodeMirror').style.fontSize = `${fontSize}px`;
-          state.settings.fontSize = fontSize;
-          localStorage.setItem('editorFontSize', fontSize);
-        });
-        document.getElementById('runBtn').addEventListener('click', () => {
-          state.code[state.currentLang] = state.editor.getValue();
-          updatePreview(true);
-          showNotification('Code executed!', 'success');
-        });
-        document.getElementById('previewBtn').addEventListener('click', () => {
-          const win = window.open('', '_blank');
-          win.document.write(`
-          
-														
-														<!DOCTYPE html>
-														<html>
-															<head>
-																<meta charset="UTF-8">
-																	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-																		<style>${state.code.css || ''}</style>
-																	</head>
-																	<body>
+  function updatePreview(force = false) {
+    if (state.isUpdating && !force) return;
+    state.isUpdating = true;
+    requestAnimationFrame(() => {
+      try {
+        const previewContent = `
+          <!DOCTYPE html>
+          <html>
+            <head>
+              <meta charset="UTF-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              <style>${state.code.css || ''}</style>
+            </head>
+            <body>
               ${state.code.html || ''}
-              
-																		
-																		<script>${state.code.javascript || ''}<\/script>
-																		</body>
-																	</html>`);
-        });
-        document.getElementById('saveBtn').addEventListener('click', () => {
-          saveToLocalStorage();
-          showNotification('Changes saved!', 'success');
-        });
-        document.getElementById('exportBtn').addEventListener('click', () => {
-          const zip = new JSZip();
-          zip.file('index.html', state.code.html);
-          zip.file('styles.css', state.code.css);
-          zip.file('script.js', state.code.javascript);
-          zip.generateAsync({
-            type: 'blob'
-          }).then(content => {
-            const url = URL.createObjectURL(content);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'project.zip';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-          });
-        });
-        document.getElementById('shareBtn').addEventListener('click', async () => {
-          try {
-            const shareData = {
-              html: state.code.html,
-              css: state.code.css,
-              javascript: state.code.javascript
-            };
-            const shareUrl = `${window.location.origin}${window.location.pathname}?share=${btoa(JSON.stringify(shareData))}`;
-            await navigator.clipboard.writeText(shareUrl);
-            showNotification('Share URL copied to clipboard!', 'success');
-          } catch (err) {
-            showNotification('Error creating share URL', 'error');
-          }
-        });
-        const resizeHandle = document.getElementById('resizeHandle');
-        let isResizing = false;
-        let startX;
-        let startWidth;
-        resizeHandle.addEventListener('mousedown', (e) => {
-          isResizing = true;
-          startX = e.pageX;
-          startWidth = document.querySelector('.editors-container').offsetWidth;
-        });
-        document.addEventListener('mousemove', (e) => {
-          if (!isResizing) return;
-          const diff = e.pageX - startX;
-          const newWidth = startWidth + diff;
-          document.querySelector('.editors-container').style.width = `${newWidth}px`;
-          updatePreviewSize();
-        });
-        document.addEventListener('mouseup', () => {
-          isResizing = false;
-        });
+              <script>${state.code.javascript || ''}<\/script>
+            </body>
+          </html>`;
+        const preview = document.getElementById('preview');
+        const previewDoc = preview.contentDocument || preview.contentWindow.document;
+        previewDoc.open();
+        previewDoc.write(previewContent);
+        previewDoc.close();
+        updatePreviewSize();
+        state.isUpdating = false;
+      } catch (err) {
+        console.error('Preview update error:', err);
+        state.isUpdating = false;
+        showNotification('Error updating preview', 'error');
+      }
+    });
+  }
 
-        function loadSharedContent() {
-          const urlParams = new URLSearchParams(window.location.search);
-          const shareData = urlParams.get('share');
-          if (shareData) {
-            try {
-              const decodedData = JSON.parse(atob(shareData));
-              state.code = decodedData;
-              state.editor.setValue(state.code[state.currentLang] || '');
-              updatePreview(true);
-            } catch (err) {
-              console.error('Error loading shared content:', err);
-              showNotification('Error loading shared content', 'error');
-            }
-          }
-        }
-        loadFromLocalStorage();
-        loadSharedContent();
-        window.addEventListener('resize', updatePreviewSize);
-      })();
-    </script>
-  </body>
-</html>
+  function updatePreviewSize() {
+    const preview = document.getElementById('preview');
+    const previewSize = document.getElementById('previewSize');
+    previewSize.textContent = `${preview.offsetWidth}x${preview.offsetHeight}`;
+  }
+
+  document.querySelectorAll('.tab-button').forEach(button => {
+    button.addEventListener('click', () => {
+      const lang = button.dataset.lang;
+      if (state.currentLang === lang) return;
+      state.code[state.currentLang] = state.editor.getValue();
+      document.querySelector('.tab-button.active').classList.remove('active');
+      button.classList.add('active');
+      state.currentLang = lang;
+      state.editor.setOption('mode', lang === 'html' ? 'htmlmixed' : lang);
+      state.editor.setValue(state.code[lang] || '');
+    });
+  });
+
+  state.editor.on('change', (cm) => {
+    state.code[state.currentLang] = cm.getValue();
+    updatePreview();
+    saveToLocalStorage();
+  });
+
+  document.querySelectorAll('.device-button').forEach(button => {
+    button.addEventListener('click', () => {
+      document.querySelector('.device-button.active').classList.remove('active');
+      button.classList.add('active');
+      const preview = document.getElementById('preview');
+      preview.style.width = button.dataset.width;
+      preview.style.height = button.dataset.height;
+      updatePreviewSize();
+    });
+  });
+
+  const settingsPanel = document.getElementById('settingsPanel');
+  const settingsBtn = document.getElementById('settingsBtn');
+  const closeSettings = document.getElementById('closeSettings');
+  settingsBtn.addEventListener('click', () => {
+    settingsPanel.classList.add('visible');
+  });
+  closeSettings.addEventListener('click', () => {
+    settingsPanel.classList.remove('visible');
+  });
+
+  const themeSelect = document.getElementById('themeSelect');
+  themeSelect.value = state.settings.theme;
+  themeSelect.addEventListener('change', (e) => {
+    const theme = e.target.value;
+    state.editor.setOption('theme', theme);
+    state.settings.theme = theme;
+    localStorage.setItem('editorTheme', theme);
+  });
+
+  const fontSizeSelect = document.getElementById('fontSizeSelect');
+  fontSizeSelect.value = state.settings.fontSize;
+  fontSizeSelect.addEventListener('change', (e) => {
+    const fontSize = e.target.value;
+    document.querySelector('.CodeMirror').style.fontSize = `${fontSize}px`;
+    state.settings.fontSize = fontSize;
+    localStorage.setItem('editorFontSize', fontSize);
+  });
+
+  document.getElementById('runBtn').addEventListener('click', () => {
+    state.code[state.currentLang] = state.editor.getValue();
+    updatePreview(true);
+    showNotification('Code executed!', 'success');
+  });
+
+  document.getElementById('previewBtn').addEventListener('click', () => {
+    const win = window.open('', '_blank');
+    win.document.write(`
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <style>${state.code.css || ''}</style>
+        </head>
+        <body>
+          ${state.code.html || ''}
+          <script>${state.code.javascript || ''}<\/script>
+        </body>
+      </html>`);
+  });
+
+  document.getElementById('shareBtn').addEventListener('click', async () => {
+    try {
+      const shareData = {
+        html: state.code.html,
+        css: state.code.css,
+        javascript: state.code.javascript
+      };
+      const shareUrl = `${window.location.origin}${window.location.pathname}?share=${btoa(JSON.stringify(shareData))}`;
+      await navigator.clipboard.writeText(shareUrl);
+      showNotification('Share URL copied to clipboard!', 'success');
+    } catch (err) {
+      showNotification('Error creating share URL', 'error');
+    }
+  });
+
+  const resizeHandle = document.getElementById('resizeHandle');
+  let isResizing = false;
+  let startX;
+  let startWidth;
+  resizeHandle.addEventListener('mousedown', (e) => {
+    isResizing = true;
+    startX = e.pageX;
+    startWidth = document.querySelector('.editors-container').offsetWidth;
+  });
+  document.addEventListener('mousemove', (e) => {
+    if (!isResizing) return;
+    const diff = e.pageX - startX;
+    const newWidth = startWidth + diff;
+    document.querySelector('.editors-container').style.width = `${newWidth}px`;
+    updatePreviewSize();
+  });
+  document.addEventListener('mouseup', () => {
+    isResizing = false;
+  });
+
+  function loadSharedContent() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const shareData = urlParams.get('share');
+    if (shareData) {
+      try {
+        const decodedData = JSON.parse(atob(shareData));
+        state.code = decodedData;
+        state.editor.setValue(state.code[state.currentLang] || '');
+        updatePreview(true);
+      } catch (err) {
+        console.error('Error loading shared content:', err);
+        showNotification('Error loading shared content', 'error');
+      }
+    }
+  }
+
+  document.getElementById('clearBtn').addEventListener('click', () => {
+
+    state.code = { html: '', css: '', javascript: '' };
+
+    state.editor.setValue('');
+
+    localStorage.removeItem('editorContent');
+    localStorage.removeItem('editorTheme');
+    localStorage.removeItem('editorFontSize');
+
+    updatePreview(true);
+
+    showNotification('All content cleared!', 'success');
+  });
+
+  loadFromLocalStorage();
+  loadSharedContent();
+  window.addEventListener('resize', updatePreviewSize);
+
+})();</script></body></html>
