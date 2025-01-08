@@ -11,6 +11,399 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/theme/material.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/theme/solarized.css">
     <link rel="stylesheet" href="/style.css">
+    <style>
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translate(-50%, -48%);
+        }
+
+        to {
+          opacity: 1;
+          transform: translate(-50%, -50%);
+        }
+      }
+
+      :root {
+        --primary-bg: #1e1e2e;
+        --secondary-bg: #282839;
+        --accent-color: #89b4fa;
+        --text-primary: #cdd6f4;
+        --text-secondary: #a6adc8;
+        --border-color: #45475a;
+        --error-color: #f38ba8;
+        --success-color: #a6e3a1;
+        --warning-color: #fab387;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      }
+
+      body {
+        height: 100vh;
+        background: var(--primary-bg);
+        color: var(--text-primary);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+
+      .toolbar {
+        background: var(--secondary-bg);
+        padding: 12px 16px;
+        display: flex;
+        gap: 16px;
+        border-bottom: 1px solid var(--border-color);
+        align-items: center;
+        flex-wrap: wrap;
+      }
+
+      .toolbar-group {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+
+      .toolbar-group:not(:last-child) {
+        padding-right: 16px;
+        border-right: 1px solid var(--border-color);
+      }
+
+      .action-button {
+        padding: 8px 16px;
+        background: transparent;
+        border: 1px solid var(--accent-color);
+        color: var(--accent-color);
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 500;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .action-button:hover {
+        background: var(--accent-color);
+        color: var(--primary-bg);
+        transform: translateY(-1px);
+      }
+
+      .action-button:active {
+        transform: translateY(0);
+      }
+
+      .action-button svg {
+        width: 16px;
+        height: 16px;
+      }
+
+      .main-content {
+        flex: 1;
+        display: flex;
+        overflow: hidden;
+      }
+
+      .split-view {
+        display: flex;
+        flex: 1;
+        overflow: hidden;
+      }
+
+      .editors-container {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        min-width: 300px;
+        background: var(--primary-bg);
+        overflow: auto;
+        border-right: 1px solid var(--border-color);
+      }
+
+      .tab-buttons {
+        display: flex;
+        background: var(--secondary-bg);
+        padding: 0 8px;
+        gap: 4px;
+        overflow-x: auto;
+        scrollbar-width: none;
+      }
+
+      .tab-buttons::-webkit-scrollbar {
+        display: none;
+      }
+
+      .tab-button {
+        padding: 12px 24px;
+        background: transparent;
+        border: none;
+        color: var(--text-secondary);
+        cursor: pointer;
+        font-size: 14px;
+        transition: all 0.2s;
+        border-bottom: 2px solid transparent;
+        white-space: nowrap;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .tab-button:hover {
+        color: var(--text-primary);
+        background: rgba(255, 255, 255, 0.05);
+      }
+
+      .tab-button.active {
+        color: var(--accent-color);
+        border-bottom-color: var(--accent-color);
+        background: rgba(137, 180, 250, 0.1);
+      }
+
+      .editor-wrapper {
+        flex: 1;
+        overflow: auto;
+        position: relative;
+      }
+
+      .preview-container {
+        flex: 1;
+        background: white;
+        position: relative;
+        min-width: 300px;
+      }
+
+      #preview {
+        width: 100%;
+        height: 100%;
+        border: none;
+        background: white;
+      }
+
+      .preview-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        padding: 8px 16px;
+        background: rgba(30, 30, 46, 0.9);
+        color: var(--text-primary);
+        font-size: 12px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        opacity: 0;
+        transition: opacity 0.3s;
+        backdrop-filter: blur(4px);
+      }
+
+      .preview-container:hover .preview-overlay {
+        opacity: 1;
+      }
+
+      .resize-handle {
+        width: 4px;
+        background: var(--border-color);
+        cursor: ew-resize;
+        transition: background 0.2s;
+      }
+
+      .resize-handle:hover {
+        background: var(--accent-color);
+      }
+
+      .CodeMirror {
+        font-family: 'JetBrains Mono', 'Fira Code', monospace;
+        font-size: 14px;
+        line-height: 1.6;
+        padding: 8px 0;
+        height: 91.63vh;
+      }
+
+      .notification {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        padding: 12px 20px;
+        border-radius: 8px;
+        color: white;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        animation: slideIn 0.3s ease;
+        z-index: 1000;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        cursor: pointer;
+      }
+
+      .notification.error {
+        background: var(--error-color);
+      }
+
+      .notification.success {
+        background: var(--success-color);
+      }
+
+      .notification.warning {
+        background: var(--warning-color);
+      }
+
+      @keyframes slideIn {
+        from {
+          transform: translateY(100%);
+          opacity: 0;
+        }
+
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+
+      #themeSelector {
+        padding: 8px 16px;
+        background: transparent;
+        border: 1px solid var(--accent-color);
+        color: var(--accent-color);
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 500;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      #themeSelector:focus {
+        transform: translateY(0);
+      }
+
+      #themeSelector:hover {
+        background: var(--accent-color);
+        color: var(--primary-bg);
+        transform: translateY(-1px);
+      }
+
+      #themeSelector option {
+        background-color: #fff;
+        color: #333;
+        padding: 8px;
+        font-size: 14px;
+        border-bottom: 1px solid #ddd;
+      }
+
+      #themeSelector option:hover {
+        background-color: #f1f1f1;
+      }
+
+      label[for="themeSelector"] {
+        font-size: 14px;
+        color: #333;
+        margin-right: 10px;
+        font-weight: bold;
+        cursor: pointer;
+      }
+
+      .theme-selector-container {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 0;
+      }
+
+      .shortcuts-panel {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: var(--secondary-bg);
+        padding: 24px;
+        border-radius: 12px;
+        border: 1px solid var(--border-color);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        z-index: 1000;
+        display: none;
+      }
+
+      .shortcuts-panel.visible {
+        display: block;
+        animation: fadeIn 0.2s ease;
+      }
+
+      .shortcuts-panel h3 {
+        margin-bottom: 16px;
+        color: var(--accent-color);
+      }
+
+      .shortcuts-list {
+        display: grid;
+        grid-template-columns: auto auto;
+        gap: 12px 24px;
+      }
+
+      .shortcut-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .shortcut-key {
+        padding: 4px 8px;
+        background: var(--primary-bg);
+        border-radius: 4px;
+        font-size: 12px;
+        color: var(--text-secondary);
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translate(-50%, -48%);
+        }
+
+        to {
+          opacity: 1;
+          transform: translate(-50%, -50%);
+        }
+      }
+
+      @media (max-width: 768px) {
+        .split-view {
+          flex-direction: column;
+        }
+
+        .resize-handle {
+          height: 4px;
+          width: 100%;
+          cursor: ns-resize;
+        }
+
+        .editors-container,
+        .preview-container {
+          min-height: 300px;
+          width: 100%;
+        }
+
+        .toolbar {
+          padding: 8px;
+        }
+
+        .toolbar-group {
+          flex-wrap: wrap;
+        }
+
+        .action-button {
+          padding: 6px 12px;
+          font-size: 13px;
+        }
+      }
+    </style>
   </head>
   <body>
     <div class="toolbar">
@@ -84,5 +477,231 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
     <script src="/script.js"></script>
+<script>
+(function() {
+  const state = {
+    code: {
+      html: '',
+      css: '',
+      javascript: ''
+    },
+    currentLang: 'html',
+    editor: null,
+    isUpdating: false
+  };
+
+  state.editor = CodeMirror(document.getElementById('editor'), {
+    mode: 'htmlmixed',
+    theme: 'default',
+    lineNumbers: true,
+    autoCloseTags: true,
+    autoCloseBrackets: true,
+    matchBrackets: true,
+    lineWrapping: true,
+    tabSize: 2,
+    indentWithTabs: false,
+    extraKeys: {
+      'Ctrl-Enter': () => document.getElementById('runBtn').click(),
+      'Ctrl-S': (cm) => {
+        saveToLocalStorage();
+        showSuccessMessage('Changes saved!');
+        return false;
+      }
+    }
+  });
+
+  function loadFromLocalStorage() {
+    try {
+      const saved = localStorage.getItem('editorContent');
+      if (saved) {
+        state.code = JSON.parse(saved);
+        state.editor.setValue(state.code[state.currentLang] || '');
+        updatePreview(true);
+      }
+    } catch (err) {
+      console.error('Error loading saved content:', err);
+    }
+  }
+
+  function loadThemeFromLocalStorage() {
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+      state.editor.setOption('theme', savedTheme);
+      document.getElementById('themeSelector').value = savedTheme;
+      updateBackgroundForTheme(savedTheme);
+    }
+  }
+
+  function saveToLocalStorage() {
+    try {
+      localStorage.setItem('editorContent', JSON.stringify(state.code));
+    } catch (err) {
+      console.error('Error saving content:', err);
+    }
+  }
+
+  function showSuccessMessage(message) {
+    const successEl = document.getElementById('successMessage');
+    successEl.textContent = message;
+    successEl.style.display = 'block';
+    setTimeout(() => {
+      successEl.style.display = 'none';
+    }, 2000);
+  }
+
+  function updatePreview(force = false) {
+    if (state.isUpdating && !force) return;
+    state.isUpdating = true;
+    requestAnimationFrame(() => {
+      try {
+        const previewContent = `
+          <!DOCTYPE html>
+          <html>
+            <head>
+              <meta charset="UTF-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              <style>${state.code.css || ''}</style>
+            </head>
+            <body>
+              ${state.code.html || ''}
+              <script>${state.code.javascript || ''}<\/script>
+            </body>
+          </html>`;
+
+        const preview = document.getElementById('preview');
+        const previewDoc = preview.contentDocument || preview.contentWindow.document;
+        previewDoc.open();
+        previewDoc.write(previewContent);
+        previewDoc.close();
+
+        const previewSize = document.getElementById('previewSize');
+        previewSize.textContent = `${preview.offsetWidth}x${preview.offsetHeight}`;
+
+        state.isUpdating = false;
+      } catch (err) {
+        console.error('Preview update error:', err);
+        state.isUpdating = false;
+      }
+    });
+  }
+
+  document.querySelectorAll('.tab-button').forEach(button => {
+    button.addEventListener('click', () => {
+      const lang = button.dataset.lang;
+      if (state.currentLang === lang) return;
+
+      state.code[state.currentLang] = state.editor.getValue();
+      document.querySelector('.tab-button.active').classList.remove('active');
+      button.classList.add('active');
+      state.currentLang = lang;
+
+      state.editor.setOption('mode', lang === 'html' ? 'htmlmixed' : lang);
+      state.editor.setValue(state.code[lang] || '');
+    });
+  });
+
+  state.editor.on('change', (cm) => {
+    state.code[state.currentLang] = cm.getValue();
+    updatePreview();
+    saveToLocalStorage();
+  });
+
+  document.getElementById('runBtn').addEventListener('click', () => {
+    state.code[state.currentLang] = state.editor.getValue();
+    updatePreview(true);
+    showSuccessMessage('Code executed!');
+  });
+
+  document.getElementById('previewBtn').addEventListener('click', () => {
+    const win = window.open('', '_blank');
+    win.document.write(`
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <style>${state.code.css || ''}</style>
+        </head>
+        <body>
+          ${state.code.html || ''}
+          <script>${state.code.javascript || ''}<\/script>
+        </body>
+      </html>`);
+  });
+
+  document.getElementById('themeSelector').addEventListener('change', (e) => {
+    const selectedTheme = e.target.value;
+    state.editor.setOption('theme', selectedTheme);
+    localStorage.setItem('theme', selectedTheme);
+    updateBackgroundForTheme(selectedTheme);
+  });
+
+  function updateBackgroundForTheme(theme) {
+    const themeStyles = {
+      nord: {
+        '--primary-bg': '#2E3440',
+        '--secondary-bg': '#3B4252',
+        '--accent-color': '#88C0D0',
+        '--text-primary': '#E5E9F0',
+        '--text-secondary': '#D8DEE9',
+        '--border-color': '#4C566A',
+      },
+      monokai: {
+        '--primary-bg': '#272822',
+        '--secondary-bg': '#3E3D32',
+        '--accent-color': '#F8F8F2',
+        '--text-primary': '#F8F8F2',
+        '--text-secondary': '#75715E',
+        '--border-color': '#586E75',
+      },
+      material: {
+        '--primary-bg': '#212121',
+        '--secondary-bg': '#263238',
+        '--accent-color': '#80CBC4',
+        '--text-primary': '#ECEFF1',
+        '--text-secondary': '#B0BEC5',
+        '--border-color': '#37474F',
+      },
+      'solarized light': {
+        '--primary-bg': '#fdf6e3',
+        '--secondary-bg': '#eee8d5',
+        '--accent-color': '#268bd2',
+        '--text-primary': '#657b83',
+        '--text-secondary': '#93a1a1',
+        '--border-color': '#586e75',
+      },
+      'solarized dark': {
+        '--primary-bg': '#002b36',
+        '--secondary-bg': '#073642',
+        '--accent-color': '#268bd2',
+        '--text-primary': '#839496',
+        '--text-secondary': '#93a1a1',
+        '--border-color': '#586e75',
+      },
+      default: {
+        '--primary-bg': '#1e1e2e',
+        '--secondary-bg': '#333333',
+        '--accent-color': '#89b4fa',
+        '--text-primary': '#e4e4e4',
+        '--text-secondary': '#a6adc8',
+        '--border-color': '#45475a',
+      }
+    };
+
+    const themeColor = themeStyles[theme] || themeStyles.default;
+
+    for (const [key, value] of Object.entries(themeColor)) {
+      document.documentElement.style.setProperty(key, value);
+    }
+
+    document.body.style.backgroundColor = themeColor['--primary-bg'];
+    document.body.style.color = themeColor['--text-primary'];
+  }
+
+  loadFromLocalStorage();
+  loadThemeFromLocalStorage();
+})();
+
+    </script>
   </body>
 </html>
