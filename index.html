@@ -3,13 +3,13 @@
  <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Synprev</title>
+  <title>Synprev - Enhanced Code Editor</title>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/nord.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/theme/monokai.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/theme/material.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/theme/dracula.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/theme/tomorrow-night-bright.css">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/material.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/dracula.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/tomorrow-night-bright.min.css" rel="stylesheet">
   <style>
    :root {
     --primary-bg: #1a1b26;
@@ -37,7 +37,201 @@
     color: var(--text-primary);
     display: flex;
     flex-direction: column;
-    overflow: hidden
+    overflow: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    transform: translateZ(0);
+    backface-visibility: hidden
+   }
+
+   .history-controls {
+    display: flex;
+    gap: 8px;
+    align-items: center
+   }
+
+   .history-button {
+    padding: 6px;
+    background: 0 0;
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all .2s ease
+   }
+
+   .history-button:hover:not(:disabled) {
+    border-color: var(--accent-color);
+    color: var(--accent-color)
+   }
+
+   .history-button:disabled {
+    opacity: .5;
+    cursor: not-allowed
+   }
+
+   .notification {
+    transform: translateZ(0);
+    will-change: transform, opacity
+   }
+
+   .CodeMirror {
+    height: 100%;
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    line-height: 1.6;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    transform: translateZ(0)
+   }
+
+   .notification {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 12px 20px;
+    border-radius: 8px;
+    color: #fff;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    animation: slideIn .3s ease;
+    z-index: 1000;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, .2)
+   }
+
+   .notification.error {
+    background: var(--error-color)
+   }
+
+   .notification.success {
+    background: var(--success-color)
+   }
+
+   .notification.warning {
+    background: var(--warning-color)
+   }
+
+   .settings-panel {
+    position: fixed;
+    top: 0;
+    right: -400px;
+    width: 400px;
+    height: 100vh;
+    background: var(--panel-bg);
+    backdrop-filter: blur(10px);
+    border-left: 1px solid var(--border-color);
+    padding: 24px;
+    transition: right .3s ease;
+    z-index: 1000;
+    overflow-y: auto
+   }
+
+   .settings-panel.visible {
+    right: 0
+   }
+
+   .settings-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px
+   }
+
+   .settings-section {
+    margin-bottom: 24px
+   }
+
+   .settings-section h3 {
+    color: var(--accent-color);
+    margin-bottom: 16px;
+    font-size: 1.1rem
+   }
+
+   .setting-item {
+    margin-bottom: 16px
+   }
+
+   .setting-item label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--text-secondary)
+   }
+
+   .setting-item input,
+   .setting-item select {
+    width: 100%;
+    padding: 8px 12px;
+    background: var(--primary-bg);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    border-radius: 6px;
+    font-size: 14px
+   }
+
+   .keyboard-shortcuts {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 12px 24px
+   }
+
+   .shortcut-key {
+    padding: 4px 8px;
+    background: var(--primary-bg);
+    border-radius: 4px;
+    font-size: 12px;
+    color: var(--text-secondary)
+   }
+
+   @keyframes slideIn {
+    from {
+     transform: translateY(100%);
+     opacity: 0
+    }
+
+    to {
+     transform: translateY(0);
+     opacity: 1
+    }
+   }
+
+   @media (max-width:768px) {
+    .split-view {
+     flex-direction: column
+    }
+
+    .resize-handle {
+     height: 4px;
+     width: 100%;
+     cursor: ns-resize
+    }
+
+    .editors-container,
+    .preview-container {
+     min-height: 300px;
+     width: 100%
+    }
+
+    .settings-panel {
+     width: 100%;
+     right: -100%
+    }
+
+    .toolbar {
+     padding: 8px
+    }
+
+    .toolbar-group {
+     flex-wrap: wrap
+    }
+
+    .button {
+     padding: 6px 12px;
+     font-size: 13px
+    }
    }
 
    .header {
@@ -241,161 +435,6 @@
    .resize-handle:hover {
     background: var(--accent-color)
    }
-
-   .CodeMirror {
-    height: 100%;
-    font-family: 'JetBrains Mono', 'Fira Code', monospace;
-    font-size: 14px;
-    line-height: 1.6;
-    overflow: hidden
-   }
-
-   .notification {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    padding: 12px 20px;
-    border-radius: 8px;
-    color: #fff;
-    font-size: 14px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    animation: slideIn .3s ease;
-    z-index: 1000;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, .2)
-   }
-
-   .notification.error {
-    background: var(--error-color)
-   }
-
-   .notification.success {
-    background: var(--success-color)
-   }
-
-   .notification.warning {
-    background: var(--warning-color)
-   }
-
-   .settings-panel {
-    position: fixed;
-    top: 0;
-    right: -400px;
-    width: 400px;
-    height: 100vh;
-    background: var(--panel-bg);
-    backdrop-filter: blur(10px);
-    border-left: 1px solid var(--border-color);
-    padding: 24px;
-    transition: right .3s ease;
-    z-index: 1000;
-    overflow-y: auto
-   }
-
-   .settings-panel.visible {
-    right: 0
-   }
-
-   .settings-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 24px
-   }
-
-   .settings-section {
-    margin-bottom: 24px
-   }
-
-   .settings-section h3 {
-    color: var(--accent-color);
-    margin-bottom: 16px;
-    font-size: 1.1rem
-   }
-
-   .setting-item {
-    margin-bottom: 16px
-   }
-
-   .setting-item label {
-    display: block;
-    margin-bottom: 8px;
-    color: var(--text-secondary)
-   }
-
-   .setting-item input,
-   .setting-item select {
-    width: 100%;
-    padding: 8px 12px;
-    background: var(--primary-bg);
-    border: 1px solid var(--border-color);
-    color: var(--text-primary);
-    border-radius: 6px;
-    font-size: 14px
-   }
-
-   .keyboard-shortcuts {
-    display: grid;
-    grid-template-columns: auto 1fr;
-    gap: 12px 24px
-   }
-
-   .shortcut-key {
-    padding: 4px 8px;
-    background: var(--primary-bg);
-    border-radius: 4px;
-    font-size: 12px;
-    color: var(--text-secondary)
-   }
-
-   @keyframes slideIn {
-    from {
-     transform: translateY(100%);
-     opacity: 0
-    }
-
-    to {
-     transform: translateY(0);
-     opacity: 1
-    }
-   }
-
-   @media (max-width:768px) {
-    .split-view {
-     flex-direction: column
-    }
-
-    .resize-handle {
-     height: 4px;
-     width: 100%;
-     cursor: ns-resize
-    }
-
-    .editors-container,
-    .preview-container {
-     min-height: 300px;
-     width: 100%
-    }
-
-    .settings-panel {
-     width: 100%;
-     right: -100%
-    }
-
-    .toolbar {
-     padding: 8px
-    }
-
-    .toolbar-group {
-     flex-wrap: wrap
-    }
-
-    .button {
-     padding: 6px 12px;
-     font-size: 13px
-    }
-   }
   </style>
  </head>
  <body>
@@ -404,6 +443,22 @@
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
      <path d="M16 18l6-6-6-6M8 6l-6 6 6 6" />
     </svg>Synprev
+   </div>
+   <div class="toolbar-group">
+    <div class="history-controls">
+     <button class="history-button" id="undoBtn" title="Undo (Ctrl+Z)" disabled="disabled">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+       <path d="M3 7v6h6"></path>
+       <path d="M21 17a9 9 0 00-9-9 9 9 0 00-6 2.3L3 13"></path>
+      </svg>
+     </button>
+     <button class="history-button" id="redoBtn" title="Redo (Ctrl+Y)" disabled="disabled">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+       <path d="M21 7v6h-6"></path>
+       <path d="M3 17a9 9 0 019-9 9 9 0 016 2.3l3 2.7"></path>
+      </svg>
+     </button>
+    </div>
    </div>
    <div class="toolbar-group">
     <button class="button" id="shareBtn" title="Share">
@@ -557,6 +612,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/hint/javascript-hint.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/comment/comment.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
   <script>
    (function() {
     const state = {
@@ -635,6 +691,8 @@
        const previewContent = `
 
 											
+											
+											
 											<!DOCTYPE html>
 											<html>
 												<head>
@@ -645,6 +703,8 @@
 														<body>
               ${state.code.html || ''}
 
+															
+															
 															
 															<script>${state.code.javascript || ''}<\/script>
 															</body>
@@ -731,6 +791,8 @@
      win.document.write(`
 
 														
+														
+														
 														<!DOCTYPE html>
 														<html>
 															<head>
@@ -741,6 +803,8 @@
 																	<body>
           ${state.code.html || ''}
 
+																		
+																		
 																		
 																		<script>${state.code.javascript || ''}<\/script>
 																		</body>
