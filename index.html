@@ -604,6 +604,14 @@
           }
         }
 
+        function saveToLocalStorage() {
+          try {
+            localStorage.setItem('editorContent', JSON.stringify(state.code));
+          } catch (err) {
+            console.error('Error saving content:', err);
+          }
+        }
+
         function showNotification(message, type = 'success') {
           const notification = document.createElement('div');
           notification.className = `notification ${type}`;
@@ -620,8 +628,7 @@
           requestAnimationFrame(() => {
             try {
               const previewContent = `
-
-											
+          
 											<!DOCTYPE html>
 											<html>
 												<head>
@@ -631,8 +638,7 @@
 														</head>
 														<body>
               ${state.code.html || ''}
-
-															
+              
 															<script>${state.code.javascript || ''}<\/script>
 															</body>
 														</html>`;
@@ -716,8 +722,7 @@
         document.getElementById('previewBtn').addEventListener('click', () => {
           const win = window.open('', '_blank');
           win.document.write(`
-
-														
+      
 														<!DOCTYPE html>
 														<html>
 															<head>
@@ -727,8 +732,7 @@
 																	</head>
 																	<body>
           ${state.code.html || ''}
-
-																		
+          
 																		<script>${state.code.javascript || ''}<\/script>
 																		</body>
 																	</html>`);
