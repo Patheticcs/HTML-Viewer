@@ -553,354 +553,326 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/comment/comment.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script>
-(function() {
-  const state = {
-    code: {
-      html: '',
-      css: '',
-      javascript: ''
-    },
-    currentLang: 'html',
-    editor: null,
-    isUpdating: false,
-    settings: {
-      theme: localStorage.getItem('editorTheme') || 'default',
-      fontSize: localStorage.getItem('editorFontSize') || '14'
-    }
-  };
+      (function() {
+        const state = {
+          code: {
+            html: '',
+            css: '',
+            javascript: ''
+          },
+          currentLang: 'html',
+          editor: null,
+          isUpdating: false,
+          settings: {
+            theme: localStorage.getItem('editorTheme') || 'default',
+            fontSize: localStorage.getItem('editorFontSize') || '14'
+          }
+        };
+        state.editor = CodeMirror(document.getElementById('editor'), {
+          mode: 'htmlmixed',
+          theme: state.settings.theme,
+          lineNumbers: true,
+          autoCloseTags: true,
+          autoCloseBrackets: true,
+          matchBrackets: true,
+          lineWrapping: true,
+          tabSize: 2,
+          indentWithTabs: false,
+          extraKeys: {
+            'Ctrl-Enter': () => document.getElementById('runBtn').click(),
+            'Ctrl-S': (cm) => {
+              saveToLocalStorage();
+              showNotification('Changes saved!', 'success');
+              return false;
+            },
+            'Ctrl-Space': 'autocomplete',
+            'Ctrl-/': 'toggleComment'
+          }
+        });
+        document.querySelector('.CodeMirror').style.fontSize = `${state.settings.fontSize}px`;
 
-  // Initialize the editor with the correct theme
-  state.editor = CodeMirror(document.getElementById('editor'), {
-    mode: 'htmlmixed',
-    theme: state.settings.theme,  // Apply the theme from settings
-    lineNumbers: true,
-    autoCloseTags: true,
-    autoCloseBrackets: true,
-    matchBrackets: true,
-    lineWrapping: true,
-    tabSize: 2,
-    indentWithTabs: false,
-    extraKeys: {
-      'Ctrl-Enter': () => document.getElementById('runBtn').click(),
-      'Ctrl-S': (cm) => {
-        saveToLocalStorage();
-        showNotification('Changes saved!', 'success');
-        return false;
-      },
-      'Ctrl-Space': 'autocomplete',
-      'Ctrl-/': 'toggleComment'
-    }
-  });
+        function loadFromLocalStorage() {
+          try {
+            const saved = localStorage.getItem('editorContent');
+            if (saved) {
+              state.code = JSON.parse(saved);
+              state.editor.setValue(state.code[state.currentLang] || '');
+              updatePreview(true);
+            }
+          } catch (err) {
+            console.error('Error loading saved content:', err);
+          }
+        }
 
-  // Apply font size for the editor
-  document.querySelector('.CodeMirror').style.fontSize = `${state.settings.fontSize}px`;
+        function saveToLocalStorage() {
+          try {
+            localStorage.setItem('editorContent', JSON.stringify(state.code));
+          } catch (err) {
+            console.error('Error saving content:', err);
+          }
+        }
 
-  function loadFromLocalStorage() {
-    try {
-      const saved = localStorage.getItem('editorContent');
-      if (saved) {
-        state.code = JSON.parse(saved);
-        state.editor.setValue(state.code[state.currentLang] || '');
-        updatePreview(true);
-      }
-    } catch (err) {
-      console.error('Error loading saved content:', err);
-    }
-  }
+        function showNotification(message, type = 'success') {
+          const notification = document.createElement('div');
+          notification.className = `notification ${type}`;
+          notification.textContent = message;
+          document.body.appendChild(notification);
+          setTimeout(() => {
+            notification.remove();
+          }, 3000);
+        }
 
-  function saveToLocalStorage() {
-    try {
-      localStorage.setItem('editorContent', JSON.stringify(state.code));
-    } catch (err) {
-      console.error('Error saving content:', err);
-    }
-  }
-
-  function showNotification(message, type = 'success') {
-    const notification = document.createElement('div');
-    notification.className = `notification ${type}`;
-    notification.textContent = message;
-    document.body.appendChild(notification);
-    setTimeout(() => {
-      notification.remove();
-    }, 3000);
-  }
-
-  function updatePreview(force = false) {
-    if (state.isUpdating && !force) return;
-    state.isUpdating = true;
-    requestAnimationFrame(() => {
-      try {
-        const previewContent = `
-          <!DOCTYPE html>
-          <html>
-            <head>
-              <meta charset="UTF-8">
-              <meta name="viewport" content="width=device-width, initial-scale=1.0">
-              <style>${state.code.css || ''}</style>
-            </head>
-            <body>
+        function updatePreview(force = false) {
+          if (state.isUpdating && !force) return;
+          state.isUpdating = true;
+          requestAnimationFrame(() => {
+            try {
+              const previewContent = `
+          
+											<!DOCTYPE html>
+											<html>
+												<head>
+													<meta charset="UTF-8">
+														<meta name="viewport" content="width=device-width, initial-scale=1.0">
+															<style>${state.code.css || ''}</style>
+														</head>
+														<body>
               ${state.code.html || ''}
-              <script>${state.code.javascript || ''}<\/script>
-            </body>
-          </html>`;
-        const preview = document.getElementById('preview');
-        const previewDoc = preview.contentDocument || preview.contentWindow.document;
-        previewDoc.open();
-        previewDoc.write(previewContent);
-        previewDoc.close();
-        updatePreviewSize();
-        state.isUpdating = false;
-      } catch (err) {
-        console.error('Preview update error:', err);
-        state.isUpdating = false;
-        showNotification('Error updating preview', 'error');
-      }
-    });
-  }
+              
+															<script>${state.code.javascript || ''}<\/script>
+															</body>
+														</html>`;
+              const preview = document.getElementById('preview');
+              const previewDoc = preview.contentDocument || preview.contentWindow.document;
+              previewDoc.open();
+              previewDoc.write(previewContent);
+              previewDoc.close();
+              updatePreviewSize();
+              state.isUpdating = false;
+            } catch (err) {
+              console.error('Preview update error:', err);
+              state.isUpdating = false;
+              showNotification('Error updating preview', 'error');
+            }
+          });
+        }
 
-  function updatePreviewSize() {
-    const preview = document.getElementById('preview');
-    const previewSize = document.getElementById('previewSize');
-    previewSize.textContent = `${preview.offsetWidth}x${preview.offsetHeight}`;
-  }
-
-  document.querySelectorAll('.tab-button').forEach(button => {
-    button.addEventListener('click', () => {
-      const lang = button.dataset.lang;
-      if (state.currentLang === lang) return;
-      state.code[state.currentLang] = state.editor.getValue();
-      document.querySelector('.tab-button.active').classList.remove('active');
-      button.classList.add('active');
-      state.currentLang = lang;
-      state.editor.setOption('mode', lang === 'html' ? 'htmlmixed' : lang);
-      state.editor.setValue(state.code[lang] || '');
-    });
-  });
-
-  state.editor.on('change', (cm) => {
-    state.code[state.currentLang] = cm.getValue();
-    updatePreview();
-    saveToLocalStorage();
-  });
-
-  document.querySelectorAll('.device-button').forEach(button => {
-    button.addEventListener('click', () => {
-      document.querySelector('.device-button.active').classList.remove('active');
-      button.classList.add('active');
-      const preview = document.getElementById('preview');
-      preview.style.width = button.dataset.width;
-      preview.style.height = button.dataset.height;
-      updatePreviewSize();
-    });
-  });
-
-  const settingsPanel = document.getElementById('settingsPanel');
-  const settingsBtn = document.getElementById('settingsBtn');
-  const closeSettings = document.getElementById('closeSettings');
-  settingsBtn.addEventListener('click', () => {
-    settingsPanel.classList.add('visible');
-  });
-  closeSettings.addEventListener('click', () => {
-    settingsPanel.classList.remove('visible');
-  });
-
-  const themeSelect = document.getElementById('themeSelect');
-  themeSelect.value = state.settings.theme;
-  themeSelect.addEventListener('change', (e) => {
-    const theme = e.target.value;
-    applyTheme(theme);
-    state.settings.theme = theme;
-    localStorage.setItem('editorTheme', theme);
-  });
-
-  const fontSizeSelect = document.getElementById('fontSizeSelect');
-  fontSizeSelect.value = state.settings.fontSize;
-  fontSizeSelect.addEventListener('change', (e) => {
-    const fontSize = e.target.value;
-    document.querySelector('.CodeMirror').style.fontSize = `${fontSize}px`;
-    state.settings.fontSize = fontSize;
-    localStorage.setItem('editorFontSize', fontSize);
-  });
-
-  document.getElementById('runBtn').addEventListener('click', () => {
-    state.code[state.currentLang] = state.editor.getValue();
-    updatePreview(true);
-    showNotification('Code executed!', 'success');
-  });
-
-  document.getElementById('previewBtn').addEventListener('click', () => {
-    const win = window.open('', '_blank');
-    win.document.write(`
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <meta charset="UTF-8">
-          <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <style>${state.code.css || ''}</style>
-        </head>
-        <body>
+        function updatePreviewSize() {
+          const preview = document.getElementById('preview');
+          const previewSize = document.getElementById('previewSize');
+          previewSize.textContent = `${preview.offsetWidth}x${preview.offsetHeight}`;
+        }
+        document.querySelectorAll('.tab-button').forEach(button => {
+          button.addEventListener('click', () => {
+            const lang = button.dataset.lang;
+            if (state.currentLang === lang) return;
+            state.code[state.currentLang] = state.editor.getValue();
+            document.querySelector('.tab-button.active').classList.remove('active');
+            button.classList.add('active');
+            state.currentLang = lang;
+            state.editor.setOption('mode', lang === 'html' ? 'htmlmixed' : lang);
+            state.editor.setValue(state.code[lang] || '');
+          });
+        });
+        state.editor.on('change', (cm) => {
+          state.code[state.currentLang] = cm.getValue();
+          updatePreview();
+          saveToLocalStorage();
+        });
+        document.querySelectorAll('.device-button').forEach(button => {
+          button.addEventListener('click', () => {
+            document.querySelector('.device-button.active').classList.remove('active');
+            button.classList.add('active');
+            const preview = document.getElementById('preview');
+            preview.style.width = button.dataset.width;
+            preview.style.height = button.dataset.height;
+            updatePreviewSize();
+          });
+        });
+        const settingsPanel = document.getElementById('settingsPanel');
+        const settingsBtn = document.getElementById('settingsBtn');
+        const closeSettings = document.getElementById('closeSettings');
+        settingsBtn.addEventListener('click', () => {
+          settingsPanel.classList.add('visible');
+        });
+        closeSettings.addEventListener('click', () => {
+          settingsPanel.classList.remove('visible');
+        });
+        const themeSelect = document.getElementById('themeSelect');
+        themeSelect.value = state.settings.theme;
+        themeSelect.addEventListener('change', (e) => {
+          const theme = e.target.value;
+          applyTheme(theme);
+          state.settings.theme = theme;
+          localStorage.setItem('editorTheme', theme);
+        });
+        const fontSizeSelect = document.getElementById('fontSizeSelect');
+        fontSizeSelect.value = state.settings.fontSize;
+        fontSizeSelect.addEventListener('change', (e) => {
+          const fontSize = e.target.value;
+          document.querySelector('.CodeMirror').style.fontSize = `${fontSize}px`;
+          state.settings.fontSize = fontSize;
+          localStorage.setItem('editorFontSize', fontSize);
+        });
+        document.getElementById('runBtn').addEventListener('click', () => {
+          state.code[state.currentLang] = state.editor.getValue();
+          updatePreview(true);
+          showNotification('Code executed!', 'success');
+        });
+        document.getElementById('previewBtn').addEventListener('click', () => {
+          const win = window.open('', '_blank');
+          win.document.write(`
+      
+														<!DOCTYPE html>
+														<html>
+															<head>
+																<meta charset="UTF-8">
+																	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+																		<style>${state.code.css || ''}</style>
+																	</head>
+																	<body>
           ${state.code.html || ''}
-          <script>${state.code.javascript || ''}<\/script>
-        </body>
-      </html>`);
-  });
+          
+																		<script>${state.code.javascript || ''}<\/script>
+																		</body>
+																	</html>`);
+        });
+        document.getElementById('shareBtn').addEventListener('click', async () => {
+          try {
+            const shareUrl = "https://synprev.vercel.app";
+            await navigator.clipboard.writeText(shareUrl);
+            showNotification('Share URL copied to clipboard!', 'success');
+          } catch (err) {
+            showNotification('Error copying URL', 'error');
+            console.error(err);
+          }
+        });
+        const resizeHandle = document.getElementById('resizeHandle');
+        let isResizing = false;
+        let startX;
+        let startWidth;
+        resizeHandle.addEventListener('mousedown', (e) => {
+          isResizing = true;
+          startX = e.pageX;
+          startWidth = document.querySelector('.editors-container').offsetWidth;
+        });
+        document.addEventListener('mousemove', (e) => {
+          if (!isResizing) return;
+          const diff = e.pageX - startX;
+          const newWidth = startWidth + diff;
+          document.querySelector('.editors-container').style.width = `${newWidth}px`;
+          updatePreviewSize();
+        });
+        document.addEventListener('mouseup', () => {
+          isResizing = false;
+        });
 
-  document.getElementById('shareBtn').addEventListener('click', async () => {
-    try {
-      const shareData = {
-        html: state.code.html,
-        css: state.code.css,
-        javascript: state.code.javascript
-      };
-      const shareUrl = `${window.location.origin}${window.location.pathname}?share=${btoa(JSON.stringify(shareData))}`;
-      await navigator.clipboard.writeText(shareUrl);
-      showNotification('Share URL copied to clipboard!', 'success');
-    } catch (err) {
-      showNotification('Error creating share URL', 'error');
-    }
-  });
+        function loadSharedContent() {
+          const urlParams = new URLSearchParams(window.location.search);
+          const shareData = urlParams.get('share');
+          if (shareData) {
+            try {
+              const decodedData = JSON.parse(atob(shareData));
+              state.code = decodedData;
+              state.editor.setValue(state.code[state.currentLang] || '');
+              updatePreview(true);
+            } catch (err) {
+              console.error('Error loading shared content:', err);
+              showNotification('Error loading shared content', 'error');
+            }
+          }
+        }
+        document.getElementById('clearBtn').addEventListener('click', () => {
+          state.code = {
+            html: '',
+            css: '',
+            javascript: ''
+          };
+          state.editor.setValue('');
+          localStorage.removeItem('editorContent');
+          localStorage.removeItem('editorTheme');
+          localStorage.removeItem('editorFontSize');
+          updatePreview(true);
+          showNotification('All content cleared!', 'success');
+        });
+        loadFromLocalStorage();
+        loadSharedContent();
+        window.addEventListener('resize', updatePreviewSize);
 
-  const resizeHandle = document.getElementById('resizeHandle');
-  let isResizing = false;
-  let startX;
-  let startWidth;
-
-  resizeHandle.addEventListener('mousedown', (e) => {
-    isResizing = true;
-    startX = e.pageX;
-    startWidth = document.querySelector('.editors-container').offsetWidth;
-  });
-
-  document.addEventListener('mousemove', (e) => {
-    if (!isResizing) return;
-    const diff = e.pageX - startX;
-    const newWidth = startWidth + diff;
-    document.querySelector('.editors-container').style.width = `${newWidth}px`;
-    updatePreviewSize();
-  });
-
-  document.addEventListener('mouseup', () => {
-    isResizing = false;
-  });
-
-  function loadSharedContent() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const shareData = urlParams.get('share');
-    if (shareData) {
-      try {
-        const decodedData = JSON.parse(atob(shareData));
-        state.code = decodedData;
-        state.editor.setValue(state.code[state.currentLang] || '');
-        updatePreview(true);
-      } catch (err) {
-        console.error('Error loading shared content:', err);
-        showNotification('Error loading shared content', 'error');
-      }
-    }
-  }
-
-  document.getElementById('clearBtn').addEventListener('click', () => {
-    state.code = {
-      html: '',
-      css: '',
-      javascript: ''
-    };
-    state.editor.setValue('');
-    localStorage.removeItem('editorContent');
-    localStorage.removeItem('editorTheme');
-    localStorage.removeItem('editorFontSize');
-    updatePreview(true);
-    showNotification('All content cleared!', 'success');
-  });
-
-  loadFromLocalStorage();
-  loadSharedContent();
-  window.addEventListener('resize', updatePreviewSize);
-
-  // Apply initial theme when page loads
-  function applyTheme(theme) {
-    const body = document.body;
-    const header = document.querySelector('.header');
-    const toolbar = document.querySelector('.toolbar');
-    const buttons = document.querySelectorAll('.button');
-    const settingsPanel = document.querySelector('.settings-panel');
-    
-    const themeColors = {
-      nord: {
-        '--primary-bg': '#2E3440',
-        '--secondary-bg': '#3B4252',
-        '--accent-color': '#88C0D0',
-        '--text-primary': '#ECEFF4',
-        '--text-secondary': '#D8DEE9',
-        '--border-color': '#434C5E'
-      },
-      monokai: {
-        '--primary-bg': '#272822',
-        '--secondary-bg': '#383830',
-        '--accent-color': '#F92672',
-        '--text-primary': '#F8F8F2',
-        '--text-secondary': '#75715E',
-        '--border-color': '#3E3D32'
-      },
-      material: {
-        '--primary-bg': '#263238',
-        '--secondary-bg': '#37474F',
-        '--accent-color': '#FF4081',
-        '--text-primary': '#ECEFF1',
-        '--text-secondary': '#B0BEC5',
-        '--border-color': '#455A64'
-      },
-      dracula: {
-        '--primary-bg': '#282a36',
-        '--secondary-bg': '#44475a',
-        '--accent-color': '#ff79c6',
-        '--text-primary': '#f8f8f2',
-        '--text-secondary': '#6272a4',
-        '--border-color': '#6272a4'
-      },
-      'tomorrow-night-bright': {
-        '--primary-bg': '#1d1f21',
-        '--secondary-bg': '#282c34',
-        '--accent-color': '#e0e0e0',
-        '--text-primary': '#f0f0f0',
-        '--text-secondary': '#b0b0b0',
-        '--border-color': '#4e5b67'
-      },
-      default: {
-        '--primary-bg': '#1a1b26',
-        '--secondary-bg': '#24283b',
-        '--accent-color': '#7aa2f7',
-        '--text-primary': '#c0caf5',
-        '--text-secondary': '#9aa5ce',
-        '--border-color': '#414868'
-      }
-    };
-
-    const selectedThemeColors = themeColors[theme] || themeColors.default;
-    for (const [key, value] of Object.entries(selectedThemeColors)) {
-      body.style.setProperty(key, value);
-    }
-
-    const secondaryBg = getComputedStyle(body).getPropertyValue('--secondary-bg');
-    const accentColor = getComputedStyle(body).getPropertyValue('--accent-color');
-    const textPrimary = getComputedStyle(body).getPropertyValue('--text-primary');
-
-    header.style.backgroundColor = secondaryBg;
-    toolbar.style.backgroundColor = secondaryBg;
-    settingsPanel.style.backgroundColor = secondaryBg;
-
-    buttons.forEach(button => {
-      button.style.backgroundColor = secondaryBg;
-      button.style.borderColor = accentColor;
-      button.style.color = textPrimary;
-    });
-
-    // Apply CodeMirror theme dynamically
-    state.editor.setOption('theme', theme);
-  }
-})();
-
+        function applyTheme(theme) {
+          const body = document.body;
+          const header = document.querySelector('.header');
+          const toolbar = document.querySelector('.toolbar');
+          const buttons = document.querySelectorAll('.button');
+          const settingsPanel = document.querySelector('.settings-panel');
+          const themeColors = {
+            nord: {
+              '--primary-bg': '#2E3440',
+              '--secondary-bg': '#3B4252',
+              '--accent-color': '#88C0D0',
+              '--text-primary': '#ECEFF4',
+              '--text-secondary': '#D8DEE9',
+              '--border-color': '#434C5E'
+            },
+            monokai: {
+              '--primary-bg': '#272822',
+              '--secondary-bg': '#383830',
+              '--accent-color': '#F92672',
+              '--text-primary': '#F8F8F2',
+              '--text-secondary': '#75715E',
+              '--border-color': '#3E3D32'
+            },
+            material: {
+              '--primary-bg': '#263238',
+              '--secondary-bg': '#37474F',
+              '--accent-color': '#FF4081',
+              '--text-primary': '#ECEFF1',
+              '--text-secondary': '#B0BEC5',
+              '--border-color': '#455A64'
+            },
+            dracula: {
+              '--primary-bg': '#282a36',
+              '--secondary-bg': '#44475a',
+              '--accent-color': '#ff79c6',
+              '--text-primary': '#f8f8f2',
+              '--text-secondary': '#6272a4',
+              '--border-color': '#6272a4'
+            },
+            'tomorrow-night-bright': {
+              '--primary-bg': '#1d1f21',
+              '--secondary-bg': '#282c34',
+              '--accent-color': '#e0e0e0',
+              '--text-primary': '#f0f0f0',
+              '--text-secondary': '#b0b0b0',
+              '--border-color': '#4e5b67'
+            },
+            default: {
+              '--primary-bg': '#1a1b26',
+              '--secondary-bg': '#24283b',
+              '--accent-color': '#7aa2f7',
+              '--text-primary': '#c0caf5',
+              '--text-secondary': '#9aa5ce',
+              '--border-color': '#414868'
+            }
+          };
+          const selectedThemeColors = themeColors[theme] || themeColors.default;
+          for (const [key, value] of Object.entries(selectedThemeColors)) {
+            body.style.setProperty(key, value);
+          }
+          const secondaryBg = getComputedStyle(body).getPropertyValue('--secondary-bg');
+          const accentColor = getComputedStyle(body).getPropertyValue('--accent-color');
+          const textPrimary = getComputedStyle(body).getPropertyValue('--text-primary');
+          header.style.backgroundColor = secondaryBg;
+          toolbar.style.backgroundColor = secondaryBg;
+          settingsPanel.style.backgroundColor = secondaryBg;
+          buttons.forEach(button => {
+            button.style.backgroundColor = secondaryBg;
+            button.style.borderColor = accentColor;
+            button.style.color = textPrimary;
+          });
+          state.editor.setOption('theme', theme);
+        }
+      })();
     </script>
   </body>
 </html>
