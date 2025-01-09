@@ -841,20 +841,15 @@
 						showNotification('Error generating zip file', 'error');
 					});
 				});
-				document.getElementById('shareBtn').addEventListener('click', async () => {
-					try {
-						const shareData = {
-							html: state.code.html,
-							css: state.code.css,
-							javascript: state.code.javascript
-						};
-						const shareUrl = `${window.location.origin}${window.location.pathname}?share=${btoa(JSON.stringify(shareData))}`;
-						await navigator.clipboard.writeText(shareUrl);
-						showNotification('Share URL copied to clipboard!', 'success');
-					} catch (err) {
-						showNotification('Error creating share URL', 'error');
-					}
-				});
+document.getElementById('shareBtn').addEventListener('click', async () => {
+    try {
+        const shareUrl = window.location.origin;
+        await navigator.clipboard.writeText(shareUrl);
+        showNotification('Domain URL copied to clipboard!', 'success');
+    } catch (err) {
+        showNotification('Error copying domain URL', 'error');
+    }
+});
 			})();
 		</script>
 	</body>
