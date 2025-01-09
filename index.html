@@ -564,8 +564,8 @@
      editor: null,
      isUpdating: false,
      settings: {
-      theme: localStorage.getItem('editorTheme') || 'default',
-      fontSize: localStorage.getItem('editorFontSize') || '14'
+      theme: 'default',
+      fontSize: '14'
      }
     };
     state.editor = CodeMirror(document.getElementById('editor'), {
@@ -581,7 +581,6 @@
      extraKeys: {
       'Ctrl-Enter': () => document.getElementById('runBtn').click(),
       'Ctrl-S': (cm) => {
-       saveToLocalStorage();
        showNotification('Changes saved!', 'success');
        return false;
       },
@@ -590,27 +589,6 @@
      }
     });
     document.querySelector('.CodeMirror').style.fontSize = `${state.settings.fontSize}px`;
-
-    function loadFromLocalStorage() {
-     try {
-      const saved = localStorage.getItem('editorContent');
-      if (saved) {
-       state.code = JSON.parse(saved);
-       state.editor.setValue(state.code[state.currentLang] || '');
-       updatePreview(true);
-      }
-     } catch (err) {
-      console.error('Error loading saved content:', err);
-     }
-    }
-
-    function saveToLocalStorage() {
-     try {
-      localStorage.setItem('editorContent', JSON.stringify(state.code));
-     } catch (err) {
-      console.error('Error saving content:', err);
-     }
-    }
 
     function showNotification(message, type = 'success') {
      const notification = document.createElement('div');
@@ -628,8 +606,7 @@
      requestAnimationFrame(() => {
       try {
        const previewContent = `
-
-											
+                                            
 											<!DOCTYPE html>
 											<html>
 												<head>
@@ -640,7 +617,7 @@
 														<body>
               ${state.code.html || ''}
 
-															
+                                                    
 															<script>${state.code.javascript || ''}<\/script>
 															</body>
 														</html>`;
@@ -679,7 +656,6 @@
     state.editor.on('change', (cm) => {
      state.code[state.currentLang] = cm.getValue();
      updatePreview();
-     saveToLocalStorage();
     });
     document.querySelectorAll('.device-button').forEach(button => {
      button.addEventListener('click', () => {
@@ -706,7 +682,6 @@
      const theme = e.target.value;
      applyTheme(theme);
      state.settings.theme = theme;
-     localStorage.setItem('editorTheme', theme);
     });
     const fontSizeSelect = document.getElementById('fontSizeSelect');
     fontSizeSelect.value = state.settings.fontSize;
@@ -714,7 +689,6 @@
      const fontSize = e.target.value;
      document.querySelector('.CodeMirror').style.fontSize = `${fontSize}px`;
      state.settings.fontSize = fontSize;
-     localStorage.setItem('editorFontSize', fontSize);
     });
     document.getElementById('runBtn').addEventListener('click', () => {
      state.code[state.currentLang] = state.editor.getValue();
@@ -724,8 +698,7 @@
     document.getElementById('previewBtn').addEventListener('click', () => {
      const win = window.open('', '_blank');
      win.document.write(`
-
-														
+                                            
 														<!DOCTYPE html>
 														<html>
 															<head>
@@ -734,58 +707,13 @@
 																		<style>${state.code.css || ''}</style>
 																	</head>
 																	<body>
-          ${state.code.html || ''}
+              ${state.code.html || ''}
 
-																		
+                                                    
 																		<script>${state.code.javascript || ''}<\/script>
 																		</body>
 																	</html>`);
     });
-    document.getElementById('shareBtn').addEventListener('click', async () => {
-     try {
-      const shareUrl = "https://synprev.vercel.app";
-      await navigator.clipboard.writeText(shareUrl);
-      showNotification('Share URL copied to clipboard!', 'success');
-     } catch (err) {
-      showNotification('Error copying URL', 'error');
-      console.error(err);
-     }
-    });
-    const resizeHandle = document.getElementById('resizeHandle');
-    let isResizing = false;
-    let startX;
-    let startWidth;
-    resizeHandle.addEventListener('mousedown', (e) => {
-     isResizing = true;
-     startX = e.pageX;
-     startWidth = document.querySelector('.editors-container').offsetWidth;
-    });
-    document.addEventListener('mousemove', (e) => {
-     if (!isResizing) return;
-     const diff = e.pageX - startX;
-     const newWidth = startWidth + diff;
-     document.querySelector('.editors-container').style.width = `${newWidth}px`;
-     updatePreviewSize();
-    });
-    document.addEventListener('mouseup', () => {
-     isResizing = false;
-    });
-
-    function loadSharedContent() {
-     const urlParams = new URLSearchParams(window.location.search);
-     const shareData = urlParams.get('share');
-     if (shareData) {
-      try {
-       const decodedData = JSON.parse(atob(shareData));
-       state.code = decodedData;
-       state.editor.setValue(state.code[state.currentLang] || '');
-       updatePreview(true);
-      } catch (err) {
-       console.error('Error loading shared content:', err);
-       showNotification('Error loading shared content', 'error');
-      }
-     }
-    }
     document.getElementById('clearBtn').addEventListener('click', () => {
      state.code = {
       html: '',
@@ -793,15 +721,9 @@
       javascript: ''
      };
      state.editor.setValue('');
-     localStorage.removeItem('editorContent');
-     localStorage.removeItem('editorTheme');
-     localStorage.removeItem('editorFontSize');
      updatePreview(true);
      showNotification('All content cleared!', 'success');
     });
-    loadFromLocalStorage();
-    loadSharedContent();
-    window.addEventListener('resize', updatePreviewSize);
 
     function applyTheme(theme) {
      const body = document.body;
@@ -888,40 +810,8 @@
       runButton.style.color = secondaryBg;
      }
      localStorage.setItem('selectedTheme', theme);
+     state.editor.setOption('theme', theme);
     }
-    window.addEventListener('DOMContentLoaded', () => {
-     const savedTheme = localStorage.getItem('selectedTheme') || 'default';
-     applyTheme(savedTheme);
-    });
-    document.getElementById('saveBtn').addEventListener('click', () => {
-     const htmlContent = state.code.html || '';
-     const cssContent = state.code.css || '';
-     const javascriptContent = state.code.javascript || '';
-     const zip = new JSZip();
-     if (htmlContent) {
-      zip.file('index.html', htmlContent);
-     }
-     if (cssContent) {
-      zip.file('styles.css', cssContent);
-     }
-     if (javascriptContent) {
-      zip.file('script.js', javascriptContent);
-     }
-     zip.generateAsync({
-      type: 'blob'
-     }).then(function(content) {
-      const link = document.createElement('a');
-      const url = URL.createObjectURL(content);
-      link.href = url;
-      link.download = 'project.zip';
-      link.click();
-      URL.revokeObjectURL(url);
-      showNotification('Your files are being downloaded as a zip!', 'success');
-     }).catch(function(err) {
-      console.error('Error generating zip file:', err);
-      showNotification('Error generating zip file', 'error');
-     });
-    });
    })();
   </script>
  </body>
