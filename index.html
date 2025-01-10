@@ -1,681 +1,681 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Synprev - Advanced Code Editor</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/nord.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/material.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/dracula.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/tomorrow-night-bright.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/hint/show-hint.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/lint/lint.min.css" rel="stylesheet">
-    <style>
-      :root {
-        --primary-bg: #0f172a;
-        --secondary-bg: #1e293b;
-        --accent-color: #3b82f6;
-        --text-primary: #f1f5f9;
-        --text-secondary: #94a3b8;
-        --border-color: #334155;
-        --success-color: #22c55e;
-        --error-color: #ef4444;
-        --warning-color: #f59e0b;
-      }
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Synprev</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/nord.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/material.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/dracula.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/tomorrow-night-bright.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/hint/show-hint.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/lint/lint.min.css" rel="stylesheet">
+  <style>
+   :root {
+    --primary-bg: #0f172a;
+    --secondary-bg: #1e293b;
+    --accent-color: #3b82f6;
+    --text-primary: #f1f5f9;
+    --text-secondary: #94a3b8;
+    --border-color: #334155;
+    --success-color: #22c55e;
+    --error-color: #ef4444;
+    --warning-color: #f59e0b
+   }
 
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-        font-family: 'Inter var', system-ui, -apple-system, sans-serif;
-      }
+   * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter var', system-ui, -apple-system, sans-serif
+   }
 
-      body {
-        height: 100vh;
-        background: var(--primary-bg);
-        color: var(--text-primary);
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
-      }
+   body {
+    height: 100vh;
+    background: var(--primary-bg);
+    color: var(--text-primary);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden
+   }
 
-      .header {
-        background: var(--secondary-bg);
-        padding: 1rem 1.5rem;
-        border-bottom: 1px solid var(--border-color);
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-        backdrop-filter: blur(8px);
-      }
+   .header {
+    background: var(--secondary-bg);
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, .05);
+    backdrop-filter: blur(8px)
+   }
 
-      .logo {
-        font-size: 1.5rem;
-        font-weight: 700;
-        background: linear-gradient(135deg, var(--accent-color), #818cf8);
-        -webkit-background-clip: text;
-        color: transparent;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-      }
+   .logo {
+    font-size: 1.5rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--accent-color), #818cf8);
+    -webkit-background-clip: text;
+    color: transparent;
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem
+   }
 
-      .toolbar {
-        background: var(--secondary-bg);
-        padding: 0.75rem 1rem;
-        display: flex;
-        gap: 1rem;
-        border-bottom: 1px solid var(--border-color);
-        align-items: center;
-        flex-wrap: wrap;
-        backdrop-filter: blur(8px);
-      }
+   .toolbar {
+    background: var(--secondary-bg);
+    padding: .75rem 1rem;
+    display: flex;
+    gap: 1rem;
+    border-bottom: 1px solid var(--border-color);
+    align-items: center;
+    flex-wrap: wrap;
+    backdrop-filter: blur(8px)
+   }
 
-      .toolbar-group {
-        display: flex;
-        gap: 0.5rem;
-        align-items: center;
-      }
+   .toolbar-group {
+    display: flex;
+    gap: .5rem;
+    align-items: center
+   }
 
-      .toolbar-group:not(:last-child) {
-        padding-right: 1rem;
-        border-right: 1px solid var(--border-color);
-      }
+   .toolbar-group:not(:last-child) {
+    padding-right: 1rem;
+    border-right: 1px solid var(--border-color)
+   }
 
-      .button {
-        padding: 0.5rem 1rem;
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid var(--border-color);
-        color: var(--text-primary);
-        border-radius: 0.5rem;
-        cursor: pointer;
-        font-size: 0.875rem;
-        font-weight: 500;
-        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-      }
+   .button {
+    padding: .5rem 1rem;
+    background: rgba(255, 255, 255, .05);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    border-radius: .5rem;
+    cursor: pointer;
+    font-size: .875rem;
+    font-weight: 500;
+    transition: all .2s cubic-bezier(.4, 0, .2, 1);
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, .05)
+   }
 
-      .button:hover {
-        background: var(--accent-color);
-        border-color: var(--accent-color);
-        color: #fff;
-        transform: translateY(-1px);
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-      }
+   .button:hover {
+    background: var(--accent-color);
+    border-color: var(--accent-color);
+    color: #fff;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, .1)
+   }
 
-      .button:active {
-        transform: translateY(0);
-      }
+   .button:active {
+    transform: translateY(0)
+   }
 
-      .button svg {
-        width: 1rem;
-        height: 1rem;
-      }
+   .button svg {
+    width: 1rem;
+    height: 1rem
+   }
 
-      .button.primary {
-        background: var(--accent-color);
-        border-color: var(--accent-color);
-        color: #fff;
-      }
+   .button.primary {
+    background: var(--accent-color);
+    border-color: var(--accent-color);
+    color: #fff
+   }
 
-      .button.primary:hover {
-        background: #2563eb;
-      }
+   .button.primary:hover {
+    background: #2563eb
+   }
 
-      .main-content {
-        flex: 1;
-        display: flex;
-        overflow: hidden;
-      }
+   .main-content {
+    flex: 1;
+    display: flex;
+    overflow: hidden
+   }
 
-      .split-view {
-        display: flex;
-        flex: 1;
-        overflow: hidden;
-        gap: 1px;
-      }
+   .split-view {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+    gap: 1px
+   }
 
-      .editors-container {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        min-width: 300px;
-        background: var(--primary-bg);
-      }
+   .editors-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 300px;
+    background: var(--primary-bg)
+   }
 
-      .tab-buttons {
-        display: flex;
-        background: var(--secondary-bg);
-        padding: 0 0.5rem;
-        gap: 0.25rem;
-        overflow-x: auto;
-        scrollbar-width: none;
-        border-bottom: 1px solid var(--border-color);
-      }
+   .tab-buttons {
+    display: flex;
+    background: var(--secondary-bg);
+    padding: 0 .5rem;
+    gap: .25rem;
+    overflow-x: auto;
+    scrollbar-width: none;
+    border-bottom: 1px solid var(--border-color)
+   }
 
-      .tab-button {
-        padding: 0.75rem 1.25rem;
-        background: transparent;
-        border: none;
-        color: var(--text-secondary);
-        cursor: pointer;
-        font-size: 0.875rem;
-        transition: all 0.2s;
-        border-bottom: 2px solid transparent;
-        white-space: nowrap;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        position: relative;
-      }
+   .tab-button {
+    padding: .75rem 1.25rem;
+    background: 0 0;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: .875rem;
+    transition: all .2s;
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    position: relative
+   }
 
-      .tab-button::after {
-        content: '';
-        position: absolute;
-        bottom: -1px;
-        left: 0;
-        right: 0;
-        height: 2px;
-        background: var(--accent-color);
-        transform: scaleX(0);
-        transition: transform 0.2s;
-      }
+   .tab-button::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--accent-color);
+    transform: scaleX(0);
+    transition: transform .2s
+   }
 
-      .tab-button:hover::after {
-        transform: scaleX(0.3);
-      }
+   .tab-button:hover::after {
+    transform: scaleX(.3)
+   }
 
-      .tab-button.active {
-        color: var(--text-primary);
-        background: rgba(255, 255, 255, 0.05);
-      }
+   .tab-button.active {
+    color: var(--text-primary);
+    background: rgba(255, 255, 255, .05)
+   }
 
-      .tab-button.active::after {
-        transform: scaleX(1);
-      }
+   .tab-button.active::after {
+    transform: scaleX(1)
+   }
 
-      .editor-wrapper {
-        flex: 1;
-        position: relative;
-        overflow: hidden;
-      }
+   .editor-wrapper {
+    flex: 1;
+    position: relative;
+    overflow: hidden
+   }
 
-      .preview-container {
-        flex: 1;
-        background: #fff;
-        position: relative;
-        min-width: 300px;
-        display: flex;
-        flex-direction: column;
-        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-      }
+   .preview-container {
+    flex: 1;
+    background: #fff;
+    position: relative;
+    min-width: 300px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, .1)
+   }
 
-      .preview-toolbar {
-        background: var(--secondary-bg);
-        padding: 0.75rem 1rem;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        border-bottom: 1px solid var(--border-color);
-        backdrop-filter: blur(8px);
-      }
+   .preview-toolbar {
+    background: var(--secondary-bg);
+    padding: .75rem 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border-color);
+    backdrop-filter: blur(8px)
+   }
 
-      .device-selector {
-        display: flex;
-        gap: 0.5rem;
-      }
+   .device-selector {
+    display: flex;
+    gap: .5rem
+   }
 
-      .device-button {
-        padding: 0.25rem 0.75rem;
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid var(--border-color);
-        color: var(--text-secondary);
-        border-radius: 0.375rem;
-        cursor: pointer;
-        font-size: 0.75rem;
-        transition: all 0.2s;
-      }
+   .device-button {
+    padding: .25rem .75rem;
+    background: rgba(255, 255, 255, .05);
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    border-radius: .375rem;
+    cursor: pointer;
+    font-size: .75rem;
+    transition: all .2s
+   }
 
-      .device-button.active {
-        background: var(--accent-color);
-        border-color: var(--accent-color);
-        color: #fff;
-      }
+   .device-button.active {
+    background: var(--accent-color);
+    border-color: var(--accent-color);
+    color: #fff
+   }
 
-      #preview {
-        flex: 1;
-        border: none;
-        background: #fff;
-        transition: all 0.3s ease;
-      }
+   #preview {
+    flex: 1;
+    border: none;
+    background: #fff;
+    transition: all .3s ease
+   }
 
-      .resize-handle {
-        width: 4px;
-        background: var(--border-color);
-        cursor: ew-resize;
-        transition: background 0.2s;
-      }
+   .resize-handle {
+    width: 4px;
+    background: var(--border-color);
+    cursor: ew-resize;
+    transition: background .2s
+   }
 
-      .resize-handle:hover {
-        background: var(--accent-color);
-      }
+   .resize-handle:hover {
+    background: var(--accent-color)
+   }
 
-      .CodeMirror {
-        height: 100%;
-        font-family: 'JetBrains Mono', 'Fira Code', monospace;
-        font-size: 0.875rem;
-        line-height: 1.6;
-        padding: 1rem;
-      }
+   .CodeMirror {
+    height: 100%;
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    font-size: .875rem;
+    line-height: 1.6;
+    padding: 1rem
+   }
 
-      .notification {
-        position: fixed;
-        bottom: 1.5rem;
-        right: 1.5rem;
-        padding: 1rem 1.5rem;
-        border-radius: 0.5rem;
-        color: #fff;
-        font-size: 0.875rem;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        animation: slideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        z-index: 1000;
-        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-        backdrop-filter: blur(8px);
-      }
+   .notification {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    padding: 1rem 1.5rem;
+    border-radius: .5rem;
+    color: #fff;
+    font-size: .875rem;
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    animation: slideIn .3s cubic-bezier(.4, 0, .2, 1);
+    z-index: 1000;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, .1);
+    backdrop-filter: blur(8px)
+   }
 
-      .notification.success {
-        background: var(--success-color);
-      }
+   .notification.success {
+    background: var(--success-color)
+   }
 
-      .notification.error {
-        background: var(--error-color);
-      }
+   .notification.error {
+    background: var(--error-color)
+   }
 
-      .notification.warning {
-        background: var(--warning-color);
-      }
+   .notification.warning {
+    background: var(--warning-color)
+   }
 
-      .settings-panel {
-        position: fixed;
-        top: 0;
-        right: -400px;
-        width: 400px;
-        height: 100vh;
-        background: rgba(30, 41, 59, 0.95);
-        backdrop-filter: blur(10px);
-        border-left: 1px solid var(--border-color);
-        padding: 24px;
-        transition: right 0.3s ease;
-        z-index: 1000;
-        overflow-y: auto;
-      }
+   .settings-panel {
+    position: fixed;
+    top: 0;
+    right: -400px;
+    width: 400px;
+    height: 100vh;
+    background: rgba(30, 41, 59, .95);
+    backdrop-filter: blur(10px);
+    border-left: 1px solid var(--border-color);
+    padding: 24px;
+    transition: right .3s ease;
+    z-index: 1000;
+    overflow-y: auto
+   }
 
-      .settings-panel.visible {
-        right: 0;
-      }
+   .settings-panel.visible {
+    right: 0
+   }
 
-      .settings-section {
-        margin-bottom: 24px;
-      }
+   .settings-section {
+    margin-bottom: 24px
+   }
 
-      .settings-section h3 {
-        color: var(--accent-color);
-        margin-bottom: 16px;
-        font-size: 1.1rem;
-      }
+   .settings-section h3 {
+    color: var(--accent-color);
+    margin-bottom: 16px;
+    font-size: 1.1rem
+   }
 
-      .setting-item {
-        margin-bottom: 16px;
-      }
+   .setting-item {
+    margin-bottom: 16px
+   }
 
-      .setting-item label {
-        display: block;
-        margin-bottom: 8px;
-        color: var(--text-secondary);
-      }
+   .setting-item label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--text-secondary)
+   }
 
-      .setting-item select,
-      .setting-item input {
-        width: 100%;
-        padding: 8px 12px;
-        background: var(--primary-bg);
-        border: 1px solid var(--border-color);
-        color: var(--text-primary);
-        border-radius: 6px;
-        font-size: 14px;
-      }
+   .setting-item input,
+   .setting-item select {
+    width: 100%;
+    padding: 8px 12px;
+    background: var(--primary-bg);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    border-radius: 6px;
+    font-size: 14px
+   }
 
-      .keyboard-shortcuts {
-        display: grid;
-        grid-template-columns: auto 1fr;
-        gap: 12px 24px;
-      }
+   .keyboard-shortcuts {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 12px 24px
+   }
 
-      .shortcut-key {
-        padding: 4px 8px;
-        background: var(--primary-bg);
-        border-radius: 4px;
-        font-size: 12px;
-        color: var(--text-secondary);
-      }
+   .shortcut-key {
+    padding: 4px 8px;
+    background: var(--primary-bg);
+    border-radius: 4px;
+    font-size: 12px;
+    color: var(--text-secondary)
+   }
 
-      .console-panel {
-        background: var(--primary-bg);
-        border-top: 1px solid var(--border-color);
-        padding: 1rem;
-        font-family: 'JetBrains Mono', monospace;
-        font-size: 0.875rem;
-        max-height: 200px;
-        overflow-y: auto;
-        display: none;
-      }
+   .console-panel {
+    background: var(--primary-bg);
+    border-top: 1px solid var(--border-color);
+    padding: 1rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .875rem;
+    max-height: 200px;
+    overflow-y: auto;
+    display: none
+   }
 
-      .console-panel.visible {
-        display: block;
-      }
+   .console-panel.visible {
+    display: block
+   }
 
-      .console-line {
-        margin-bottom: 0.5rem;
-        padding: 0.25rem 0;
-      }
+   .console-line {
+    margin-bottom: .5rem;
+    padding: .25rem 0
+   }
 
-      .console-error {
-        color: var(--error-color);
-      }
+   .console-error {
+    color: var(--error-color)
+   }
 
-      .console-warning {
-        color: var(--warning-color);
-      }
+   .console-warning {
+    color: var(--warning-color)
+   }
 
-      .console-info {
-        color: var(--accent-color);
-      }
+   .console-info {
+    color: var(--accent-color)
+   }
 
-      @keyframes slideIn {
-        from {
-          transform: translateY(100%);
-          opacity: 0;
-        }
+   @keyframes slideIn {
+    from {
+     transform: translateY(100%);
+     opacity: 0
+    }
 
-        to {
-          transform: translateY(0);
-          opacity: 1;
-        }
-      }
+    to {
+     transform: translateY(0);
+     opacity: 1
+    }
+   }
 
-      @media (max-width: 768px) {
-        .split-view {
-          flex-direction: column;
-        }
+   @media (max-width:768px) {
+    .split-view {
+     flex-direction: column
+    }
 
-        .resize-handle {
-          height: 4px;
-          width: 100%;
-          cursor: ns-resize;
-        }
+    .resize-handle {
+     height: 4px;
+     width: 100%;
+     cursor: ns-resize
+    }
 
-        .editors-container,
-        .preview-container {
-          min-height: 300px;
-          width: 100%;
-        }
+    .editors-container,
+    .preview-container {
+     min-height: 300px;
+     width: 100%
+    }
 
-        .settings-panel {
-          width: 100%;
-          right: -100%;
-        }
+    .settings-panel {
+     width: 100%;
+     right: -100%
+    }
 
-        .toolbar {
-          padding: 8px;
-        }
+    .toolbar {
+     padding: 8px
+    }
 
-        .toolbar-group {
-          flex-wrap: wrap;
-        }
+    .toolbar-group {
+     flex-wrap: wrap
+    }
 
-        .button {
-          padding: 6px 12px;
-          font-size: 13px;
-        }
-      }
-    </style>
-  </head>
-  <body>
-    <div class="header">
-      <div class="logo">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M16 18l6-6-6-6M8 6l-6 6 6 6" />
-        </svg> Synprev
-      </div>
-      <div class="toolbar-group">
-        <button class="button" id="shareBtn" title="Share">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
-            <polyline points="16 6 12 2 8 6" />
-            <line x1="12" y1="2" x2="12" y2="15" />
-          </svg> Share </button>
-        <button class="button" id="settingsBtn" title="Settings">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="3" />
-            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
-          </svg> Settings </button>
-      </div>
+    .button {
+     padding: 6px 12px;
+     font-size: 13px
+    }
+   }
+  </style>
+ </head>
+ <body>
+  <div class="header">
+   <div class="logo">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+     <path d="M16 18l6-6-6-6M8 6l-6 6 6 6" />
+    </svg>Synprev
+   </div>
+   <div class="toolbar-group">
+    <button class="button" id="shareBtn" title="Share">
+     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
+      <polyline points="16 6 12 2 8 6" />
+      <line x1="12" y1="2" x2="12" y2="15" />
+     </svg>Share </button>
+    <button class="button" id="settingsBtn" title="Settings">
+     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="12" cy="12" r="3" />
+      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+     </svg>Settings </button>
+   </div>
+  </div>
+  <div class="toolbar">
+   <div class="toolbar-group">
+    <button class="button primary" id="runBtn" title="Run (Ctrl+Enter)">
+     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <polygon points="5 3 19 12 5 21 5 3" />
+     </svg>Run </button>
+    <button class="button" id="previewBtn" title="Open in New Window">
+     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+      <polyline points="15 3 21 3 21 9" />
+      <line x1="10" y1="14" x2="21" y2="3" />
+     </svg>Preview </button>
+   </div>
+   <div class="toolbar-group">
+    <button class="button" id="clearBtn" title="Clear">
+     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M18 6V16.2C18 17.8802 18 18.7202 17.673 19.362C17.3854 19.9265 16.9265 20.3854 16.362 20.673C15.7202 21 14.8802 21 13.2 21H10.8C9.11984 21 8.27976 21 7.63803 20.673C7.07354 20.3854 6.6146 19.9265 6.32698 19.362C6 18.7202 6 17.8802 6 16.2V6M4 6H20M16 6L15.7294 5.18807C15.4671 4.40125 15.3359 4.00784 15.0927 3.71698C14.8779 3.46013 14.6021 3.26132 14.2905 3.13878C13.9376 3 13.523 3 12.6936 3H11.3064C10.477 3 10.0624 3 9.70951 3.13878C9.39792 3.26132 9.12208 3.46013 8.90729 3.71698C8.66405 4.00784 8.53292 4.40125 8.27064 5.18807L8 6" />
+     </svg>Clear </button>
+    <button class="button" id="saveBtn" title="Download">
+     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+      <polyline points="7 10 12 15 17 10" />
+      <line x1="12" y1="15" x2="12" y2="3" />
+     </svg>Download </button>
+    <button class="button" id="consoleBtn" title="Toggle Console">
+     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <polyline points="4 17 10 11 4 5" />
+      <line x1="12" y1="19" x2="20" y2="19" />
+     </svg>Console </button>
+   </div>
+  </div>
+  <div class="main-content">
+   <div class="split-view">
+    <div class="editors-container">
+     <div class="tab-buttons">
+      <button class="tab-button active" data-lang="html">
+       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z" />
+        <polyline points="13 2 13 9 20 9" />
+       </svg>HTML </button>
+      <button class="tab-button" data-lang="css">
+       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+        <polyline points="14 2 14 8 20 8" />
+        <line x1="16" y1="13" x2="8" y2="13" />
+        <line x1="16" y1="17" x2="8" y2="17" />
+        <polyline points="10 9 9 9 8 9" />
+       </svg>CSS </button>
+      <button class="tab-button" data-lang="javascript">
+       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+        <polyline points="14 2 14 8 20 8" />
+       </svg>JavaScript </button>
+     </div>
+     <div class="editor-wrapper">
+      <div id="editor"></div>
+     </div>
+     <div class="console-panel" id="consolePanel">
+      <div id="consoleOutput"></div>
+     </div>
     </div>
-    <div class="toolbar">
-      <div class="toolbar-group">
-        <button class="button primary" id="runBtn" title="Run (Ctrl+Enter)">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <polygon points="5 3 19 12 5 21 5 3" />
-          </svg> Run </button>
-        <button class="button" id="previewBtn" title="Open in New Window">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
-            <polyline points="15 3 21 3 21 9" />
-            <line x1="10" y1="14" x2="21" y2="3" />
-          </svg> Preview </button>
+    <div class="resize-handle" id="resizeHandle"></div>
+    <div class="preview-container">
+     <div class="preview-toolbar">
+      <div class="device-selector">
+       <button class="device-button active" data-width="100%" data-height="100%">Desktop</button>
+       <button class="device-button" data-width="768px" data-height="1024px">Tablet</button>
+       <button class="device-button" data-width="375px" data-height="812px">Mobile</button>
       </div>
-      <div class="toolbar-group">
-        <button class="button" id="clearBtn" title="Clear">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M18 6V16.2C18 17.8802 18 18.7202 17.673 19.362C17.3854 19.9265 16.9265 20.3854 16.362 20.673C15.7202 21 14.8802 21 13.2 21H10.8C9.11984 21 8.27976 21 7.63803 20.673C7.07354 20.3854 6.6146 19.9265 6.32698 19.362C6 18.7202 6 17.8802 6 16.2V6M4 6H20M16 6L15.7294 5.18807C15.4671 4.40125 15.3359 4.00784 15.0927 3.71698C14.8779 3.46013 14.6021 3.26132 14.2905 3.13878C13.9376 3 13.523 3 12.6936 3H11.3064C10.477 3 10.0624 3 9.70951 3.13878C9.39792 3.26132 9.12208 3.46013 8.90729 3.71698C8.66405 4.00784 8.53292 4.40125 8.27064 5.18807L8 6" />
-          </svg> Clear </button>
-        <button class="button" id="saveBtn" title="Download">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-            <polyline points="7 10 12 15 17 10" />
-            <line x1="12" y1="15" x2="12" y2="3" />
-          </svg> Download </button>
-        <button class="button" id="consoleBtn" title="Toggle Console">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <polyline points="4 17 10 11 4 5" />
-            <line x1="12" y1="19" x2="20" y2="19" />
-          </svg> Console </button>
-      </div>
+      <span id="previewSize"></span>
+     </div>
+     <iframe id="preview"></iframe>
     </div>
-    <div class="main-content">
-      <div class="split-view">
-        <div class="editors-container">
-          <div class="tab-buttons">
-            <button class="tab-button active" data-lang="html">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z" />
-                <polyline points="13 2 13 9 20 9" />
-              </svg> HTML </button>
-            <button class="tab-button" data-lang="css">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                <polyline points="14 2 14 8 20 8" />
-                <line x1="16" y1="13" x2="8" y2="13" />
-                <line x1="16" y1="17" x2="8" y2="17" />
-                <polyline points="10 9 9 9 8 9" />
-              </svg> CSS </button>
-            <button class="tab-button" data-lang="javascript">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                <polyline points="14 2 14 8 20 8" />
-              </svg> JavaScript </button>
-          </div>
-          <div class="editor-wrapper">
-            <div id="editor"></div>
-          </div>
-          <div class="console-panel" id="consolePanel">
-            <div id="consoleOutput"></div>
-          </div>
-        </div>
-        <div class="resize-handle" id="resizeHandle"></div>
-        <div class="preview-container">
-          <div class="preview-toolbar">
-            <div class="device-selector">
-              <button class="device-button active" data-width="100%" data-height="100%">Desktop</button>
-              <button class="device-button" data-width="768px" data-height="1024px">Tablet</button>
-              <button class="device-button" data-width="375px" data-height="812px">Mobile</button>
-            </div>
-            <span id="previewSize"></span>
-          </div>
-          <iframe id="preview"></iframe>
-        </div>
-      </div>
+   </div>
+  </div>
+  <div class="settings-panel" id="settingsPanel">
+   <div class="settings-header">
+    <h2>Settings</h2>
+    <button class="button" id="closeSettings">
+     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <line x1="18" y1="6" x2="6" y2="18" />
+      <line x1="6" y1="6" x2="18" y2="18" />
+     </svg>
+    </button>
+   </div>
+   <div class="settings-section">
+    <h3>Editor</h3>
+    <div class="setting-item">
+     <label for="themeSelect">Theme</label>
+     <select id="themeSelect">
+      <option value="default">Default</option>
+      <option value="nord">Nord</option>
+      <option value="monokai">Monokai</option>
+      <option value="material">Material</option>
+      <option value="dracula">Dracula</option>
+      <option value="tomorrow-night-bright">Tomorrow Night</option>
+     </select>
     </div>
-    <div class="settings-panel" id="settingsPanel">
-      <div class="settings-header">
-        <h2>Settings</h2>
-        <button class="button" id="closeSettings">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <line x1="18" y1="6" x2="6" y2="18" />
-            <line x1="6" y1="6" x2="18" y2="18" />
-          </svg>
-        </button>
-      </div>
-      <div class="settings-section">
-        <h3>Editor</h3>
-        <div class="setting-item">
-          <label for="themeSelect">Theme</label>
-          <select id="themeSelect">
-            <option value="default">Default</option>
-            <option value="nord">Nord</option>
-            <option value="monokai">Monokai</option>
-            <option value="material">Material</option>
-            <option value="dracula">Dracula</option>
-            <option value="tomorrow-night-bright">Tomorrow Night</option>
-          </select>
-        </div>
-        <div class="setting-item">
-          <label for="fontSizeSelect">Font Size</label>
-          <select id="fontSizeSelect">
-            <option value="12">12px</option>
-            <option value="14" selected>14px</option>
-            <option value="16">16px</option>
-            <option value="18">18px</option>
-          </select>
-        </div>
-        <div class="setting-item">
-          <label for="autoSaveSelect">Auto Save</label>
-          <select id="autoSaveSelect">
-            <option value="off">Off</option>
-            <option value="30">Every 30 seconds</option>
-            <option value="60">Every minute</option>
-            <option value="300">Every 5 minutes</option>
-          </select>
-        </div>
-      </div>
-      <div class="settings-section">
-        <h3>Keyboard Shortcuts</h3>
-        <div class="keyboard-shortcuts">
-          <span class="shortcut-key">Ctrl + Enter</span>
-          <span>Run Code</span>
-          <span class="shortcut-key">Ctrl + S</span>
-          <span>Save Changes</span>
-          <span class="shortcut-key">Ctrl + /</span>
-          <span>Toggle Comment</span>
-          <span class="shortcut-key">Ctrl + Space</span>
-          <span>Show Autocomplete</span>
-          <span class="shortcut-key">Ctrl + F</span>
-          <span>Find</span>
-          <span class="shortcut-key">Ctrl + H</span>
-          <span>Replace</span>
-          <span class="shortcut-key">Alt + Click</span>
-          <span>Add Cursor</span>
-        </div>
-      </div>
+    <div class="setting-item">
+     <label for="fontSizeSelect">Font Size</label>
+     <select id="fontSizeSelect">
+      <option value="12">12px</option>
+      <option value="14" selected="selected">14px</option>
+      <option value="16">16px</option>
+      <option value="18">18px</option>
+     </select>
     </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/xml/xml.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/javascript/javascript.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/css/css.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/htmlmixed/htmlmixed.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closetag.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/hint/show-hint.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/hint/html-hint.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/hint/css-hint.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/hint/javascript-hint.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/comment/comment.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-    <script>
-      (function() {
-        const state = {
-          code: {
-            html: '',
-            css: '',
-            javascript: ''
-          },
-          currentLang: 'html',
-          editor: null,
-          isUpdating: false,
-          settings: {
-            theme: 'default',
-            fontSize: '14'
-          }
-        };
-        state.editor = CodeMirror(document.getElementById('editor'), {
-          mode: 'htmlmixed',
-          theme: state.settings.theme,
-          lineNumbers: true,
-          autoCloseTags: true,
-          autoCloseBrackets: true,
-          matchBrackets: true,
-          lineWrapping: true,
-          tabSize: 2,
-          indentWithTabs: false,
-          extraKeys: {
-            'Ctrl-Enter': () => document.getElementById('runBtn').click(),
-            'Ctrl-S': (cm) => {
-              showNotification('Changes saved!', 'success');
-              return false;
-            },
-            'Ctrl-Space': 'autocomplete',
-            'Ctrl-/': 'toggleComment'
-          }
-        });
-        document.querySelector('.CodeMirror').style.fontSize = `${state.settings.fontSize}px`;
+    <div class="setting-item">
+     <label for="autoSaveSelect">Auto Save</label>
+     <select id="autoSaveSelect">
+      <option value="off">Off</option>
+      <option value="30">Every 30 seconds</option>
+      <option value="60">Every minute</option>
+      <option value="300">Every 5 minutes</option>
+     </select>
+    </div>
+   </div>
+   <div class="settings-section">
+    <h3>Keyboard Shortcuts</h3>
+    <div class="keyboard-shortcuts">
+     <span class="shortcut-key">Ctrl + Enter</span>
+     <span>Run Code</span>
+     <span class="shortcut-key">Ctrl + S</span>
+     <span>Save Changes</span>
+     <span class="shortcut-key">Ctrl + /</span>
+     <span>Toggle Comment</span>
+     <span class="shortcut-key">Ctrl + Space</span>
+     <span>Show Autocomplete</span>
+     <span class="shortcut-key">Ctrl + F</span>
+     <span>Find</span>
+     <span class="shortcut-key">Ctrl + H</span>
+     <span>Replace</span>
+     <span class="shortcut-key">Alt + Click</span>
+     <span>Add Cursor</span>
+    </div>
+   </div>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/xml/xml.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/javascript/javascript.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/css/css.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/htmlmixed/htmlmixed.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closetag.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/hint/show-hint.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/hint/html-hint.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/hint/css-hint.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/hint/javascript-hint.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/comment/comment.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script>
+   (function() {
+    const state = {
+     code: {
+      html: '',
+      css: '',
+      javascript: ''
+     },
+     currentLang: 'html',
+     editor: null,
+     isUpdating: false,
+     settings: {
+      theme: 'default',
+      fontSize: '14'
+     }
+    };
+    state.editor = CodeMirror(document.getElementById('editor'), {
+     mode: 'htmlmixed',
+     theme: state.settings.theme,
+     lineNumbers: true,
+     autoCloseTags: true,
+     autoCloseBrackets: true,
+     matchBrackets: true,
+     lineWrapping: true,
+     tabSize: 2,
+     indentWithTabs: false,
+     extraKeys: {
+      'Ctrl-Enter': () => document.getElementById('runBtn').click(),
+      'Ctrl-S': (cm) => {
+       showNotification('Changes saved!', 'success');
+       return false;
+      },
+      'Ctrl-Space': 'autocomplete',
+      'Ctrl-/': 'toggleComment'
+     }
+    });
+    document.querySelector('.CodeMirror').style.fontSize = `${state.settings.fontSize}px`;
 
-        function showNotification(message, type = 'success') {
-          const notification = document.createElement('div');
-          notification.className = `notification ${type}`;
-          notification.textContent = message;
-          document.body.appendChild(notification);
-          setTimeout(() => {
-            notification.remove();
-          }, 3000);
-        }
+    function showNotification(message, type = 'success') {
+     const notification = document.createElement('div');
+     notification.className = `notification ${type}`;
+     notification.textContent = message;
+     document.body.appendChild(notification);
+     setTimeout(() => {
+      notification.remove();
+     }, 3000);
+    }
 
-        function updatePreview(force = false) {
-          if (state.isUpdating && !force) return;
-          state.isUpdating = true;
-          requestAnimationFrame(() => {
-            try {
-              const previewContent = `
+    function updatePreview(force = false) {
+     if (state.isUpdating && !force) return;
+     state.isUpdating = true;
+     requestAnimationFrame(() => {
+      try {
+       const previewContent = `
 
-											
+													
 													<!DOCTYPE html>
 													<html>
 														<head>
@@ -686,89 +686,89 @@
 																<body>
               ${state.code.html || ''}
 
-															
+																	
 																	<script>${state.code.javascript || ''}<\/script>
 																	</body>
 																</html>`;
-              const preview = document.getElementById('preview');
-              const previewDoc = preview.contentDocument || preview.contentWindow.document;
-              previewDoc.open();
-              previewDoc.write(previewContent);
-              previewDoc.close();
-              updatePreviewSize();
-              state.isUpdating = false;
-            } catch (err) {
-              console.error('Preview update error:', err);
-              state.isUpdating = false;
-              showNotification('Error updating preview', 'error');
-            }
-          });
-        }
+       const preview = document.getElementById('preview');
+       const previewDoc = preview.contentDocument || preview.contentWindow.document;
+       previewDoc.open();
+       previewDoc.write(previewContent);
+       previewDoc.close();
+       updatePreviewSize();
+       state.isUpdating = false;
+      } catch (err) {
+       console.error('Preview update error:', err);
+       state.isUpdating = false;
+       showNotification('Error updating preview', 'error');
+      }
+     });
+    }
 
-        function updatePreviewSize() {
-          const preview = document.getElementById('preview');
-          const previewSize = document.getElementById('previewSize');
-          previewSize.textContent = `${preview.offsetWidth}x${preview.offsetHeight}`;
-        }
-        document.querySelectorAll('.tab-button').forEach(button => {
-          button.addEventListener('click', () => {
-            const lang = button.dataset.lang;
-            if (state.currentLang === lang) return;
-            state.code[state.currentLang] = state.editor.getValue();
-            document.querySelector('.tab-button.active').classList.remove('active');
-            button.classList.add('active');
-            state.currentLang = lang;
-            state.editor.setOption('mode', lang === 'html' ? 'htmlmixed' : lang);
-            state.editor.setValue(state.code[lang] || '');
-          });
-        });
-        state.editor.on('change', (cm) => {
-          state.code[state.currentLang] = cm.getValue();
-          updatePreview();
-        });
-        document.querySelectorAll('.device-button').forEach(button => {
-          button.addEventListener('click', () => {
-            document.querySelector('.device-button.active').classList.remove('active');
-            button.classList.add('active');
-            const preview = document.getElementById('preview');
-            preview.style.width = button.dataset.width;
-            preview.style.height = button.dataset.height;
-            updatePreviewSize();
-          });
-        });
-        const settingsPanel = document.getElementById('settingsPanel');
-        const settingsBtn = document.getElementById('settingsBtn');
-        const closeSettings = document.getElementById('closeSettings');
-        settingsBtn.addEventListener('click', () => {
-          settingsPanel.classList.add('visible');
-        });
-        closeSettings.addEventListener('click', () => {
-          settingsPanel.classList.remove('visible');
-        });
-        const themeSelect = document.getElementById('themeSelect');
-        themeSelect.value = state.settings.theme;
-        themeSelect.addEventListener('change', (e) => {
-          const theme = e.target.value;
-          applyTheme(theme);
-          state.settings.theme = theme;
-        });
-        const fontSizeSelect = document.getElementById('fontSizeSelect');
-        fontSizeSelect.value = state.settings.fontSize;
-        fontSizeSelect.addEventListener('change', (e) => {
-          const fontSize = e.target.value;
-          document.querySelector('.CodeMirror').style.fontSize = `${fontSize}px`;
-          state.settings.fontSize = fontSize;
-        });
-        document.getElementById('runBtn').addEventListener('click', () => {
-          state.code[state.currentLang] = state.editor.getValue();
-          updatePreview(true);
-          showNotification('Code executed!', 'success');
-        });
-        document.getElementById('previewBtn').addEventListener('click', () => {
-          const win = window.open('', '_blank');
-          win.document.write(`
+    function updatePreviewSize() {
+     const preview = document.getElementById('preview');
+     const previewSize = document.getElementById('previewSize');
+     previewSize.textContent = `${preview.offsetWidth}x${preview.offsetHeight}`;
+    }
+    document.querySelectorAll('.tab-button').forEach(button => {
+     button.addEventListener('click', () => {
+      const lang = button.dataset.lang;
+      if (state.currentLang === lang) return;
+      state.code[state.currentLang] = state.editor.getValue();
+      document.querySelector('.tab-button.active').classList.remove('active');
+      button.classList.add('active');
+      state.currentLang = lang;
+      state.editor.setOption('mode', lang === 'html' ? 'htmlmixed' : lang);
+      state.editor.setValue(state.code[lang] || '');
+     });
+    });
+    state.editor.on('change', (cm) => {
+     state.code[state.currentLang] = cm.getValue();
+     updatePreview();
+    });
+    document.querySelectorAll('.device-button').forEach(button => {
+     button.addEventListener('click', () => {
+      document.querySelector('.device-button.active').classList.remove('active');
+      button.classList.add('active');
+      const preview = document.getElementById('preview');
+      preview.style.width = button.dataset.width;
+      preview.style.height = button.dataset.height;
+      updatePreviewSize();
+     });
+    });
+    const settingsPanel = document.getElementById('settingsPanel');
+    const settingsBtn = document.getElementById('settingsBtn');
+    const closeSettings = document.getElementById('closeSettings');
+    settingsBtn.addEventListener('click', () => {
+     settingsPanel.classList.add('visible');
+    });
+    closeSettings.addEventListener('click', () => {
+     settingsPanel.classList.remove('visible');
+    });
+    const themeSelect = document.getElementById('themeSelect');
+    themeSelect.value = state.settings.theme;
+    themeSelect.addEventListener('change', (e) => {
+     const theme = e.target.value;
+     applyTheme(theme);
+     state.settings.theme = theme;
+    });
+    const fontSizeSelect = document.getElementById('fontSizeSelect');
+    fontSizeSelect.value = state.settings.fontSize;
+    fontSizeSelect.addEventListener('change', (e) => {
+     const fontSize = e.target.value;
+     document.querySelector('.CodeMirror').style.fontSize = `${fontSize}px`;
+     state.settings.fontSize = fontSize;
+    });
+    document.getElementById('runBtn').addEventListener('click', () => {
+     state.code[state.currentLang] = state.editor.getValue();
+     updatePreview(true);
+     showNotification('Code executed!', 'success');
+    });
+    document.getElementById('previewBtn').addEventListener('click', () => {
+     const win = window.open('', '_blank');
+     win.document.write(`
 
-														
+																
 																<!DOCTYPE html>
 																<html>
 																	<head>
@@ -779,173 +779,821 @@
 																			<body>
               ${state.code.html || ''}
 
-																		
+																				
 																				<script>${state.code.javascript || ''}<\/script>
 																				</body>
 																			</html>`);
-        });
-        document.getElementById('clearBtn').addEventListener('click', () => {
-          state.code = {
-            html: '',
-            css: '',
-            javascript: ''
-          };
-          state.editor.setValue('');
-          updatePreview(true);
-          showNotification('All content cleared!', 'success');
-        });
-        document.getElementById('saveBtn').addEventListener('click', () => {
-          const htmlContent = state.code.html || '';
-          const cssContent = state.code.css || '';
-          const javascriptContent = state.code.javascript || '';
-          const zip = new JSZip();
-          if (htmlContent) {
-            zip.file('index.html', htmlContent);
-          }
-          if (cssContent) {
-            zip.file('styles.css', cssContent);
-          }
-          if (javascriptContent) {
-            zip.file('script.js', javascriptContent);
-          }
-          zip.generateAsync({
-            type: 'blob'
-          }).then(function(content) {
-            const link = document.createElement('a');
-            const url = URL.createObjectURL(content);
-            link.href = url;
-            link.download = 'project.zip';
-            link.click();
-            URL.revokeObjectURL(url);
-            showNotification('Your files are being downloaded as a zip!', 'success');
-          }).catch(function(err) {
-            console.error('Error generating zip file:', err);
-            showNotification('Error generating zip file', 'error');
-          });
-        });
-        document.getElementById('shareBtn').addEventListener('click', async () => {
-          try {
-            const shareUrl = window.location.origin;
-            await navigator.clipboard.writeText(shareUrl);
-            showNotification('Domain URL copied to clipboard!', 'success');
-          } catch (err) {
-            showNotification('Error copying domain URL', 'error');
-          }
-        });
+    });
+    document.getElementById('clearBtn').addEventListener('click', () => {
+     state.code = {
+      html: '',
+      css: '',
+      javascript: ''
+     };
+     state.editor.setValue('');
+     updatePreview(true);
+     showNotification('All content cleared!', 'success');
+    });
+    document.getElementById('saveBtn').addEventListener('click', () => {
+     const htmlContent = state.code.html || '';
+     const cssContent = state.code.css || '';
+     const javascriptContent = state.code.javascript || '';
+     const zip = new JSZip();
+     if (htmlContent) {
+      zip.file('index.html', htmlContent);
+     }
+     if (cssContent) {
+      zip.file('styles.css', cssContent);
+     }
+     if (javascriptContent) {
+      zip.file('script.js', javascriptContent);
+     }
+     zip.generateAsync({
+      type: 'blob'
+     }).then(function(content) {
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(content);
+      link.href = url;
+      link.download = 'project.zip';
+      link.click();
+      URL.revokeObjectURL(url);
+      showNotification('Your files are being downloaded as a zip!', 'success');
+     }).catch(function(err) {
+      console.error('Error generating zip file:', err);
+      showNotification('Error generating zip file', 'error');
+     });
+    });
+    document.getElementById('shareBtn').addEventListener('click', async () => {
+     try {
+      const shareUrl = window.location.origin;
+      await navigator.clipboard.writeText(shareUrl);
+      showNotification('Domain URL copied to clipboard!', 'success');
+     } catch (err) {
+      showNotification('Error copying domain URL', 'error');
+     }
+    });
 
-        function applyTheme(theme) {
-          const themeColors = {
-            nord: {
-              '--primary-bg': '#2E3440',
-              '--secondary-bg': '#3B4252',
-              '--accent-color': '#88C0D0',
-              '--text-primary': '#ECEFF4',
-              '--text-secondary': '#D8DEE9',
-              '--border-color': '#434C5E'
-            },
-            monokai: {
-              '--primary-bg': '#272822',
-              '--secondary-bg': '#383830',
-              '--accent-color': '#F92672',
-              '--text-primary': '#F8F8F2',
-              '--text-secondary': '#75715E',
-              '--border-color': '#3E3D32'
-            },
-            material: {
-              '--primary-bg': '#263238',
-              '--secondary-bg': '#37474F',
-              '--accent-color': '#FF4081',
-              '--text-primary': '#ECEFF1',
-              '--text-secondary': '#B0BEC5',
-              '--border-color': '#455A64'
-            },
-            dracula: {
-              '--primary-bg': '#282a36',
-              '--secondary-bg': '#44475a',
-              '--accent-color': '#ff79c6',
-              '--text-primary': '#f8f8f2',
-              '--text-secondary': '#6272a4',
-              '--border-color': '#6272a4'
-            },
-            'tomorrow-night-bright': {
-              '--primary-bg': '#1d1f21',
-              '--secondary-bg': '#282c34',
-              '--accent-color': '#e0e0e0',
-              '--text-primary': '#f0f0f0',
-              '--text-secondary': '#b0b0b0',
-              '--border-color': '#4e5b67'
-            },
-            default: {
-              '--primary-bg': '#1a1b26',
-              '--secondary-bg': '#24283b',
-              '--accent-color': '#7aa2f7',
-              '--text-primary': '#c0caf5',
-              '--text-secondary': '#9aa5ce',
-              '--border-color': '#414868'
-            }
-          };
-          localStorage.setItem('selectedTheme', theme);
-          state.editor.setOption('theme', theme);
-        }
-        const consoleBtn = document.getElementById("consoleBtn");
-        const consolePanel = document.getElementById("consolePanel");
-        const consoleOutput = document.getElementById("consoleOutput");
-        const originalConsole = {
-          error: console.error,
-          log: console.log,
-          warn: console.warn,
-          info: console.info
-        };
-        console.log = function(...args) {
-          originalConsole.log(...args);
-          appendToConsole("log", args);
-        };
-        console.error = function(...args) {
-          originalConsole.error(...args);
-          appendToConsole("error", args);
-        };
-        console.warn = function(...args) {
-          originalConsole.warn(...args);
-          appendToConsole("warning", args);
-        };
-        console.info = function(...args) {
-          originalConsole.info(...args);
-          appendToConsole("info", args);
-        };
+    function applyTheme(theme) {
+     const themeColors = {
+      nord: {
+       '--primary-bg': '#2E3440',
+       '--secondary-bg': '#3B4252',
+       '--accent-color': '#88C0D0',
+       '--text-primary': '#ECEFF4',
+       '--text-secondary': '#D8DEE9',
+       '--border-color': '#434C5E'
+      },
+      monokai: {
+       '--primary-bg': '#272822',
+       '--secondary-bg': '#383830',
+       '--accent-color': '#F92672',
+       '--text-primary': '#F8F8F2',
+       '--text-secondary': '#75715E',
+       '--border-color': '#3E3D32'
+      },
+      material: {
+       '--primary-bg': '#263238',
+       '--secondary-bg': '#37474F',
+       '--accent-color': '#FF4081',
+       '--text-primary': '#ECEFF1',
+       '--text-secondary': '#B0BEC5',
+       '--border-color': '#455A64'
+      },
+      dracula: {
+       '--primary-bg': '#282a36',
+       '--secondary-bg': '#44475a',
+       '--accent-color': '#ff79c6',
+       '--text-primary': '#f8f8f2',
+       '--text-secondary': '#6272a4',
+       '--border-color': '#6272a4'
+      },
+      'tomorrow-night-bright': {
+       '--primary-bg': '#1d1f21',
+       '--secondary-bg': '#282c34',
+       '--accent-color': '#e0e0e0',
+       '--text-primary': '#f0f0f0',
+       '--text-secondary': '#b0b0b0',
+       '--border-color': '#4e5b67'
+      },
+      default: {
+       '--primary-bg': '#1a1b26',
+       '--secondary-bg': '#24283b',
+       '--accent-color': '#7aa2f7',
+       '--text-primary': '#c0caf5',
+       '--text-secondary': '#9aa5ce',
+       '--border-color': '#414868'
+      }
+     };
+     localStorage.setItem('selectedTheme', theme);
+     state.editor.setOption('theme', theme);
+    }
+    const consoleBtn = document.getElementById("consoleBtn");
+    const consolePanel = document.getElementById("consolePanel");
+    const consoleOutput = document.getElementById("consoleOutput");
+    const originalConsole = {
+     error: console.error,
+     log: console.log,
+     warn: console.warn,
+     info: console.info
+    };
+    console.log = function(...args) {
+     originalConsole.log(...args);
+     appendToConsole("log", args);
+    };
+    console.error = function(...args) {
+     originalConsole.error(...args);
+     appendToConsole("error", args);
+    };
+    console.warn = function(...args) {
+     originalConsole.warn(...args);
+     appendToConsole("warning", args);
+    };
+    console.info = function(...args) {
+     originalConsole.info(...args);
+     appendToConsole("info", args);
+    };
 
-        function appendToConsole(type, args) {
-          const line = document.createElement("div");
-          line.className = `console-line console-${type}`;
-          const output = args.map(function(arg) {
-            if (typeof arg === "object") {
-              return JSON.stringify(arg, null, 2);
-            }
-            return String(arg);
-          }).join(" ");
-          const timestamp = new Date().toLocaleTimeString();
-          line.innerHTML = `[${timestamp}] ${output}`;
-          consoleOutput.appendChild(line);
-          consoleOutput.scrollTop = consoleOutput.scrollHeight;
-        }
-        consoleBtn.addEventListener("click", function() {
-          consolePanel.classList.toggle("visible");
-          const editorWrapper = document.querySelector(".editor-wrapper");
-          if (consolePanel.classList.contains("visible")) {
-            editorWrapper.style.height = "calc(100% - 200px)";
-          } else {
-            editorWrapper.style.height = "100%";
-          }
+    function appendToConsole(type, args) {
+     const line = document.createElement("div");
+     line.className = `console-line console-${type}`;
+     const output = args.map(function(arg) {
+      if (typeof arg === "object") {
+       return JSON.stringify(arg, null, 2);
+      }
+      return String(arg);
+     }).join(" ");
+     const timestamp = new Date().toLocaleTimeString();
+     line.innerHTML = `[${timestamp}] ${output}`;
+     consoleOutput.appendChild(line);
+     consoleOutput.scrollTop = consoleOutput.scrollHeight;
+    }
+    consoleBtn.addEventListener("click", function() {
+     consolePanel.classList.toggle("visible");
+     const editorWrapper = document.querySelector(".editor-wrapper");
+     if (consolePanel.classList.contains("visible")) {
+      editorWrapper.style.height = "calc(100% - 200px)";
+     } else {
+      editorWrapper.style.height = "100%";
+     }
+    });
+    document.getElementById("clearBtn").addEventListener("click", function() {
+     consoleOutput.innerHTML = "";
+    });
+    document.addEventListener("keydown", function(e) {
+     if (e.ctrlKey && e.key === "`") {
+      e.preventDefault();
+      consoleBtn.click();
+     }
+    });
+    let autoSaveInterval;
+
+    function setupAutoSave() {
+     const autoSaveSelect = document.getElementById('autoSaveSelect');
+     clearInterval(autoSaveInterval);
+     if (autoSaveSelect.value !== 'off') {
+      const seconds = parseInt(autoSaveSelect.value);
+      autoSaveInterval = setInterval(() => {
+       localStorage.setItem('synprev_autosave', JSON.stringify(state.code));
+       showNotification('Auto-saved', 'success');
+      }, seconds * 1000);
+     }
+    }
+    const savedContent = localStorage.getItem('synprev_autosave');
+    if (savedContent) {
+     state.code = JSON.parse(savedContent);
+     state.editor.setValue(state.code[state.currentLang] || '');
+    }
+    document.getElementById('autoSaveSelect').addEventListener('change', setupAutoSave);
+    const editorWrapper = document.querySelector('.editor-wrapper');
+    editorWrapper.addEventListener('dragover', (e) => {
+     e.preventDefault();
+     e.stopPropagation();
+     editorWrapper.classList.add('drag-over');
+    });
+    editorWrapper.addEventListener('dragleave', () => {
+     editorWrapper.classList.remove('drag-over');
+    });
+    editorWrapper.addEventListener('drop', async (e) => {
+     e.preventDefault();
+     e.stopPropagation();
+     editorWrapper.classList.remove('drag-over');
+     const file = e.dataTransfer.files[0];
+     if (!file) return;
+     const content = await file.text();
+     const extension = file.name.split('.').pop().toLowerCase();
+     switch (extension) {
+      case 'html':
+       state.code.html = content;
+       break;
+      case 'css':
+       state.code.css = content;
+       break;
+      case 'js':
+       state.code.javascript = content;
+       break;
+      default:
+       showNotification('Unsupported file type', 'error');
+       return;
+     }
+     if (extension === state.currentLang || (extension === 'js' && state.currentLang === 'javascript')) {
+      state.editor.setValue(content);
+     }
+     updatePreview(true);
+     showNotification(`${file.name} loaded successfully`, 'success');
+    });
+    const undoManager = {
+     stack: [],
+     position: -1,
+     maxSize: 100,
+     push(state) {
+      this.position++;
+      this.stack.splice(this.position);
+      this.stack.push(JSON.stringify(state));
+      if (this.stack.length > this.maxSize) {
+       this.stack.shift();
+       this.position--;
+      }
+     },
+     undo() {
+      if (this.position > 0) {
+       this.position--;
+       return JSON.parse(this.stack[this.position]);
+      }
+      return null;
+     },
+     redo() {
+      if (this.position < this.stack.length - 1) {
+       this.position++;
+       return JSON.parse(this.stack[this.position]);
+      }
+      return null;
+     }
+    };
+
+    function setupErrorHandling() {
+     const preview = document.getElementById('preview');
+     const previewWindow = preview.contentWindow;
+     previewWindow.onerror = (msg, url, lineNo, columnNo, error) => {
+      console.error(`${msg}\nLine: ${lineNo}, Column: ${columnNo}`);
+      showNotification('JavaScript error detected', 'error');
+      return false;
+     };
+    }
+
+    function setupResizeHandle() {
+     const handle = document.getElementById('resizeHandle');
+     const editorsContainer = document.querySelector('.editors-container');
+     const previewContainer = document.querySelector('.preview-container');
+     let isResizing = false;
+     let startX, startWidth;
+     handle.addEventListener('mousedown', (e) => {
+      isResizing = true;
+      startX = e.pageX;
+      startWidth = editorsContainer.offsetWidth;
+      document.body.classList.add('resizing');
+     });
+     document.addEventListener('mousemove', (e) => {
+      if (!isResizing) return;
+      const diff = e.pageX - startX;
+      const newWidth = Math.max(300, Math.min(startWidth + diff, document.body.offsetWidth - 300));
+      editorsContainer.style.width = `${newWidth}px`;
+      previewContainer.style.width = `calc(100% - ${newWidth}px - 4px)`;
+      updatePreviewSize();
+     });
+     document.addEventListener('mouseup', () => {
+      isResizing = false;
+      document.body.classList.remove('resizing');
+     });
+    }
+    const keyboardShortcuts = {
+     'Ctrl-Z': (cm) => {
+      const previousState = undoManager.undo();
+      if (previousState) {
+       state.code = previousState;
+       cm.setValue(state.code[state.currentLang]);
+       updatePreview(true);
+      }
+     },
+     'Ctrl-Y': (cm) => {
+      const nextState = undoManager.redo();
+      if (nextState) {
+       state.code = nextState;
+       cm.setValue(state.code[state.currentLang]);
+       updatePreview(true);
+      }
+     },
+     'Alt-F': () => {
+      document.getElementById('preview').requestFullscreen();
+     }
+    };
+    Object.assign(state.editor.options.extraKeys, keyboardShortcuts);
+
+    function initializeNewFeatures() {
+     setupAutoSave();
+     setupErrorHandling();
+     setupResizeHandle();
+     state.editor.on('change', () => {
+      undoManager.push({
+       ...state.code
+      });
+     });
+    }
+    initializeNewFeatures();
+    const newStyles = `
+  .drag-over {
+    border: 2px dashed var(--accent-color);
+    background: rgba(59, 130, 246, 0.1);
+  }
+
+  body.resizing {
+    cursor: ew-resize;
+    user-select: none;
+  }
+
+  .console-line {
+    font-family: 'JetBrains Mono', monospace;
+    white-space: pre-wrap;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .notification {
+      animation: none;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .toolbar-group {
+      display: none;
+    }
+
+    .toolbar-group:first-child {
+      display: flex;
+    }
+  }
+`;
+    const newToolbar = document.createElement('div');
+    newToolbar.className = 'toolbar-group advanced-features';
+    newToolbar.innerHTML = `
+
+																			
+																			<button class="button" id="formatBtn" title="Format Code">
+																				<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+																					<path d="M21 10H3M21 6H3M21 14H3M21 18H3"/>
+																				</svg>
+    Format
+
+																			
+																			</button>
+																			<button class="button" id="snippetsBtn" title="Code Snippets">
+																				<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+																					<path d="M16 18l6-6-6-6M8 6l-6 6 6 6"/>
+																				</svg>
+    Snippets
+
+																			
+																			</button>
+																			<button class="button" id="searchBtn" title="Search in Files">
+																				<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+																					<circle cx="11" cy="11" r="8"/>
+																					<line x1="21" y1="21" x2="16.65" y2="16.65"/>
+																				</svg>
+    Search
+
+																			
+																			</button>
+`;
+    document.querySelector('.toolbar').appendChild(newToolbar);
+    const snippetsPanel = document.createElement('div');
+    snippetsPanel.className = 'side-panel snippets-panel';
+    snippetsPanel.innerHTML = `
+
+																			
+																			<div class="panel-header">
+																				<h2>Code Snippets</h2>
+																				<button class="button" id="closeSnippets">
+																					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+																						<line x1="18" y1="6" x2="6" y2="18"/>
+																						<line x1="6" y1="6" x2="18" y2="18"/>
+																					</svg>
+																				</button>
+																			</div>
+																			<div class="panel-content">
+																				<div class="snippet-categories">
+																					<button class="active" data-category="html">HTML</button>
+																					<button data-category="css">CSS</button>
+																					<button data-category="js">JavaScript</button>
+																				</div>
+																				<div class="snippet-list"></div>
+																			</div>
+`;
+    document.body.appendChild(snippetsPanel);
+    const searchPanel = document.createElement('div');
+    searchPanel.className = 'search-panel';
+    searchPanel.innerHTML = `
+
+																			
+																			<div class="search-header">
+																				<input type="text" id="searchInput" placeholder="Search in files...">
+																					<div class="search-options">
+																						<label>
+																							<input type="checkbox" id="caseSensitive"> Case sensitive
+																							
+																							</label>
+																							<label>
+																								<input type="checkbox" id="regexSearch"> Regular expression
+																								
+																								</label>
+																							</div>
+																						</div>
+																						<div class="search-results"></div>
+`;
+    document.body.appendChild(searchPanel);
+    const additionalStyles = `
+  .side-panel {
+    position: fixed;
+    top: 0;
+    right: -400px;
+    width: 400px;
+    height: 100vh;
+    background: var(--secondary-bg);
+    border-left: 1px solid var(--border-color);
+    transition: right 0.3s ease;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .side-panel.visible {
+    right: 0;
+  }
+
+  .panel-header {
+    padding: 1rem;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .panel-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1rem;
+  }
+
+  .snippet-categories {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .snippet-categories button {
+    padding: 0.5rem 1rem;
+    background: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    border-radius: 0.375rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .snippet-categories button.active {
+    background: var(--accent-color);
+    border-color: var(--accent-color);
+    color: #fff;
+  }
+
+  .snippet-item {
+    padding: 1rem;
+    background: var(--primary-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem;
+    margin-bottom: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .snippet-item:hover {
+    border-color: var(--accent-color);
+    transform: translateY(-1px);
+  }
+
+  .snippet-title {
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+  }
+
+  .snippet-description {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+  }
+
+  .search-panel {
+    position: fixed;
+    top: 20%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-20%);
+    width: 600px;
+    max-width: 90vw;
+    background: var(--secondary-bg);
+    border-radius: 0.5rem;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    display: none;
+    z-index: 1000;
+  }
+
+  .search-panel.visible {
+    display: block;
+  }
+
+  .search-header {
+    padding: 1rem;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .search-header input[type="text"] {
+    width: 100%;
+    padding: 0.75rem;
+    background: var(--primary-bg);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    border-radius: 0.375rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .search-options {
+    display: flex;
+    gap: 1rem;
+    font-size: 0.875rem;
+  }
+
+  .search-results {
+    max-height: 400px;
+    overflow-y: auto;
+    padding: 1rem;
+  }
+
+  .search-result {
+    padding: 0.75rem;
+    border-bottom: 1px solid var(--border-color);
+    cursor: pointer;
+  }
+
+  .search-result:hover {
+    background: var(--primary-bg);
+  }
+
+  .search-result-file {
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+  }
+
+  .search-result-preview {
+    font-family: monospace;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+  }
+
+  .highlight {
+    background: rgba(59, 130, 246, 0.2);
+    border-radius: 0.25rem;
+  }
+
+  @media (max-width: 768px) {
+    .side-panel {
+      width: 100%;
+      right: -100%;
+    }
+
+    .search-panel {
+      width: 95vw;
+      max-height: 80vh;
+    }
+  }
+
+  .status-bar {
+    background: var(--secondary-bg);
+    border-top: 1px solid var(--border-color);
+    padding: 0.5rem 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+  }
+
+  .status-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .minimap {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 100px;
+    background: var(--primary-bg);
+    opacity: 0.6;
+    pointer-events: none;
+  }
+`;
+    const styleSheet = document.createElement('style');
+    styleSheet.textContent = additionalStyles;
+    document.head.appendChild(styleSheet);
+
+    function initializeNewUI() {
+     const snippets = {
+      html: [{
+       title: 'Responsive Container',
+       description: 'A container with responsive breakpoints',
+       code: ' < div class = "container mx-auto px-4" > ... < /div>'
+      }, ],
+      css: [{
+       title: 'Flex Center',
+       description: 'Center elements using flexbox',
+       code: '.center {\n  display: flex;\n  justify-content: center;\n  align-items: center;\n}'
+      }, ],
+      js: [{
+       title: 'Fetch API Template',
+       description: 'Basic fetch API with error handling',
+       code: 'async function fetchData(url) {\n  try {\n    const response = await fetch(url);\n    return await response.json();\n  } catch (error) {\n    console.error("Error:", error);\n  }\n}'
+      }, ]
+     };
+
+     function showSnippets(category) {
+      const snippetList = document.querySelector('.snippet-list');
+      snippetList.innerHTML = '';
+      snippets[category].forEach(snippet => {
+       const snippetEl = document.createElement('div');
+       snippetEl.className = 'snippet-item';
+       snippetEl.innerHTML = `
+
+																						
+																						<div class="snippet-title">${snippet.title}</div>
+																						<div class="snippet-description">${snippet.description}</div>
+      `;
+       snippetEl.addEventListener('click', () => {
+        state.editor.replaceSelection(snippet.code);
+        showNotification('Snippet inserted!', 'success');
+       });
+       snippetList.appendChild(snippetEl);
+      });
+     }
+     document.getElementById('snippetsBtn').addEventListener('click', () => {
+      document.querySelector('.snippets-panel').classList.add('visible');
+      showSnippets('html');
+     });
+     document.getElementById('closeSnippets').addEventListener('click', () => {
+      document.querySelector('.snippets-panel').classList.remove('visible');
+     });
+     document.querySelectorAll('.snippet-categories button').forEach(button => {
+      button.addEventListener('click', () => {
+       document.querySelector('.snippet-categories .active').classList.remove('active');
+       button.classList.add('active');
+       showSnippets(button.dataset.category);
+      });
+     });
+     const statusBar = document.createElement('div');
+     statusBar.className = 'status-bar';
+     statusBar.innerHTML = `
+
+																						
+																						<div class="status-left">
+																							<span class="status-item" id="cursorPosition">Ln 1, Col 1</span>
+																							<span class="status-item" id="fileSize">0 bytes</span>
+																						</div>
+																						<div class="status-right">
+																							<span class="status-item" id="syntaxMode">HTML</span>
+																							<span class="status-item" id="encodingType">UTF-8</span>
+																						</div>
+  `;
+     document.querySelector('.editors-container').appendChild(statusBar);
+     state.editor.on('cursorActivity', () => {
+      const pos = state.editor.getCursor();
+      document.getElementById('cursorPosition').textContent = `Ln ${pos.line + 1}, Col ${pos.ch + 1}`;
+     });
+     state.editor.on('change', () => {
+      const size = new Blob([state.editor.getValue()]).size;
+      document.getElementById('fileSize').textContent = `${size} bytes`;
+     });
+     document.getElementById('formatBtn').addEventListener('click', () => {
+      const value = state.editor.getValue();
+      let formatted = value;
+      try {
+       if (state.currentLang === 'javascript') {
+        formatted = js_beautify(value, {
+         indent_size: 2,
+         space_in_empty_paren: true
         });
-        document.getElementById("clearBtn").addEventListener("click", function() {
-          consoleOutput.innerHTML = "";
+       } else if (state.currentLang === 'html') {
+        formatted = html_beautify(value, {
+         indent_size: 2,
+         max_preserve_newlines: 2
         });
-        document.addEventListener("keydown", function(e) {
-          if (e.ctrlKey && e.key === "`") {
-            e.preventDefault();
-            consoleBtn.click();
-          }
+       } else if (state.currentLang === 'css') {
+        formatted = css_beautify(value, {
+         indent_size: 2
         });
-      })();
-    </script>
-  </body>
+       }
+       state.editor.setValue(formatted);
+       showNotification('Code formatted!', 'success');
+      } catch (error) {
+       console.error('Formatting error:', error);
+       showNotification('Error formatting code', 'error');
+      }
+     });
+    }
+    initializeNewUI();
+
+    function performSearch(query, options = {}) {
+     const searchResults = document.querySelector('.search-results');
+     searchResults.innerHTML = '';
+     if (!query) return;
+     const files = {
+      'HTML': state.code.html,
+      'CSS': state.code.css,
+      'JavaScript': state.code.javascript
+     };
+     try {
+      let regex;
+      if (options.isRegex) {
+       regex = new RegExp(query, options.caseSensitive ? 'g' : 'gi');
+      } else {
+       regex = new RegExp(escapeRegExp(query), options.caseSensitive ? 'g' : 'gi');
+      }
+      Object.entries(files).forEach(([fileName, content]) => {
+       if (!content) return;
+       const matches = [...content.matchAll(regex)];
+       if (matches.length > 0) {
+        matches.forEach(match => {
+         const start = Math.max(0, match.index - 40);
+         const end = Math.min(content.length, match.index + match[0].length + 40);
+         const preview = content.substring(start, end);
+         const resultElement = document.createElement('div');
+         resultElement.className = 'search-result';
+         resultElement.innerHTML = `
+            
+																						<div class="search-result-file">${fileName}</div>
+																						<div class="search-result-preview">${highlightMatch(preview, match[0])}</div>
+          `;
+         resultElement.addEventListener('click', () => {
+          const langMap = {
+           'HTML': 'html',
+           'CSS': 'css',
+           'JavaScript': 'javascript'
+          };
+          document.querySelector(`[data-lang="${langMap[fileName]}"]`).click();
+          state.editor.setCursor(state.editor.posFromIndex(match.index));
+          state.editor.focus();
+         });
+         searchResults.appendChild(resultElement);
+        });
+       }
+      });
+      if (searchResults.children.length === 0) {
+       searchResults.innerHTML = ' < div class = "search-no-results" > No results found < /div>';
+      }
+     } catch (error) {
+      console.error('Search error:', error);
+      showNotification('Invalid search pattern', 'error');
+     }
+    }
+
+    function escapeRegExp(string) {
+     return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    }
+
+    function highlightMatch(text, match) {
+     return text.replace(new RegExp(escapeRegExp(match), 'gi'), `
+																						<span class="highlight">${match}</span>`);
+    }
+
+    function toggleSearchPanel() {
+     const searchPanel = document.querySelector('.search-panel');
+     searchPanel.classList.toggle('visible');
+     if (searchPanel.classList.contains('visible')) {
+      document.getElementById('searchInput').focus();
+     }
+    }
+    document.getElementById('searchBtn').addEventListener('click', toggleSearchPanel);
+    document.getElementById('searchInput').addEventListener('input', (e) => {
+     const caseSensitive = document.getElementById('caseSensitive').checked;
+     const isRegex = document.getElementById('regexSearch').checked;
+     performSearch(e.target.value, {
+      caseSensitive,
+      isRegex
+     });
+    });
+    document.addEventListener('keydown', (e) => {
+     if (e.ctrlKey && e.key === 'f') {
+      e.preventDefault();
+      toggleSearchPanel();
+     }
+    });
+   })();
+  </script>
+ </body>
 </html>
