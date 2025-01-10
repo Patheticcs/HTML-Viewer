@@ -620,6 +620,9 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/hint/javascript-hint.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/comment/comment.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.14.9/beautify.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.14.9/beautify-css.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.14.9/beautify-html.min.js"></script>
   <script>
    (function() {
     const state = {
@@ -675,7 +678,6 @@
       try {
        const previewContent = `
 
-													
 													<!DOCTYPE html>
 													<html>
 														<head>
@@ -686,7 +688,6 @@
 																<body>
               ${state.code.html || ''}
 
-																	
 																	<script>${state.code.javascript || ''}<\/script>
 																	</body>
 																</html>`;
@@ -768,7 +769,6 @@
      const win = window.open('', '_blank');
      win.document.write(`
 
-																
 																<!DOCTYPE html>
 																<html>
 																	<head>
@@ -779,7 +779,6 @@
 																			<body>
               ${state.code.html || ''}
 
-																				
 																				<script>${state.code.javascript || ''}<\/script>
 																				</body>
 																			</html>`);
@@ -1136,14 +1135,12 @@
     newToolbar.className = 'toolbar-group advanced-features';
     newToolbar.innerHTML = `
 
-																			
 																			<button class="button" id="formatBtn" title="Format Code">
 																				<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 																					<path d="M21 10H3M21 6H3M21 14H3M21 18H3"/>
 																				</svg>
     Format
 
-																			
 																			</button>
 																			<button class="button" id="snippetsBtn" title="Code Snippets">
 																				<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -1151,7 +1148,6 @@
 																				</svg>
     Snippets
 
-																			
 																			</button>
 																			<button class="button" id="searchBtn" title="Search in Files">
 																				<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -1160,7 +1156,6 @@
 																				</svg>
     Search
 
-																			
 																			</button>
 `;
     document.querySelector('.toolbar').appendChild(newToolbar);
@@ -1168,7 +1163,6 @@
     snippetsPanel.className = 'side-panel snippets-panel';
     snippetsPanel.innerHTML = `
 
-																			
 																			<div class="panel-header">
 																				<h2>Code Snippets</h2>
 																				<button class="button" id="closeSnippets">
@@ -1192,17 +1186,16 @@
     searchPanel.className = 'search-panel';
     searchPanel.innerHTML = `
 
-																			
 																			<div class="search-header">
 																				<input type="text" id="searchInput" placeholder="Search in files...">
 																					<div class="search-options">
 																						<label>
 																							<input type="checkbox" id="caseSensitive"> Case sensitive
-																							
+
 																							</label>
 																							<label>
 																								<input type="checkbox" id="regexSearch"> Regular expression
-																								
+
 																								</label>
 																							</div>
 																						</div>
@@ -1431,7 +1424,6 @@
        snippetEl.className = 'snippet-item';
        snippetEl.innerHTML = `
 
-																						
 																						<div class="snippet-title">${snippet.title}</div>
 																						<div class="snippet-description">${snippet.description}</div>
       `;
@@ -1460,7 +1452,6 @@
      statusBar.className = 'status-bar';
      statusBar.innerHTML = `
 
-																						
 																						<div class="status-left">
 																							<span class="status-item" id="cursorPosition">Ln 1, Col 1</span>
 																							<span class="status-item" id="fileSize">0 bytes</span>
@@ -1485,17 +1476,17 @@
       try {
        if (state.currentLang === 'javascript') {
         formatted = js_beautify(value, {
-         indent_size: 2,
+         indent_size: 1,
          space_in_empty_paren: true
         });
        } else if (state.currentLang === 'html') {
         formatted = html_beautify(value, {
-         indent_size: 2,
+         indent_size: 1,
          max_preserve_newlines: 2
         });
        } else if (state.currentLang === 'css') {
         formatted = css_beautify(value, {
-         indent_size: 2
+         indent_size: 1
         });
        }
        state.editor.setValue(formatted);
@@ -1535,7 +1526,7 @@
          const resultElement = document.createElement('div');
          resultElement.className = 'search-result';
          resultElement.innerHTML = `
-            
+
 																						<div class="search-result-file">${fileName}</div>
 																						<div class="search-result-preview">${highlightMatch(preview, match[0])}</div>
           `;
@@ -1568,6 +1559,7 @@
 
     function highlightMatch(text, match) {
      return text.replace(new RegExp(escapeRegExp(match), 'gi'), `
+
 																						<span class="highlight">${match}</span>`);
     }
 
