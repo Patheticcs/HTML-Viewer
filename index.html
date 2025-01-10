@@ -1,682 +1,931 @@
 <!DOCTYPE html>
 <html lang="en">
- <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Synprev</title>
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" rel="stylesheet">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/nord.min.css" rel="stylesheet">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css" rel="stylesheet">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/material.min.css" rel="stylesheet">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/dracula.min.css" rel="stylesheet">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/tomorrow-night-bright.min.css" rel="stylesheet">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/hint/show-hint.min.css" rel="stylesheet">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/lint/lint.min.css" rel="stylesheet">
-  <style>
-   :root {
-    --primary-bg: #0f172a;
-    --secondary-bg: #1e293b;
-    --accent-color: #3b82f6;
-    --text-primary: #f1f5f9;
-    --text-secondary: #94a3b8;
-    --border-color: #334155;
-    --success-color: #22c55e;
-    --error-color: #ef4444;
-    --warning-color: #f59e0b
+
+<head>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width,initial-scale=1">
+ <title>Synprev</title>
+ <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" rel="stylesheet">
+ <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/nord.min.css" rel="stylesheet">
+ <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css" rel="stylesheet">
+ <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/material.min.css" rel="stylesheet">
+ <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/dracula.min.css" rel="stylesheet">
+ <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/tomorrow-night-bright.min.css" rel="stylesheet">
+ <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/hint/show-hint.min.css" rel="stylesheet">
+ <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/lint/lint.min.css" rel="stylesheet">
+ <style>
+  :root {
+   --primary-bg: #0f172a;
+   --secondary-bg: #1e293b;
+   --accent-color: #3b82f6;
+   --text-primary: #f1f5f9;
+   --text-secondary: #94a3b8;
+   --border-color: #334155;
+   --success-color: #22c55e;
+   --error-color: #ef4444;
+   --warning-color: #f59e0b
+  }
+
+  * {
+   margin: 0;
+   padding: 0;
+   box-sizing: border-box;
+   font-family: 'Inter var', system-ui, -apple-system, sans-serif
+  }
+
+  body {
+   height: 100vh;
+   background: var(--primary-bg);
+   color: var(--text-primary);
+   display: flex;
+   flex-direction: column;
+   overflow: hidden
+  }
+
+  .header {
+   background: var(--secondary-bg);
+   padding: 1rem 1.5rem;
+   border-bottom: 1px solid var(--border-color);
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, .05);
+   backdrop-filter: blur(8px)
+  }
+
+  .logo {
+   font-size: 1.5rem;
+   font-weight: 700;
+   background: linear-gradient(135deg, var(--accent-color), #818cf8);
+   -webkit-background-clip: text;
+   color: transparent;
+   display: inline-flex;
+   align-items: center;
+   gap: .5rem
+  }
+
+  .toolbar {
+   background: var(--secondary-bg);
+   padding: .75rem 1rem;
+   display: flex;
+   gap: 1rem;
+   border-bottom: 1px solid var(--border-color);
+   align-items: center;
+   flex-wrap: wrap;
+   backdrop-filter: blur(8px)
+  }
+
+  .toolbar-group {
+   display: flex;
+   gap: .5rem;
+   align-items: center
+  }
+
+  .toolbar-group:not(:last-child) {
+   padding-right: 1rem;
+   border-right: 1px solid var(--border-color)
+  }
+
+  .button {
+   padding: .5rem 1rem;
+   background: rgba(255, 255, 255, .05);
+   border: 1px solid var(--border-color);
+   color: var(--text-primary);
+   border-radius: .5rem;
+   cursor: pointer;
+   font-size: .875rem;
+   font-weight: 500;
+   transition: all .2s cubic-bezier(.4, 0, .2, 1);
+   display: flex;
+   align-items: center;
+   gap: .5rem;
+   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, .05)
+  }
+
+  .button:hover {
+   background: var(--accent-color);
+   border-color: var(--accent-color);
+   color: #fff;
+   transform: translateY(-1px);
+   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, .1)
+  }
+
+  .button:active {
+   transform: translateY(0)
+  }
+
+  .button svg {
+   width: 1rem;
+   height: 1rem
+  }
+
+  .button.primary {
+   background: var(--accent-color);
+   border-color: var(--accent-color);
+   color: #fff
+  }
+
+  .button.primary:hover {
+   background: #2563eb
+  }
+
+  .main-content {
+   flex: 1;
+   display: flex;
+   overflow: hidden
+  }
+
+  .split-view {
+   display: flex;
+   flex: 1;
+   overflow: hidden;
+   gap: 1px
+  }
+
+  .editors-container {
+   flex: 1;
+   display: flex;
+   flex-direction: column;
+   min-width: 300px;
+   background: var(--primary-bg)
+  }
+
+  .tab-buttons {
+   display: flex;
+   background: var(--secondary-bg);
+   padding: 0 .5rem;
+   gap: .25rem;
+   overflow-x: auto;
+   scrollbar-width: none;
+   border-bottom: 1px solid var(--border-color)
+  }
+
+  .tab-button {
+   padding: .75rem 1.25rem;
+   background: 0 0;
+   border: none;
+   color: var(--text-secondary);
+   cursor: pointer;
+   font-size: .875rem;
+   transition: all .2s;
+   border-bottom: 2px solid transparent;
+   white-space: nowrap;
+   display: flex;
+   align-items: center;
+   gap: .5rem;
+   position: relative
+  }
+
+  .tab-button::after {
+   content: '';
+   position: absolute;
+   bottom: -1px;
+   left: 0;
+   right: 0;
+   height: 2px;
+   background: var(--accent-color);
+   transform: scaleX(0);
+   transition: transform .2s
+  }
+
+  .tab-button:hover::after {
+   transform: scaleX(.3)
+  }
+
+  .tab-button.active {
+   color: var(--text-primary);
+   background: rgba(255, 255, 255, .05)
+  }
+
+  .tab-button.active::after {
+   transform: scaleX(1)
+  }
+
+  .editor-wrapper {
+   flex: 1;
+   position: relative;
+   overflow: hidden
+  }
+
+  .preview-container {
+   flex: 1;
+   background: #fff;
+   position: relative;
+   min-width: 300px;
+   display: flex;
+   flex-direction: column;
+   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, .1)
+  }
+
+  .preview-toolbar {
+   background: var(--secondary-bg);
+   padding: .75rem 1rem;
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   border-bottom: 1px solid var(--border-color);
+   backdrop-filter: blur(8px)
+  }
+
+  .device-selector {
+   display: flex;
+   gap: .5rem
+  }
+
+  .device-button {
+   padding: .25rem .75rem;
+   background: rgba(255, 255, 255, .05);
+   border: 1px solid var(--border-color);
+   color: var(--text-secondary);
+   border-radius: .375rem;
+   cursor: pointer;
+   font-size: .75rem;
+   transition: all .2s
+  }
+
+  .device-button.active {
+   background: var(--accent-color);
+   border-color: var(--accent-color);
+   color: #fff
+  }
+
+  #preview {
+   flex: 1;
+   border: none;
+   background: #fff;
+   transition: all .3s ease
+  }
+
+  .resize-handle {
+   width: 4px;
+   background: var(--border-color);
+   cursor: ew-resize;
+   transition: background .2s
+  }
+
+  .resize-handle:hover {
+   background: var(--accent-color)
+  }
+
+  .CodeMirror {
+   height: 100%;
+   font-family: 'JetBrains Mono', 'Fira Code', monospace;
+   font-size: .875rem;
+   line-height: 1.6;
+   padding: 1rem
+  }
+
+  .notification {
+   position: fixed;
+   bottom: 1.5rem;
+   right: 1.5rem;
+   padding: 1rem 1.5rem;
+   border-radius: .5rem;
+   color: #fff;
+   font-size: .875rem;
+   display: flex;
+   align-items: center;
+   gap: .5rem;
+   animation: slideIn .3s cubic-bezier(.4, 0, .2, 1);
+   z-index: 1000;
+   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, .1);
+   backdrop-filter: blur(8px)
+  }
+
+  .notification.success {
+   background: var(--success-color)
+  }
+
+  .notification.error {
+   background: var(--error-color)
+  }
+
+  .notification.warning {
+   background: var(--warning-color)
+  }
+
+  .settings-panel {
+   position: fixed;
+   top: 0;
+   right: -400px;
+   width: 400px;
+   height: 100vh;
+   background: rgba(30, 41, 59, .95);
+   backdrop-filter: blur(10px);
+   border-left: 1px solid var(--border-color);
+   padding: 24px;
+   transition: right .3s ease;
+   z-index: 1000;
+   overflow-y: auto
+  }
+
+  .settings-panel.visible {
+   right: 0
+  }
+
+  .settings-section {
+   margin-bottom: 24px
+  }
+
+  .settings-section h3 {
+   color: var(--accent-color);
+   margin-bottom: 16px;
+   font-size: 1.1rem
+  }
+
+  .setting-item {
+   margin-bottom: 16px
+  }
+
+  .setting-item label {
+   display: block;
+   margin-bottom: 8px;
+   color: var(--text-secondary)
+  }
+
+  .setting-item input,
+  .setting-item select {
+   width: 100%;
+   padding: 8px 12px;
+   background: var(--primary-bg);
+   border: 1px solid var(--border-color);
+   color: var(--text-primary);
+   border-radius: 6px;
+   font-size: 14px
+  }
+
+  .keyboard-shortcuts {
+   display: grid;
+   grid-template-columns: auto 1fr;
+   gap: 12px 24px
+  }
+
+  .shortcut-key {
+   padding: 4px 8px;
+   background: var(--primary-bg);
+   border-radius: 4px;
+   font-size: 12px;
+   color: var(--text-secondary)
+  }
+
+  .console-panel {
+   background: var(--primary-bg);
+   border-top: 1px solid var(--border-color);
+   padding: 1rem;
+   font-family: 'JetBrains Mono', monospace;
+   font-size: .875rem;
+   max-height: 200px;
+   overflow-y: auto;
+   display: none
+  }
+
+  .console-panel.visible {
+   display: block
+  }
+
+  .console-line {
+   margin-bottom: .5rem;
+   padding: .25rem 0
+  }
+
+  .console-error {
+   color: var(--error-color)
+  }
+
+  .console-warning {
+   color: var(--warning-color)
+  }
+
+  .console-info {
+   color: var(--accent-color)
+  }
+
+  @keyframes slideIn {
+   from {
+    transform: translateY(100%);
+    opacity: 0
    }
 
-   * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Inter var', system-ui, -apple-system, sans-serif
+   to {
+    transform: translateY(0);
+    opacity: 1
    }
+  }
 
-   body {
-    height: 100vh;
-    background: var(--primary-bg);
-    color: var(--text-primary);
-    display: flex;
-    flex-direction: column;
-    overflow: hidden
-   }
-
-   .header {
-    background: var(--secondary-bg);
-    padding: 1rem 1.5rem;
-    border-bottom: 1px solid var(--border-color);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, .05);
-    backdrop-filter: blur(8px)
-   }
-
-   .logo {
-    font-size: 1.5rem;
-    font-weight: 700;
-    background: linear-gradient(135deg, var(--accent-color), #818cf8);
-    -webkit-background-clip: text;
-    color: transparent;
-    display: inline-flex;
-    align-items: center;
-    gap: .5rem
-   }
-
-   .toolbar {
-    background: var(--secondary-bg);
-    padding: .75rem 1rem;
-    display: flex;
-    gap: 1rem;
-    border-bottom: 1px solid var(--border-color);
-    align-items: center;
-    flex-wrap: wrap;
-    backdrop-filter: blur(8px)
-   }
-
-   .toolbar-group {
-    display: flex;
-    gap: .5rem;
-    align-items: center
-   }
-
-   .toolbar-group:not(:last-child) {
-    padding-right: 1rem;
-    border-right: 1px solid var(--border-color)
-   }
-
-   .button {
-    padding: .5rem 1rem;
-    background: rgba(255, 255, 255, .05);
-    border: 1px solid var(--border-color);
-    color: var(--text-primary);
-    border-radius: .5rem;
-    cursor: pointer;
-    font-size: .875rem;
-    font-weight: 500;
-    transition: all .2s cubic-bezier(.4, 0, .2, 1);
-    display: flex;
-    align-items: center;
-    gap: .5rem;
-    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, .05)
-   }
-
-   .button:hover {
-    background: var(--accent-color);
-    border-color: var(--accent-color);
-    color: #fff;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, .1)
-   }
-
-   .button:active {
-    transform: translateY(0)
-   }
-
-   .button svg {
-    width: 1rem;
-    height: 1rem
-   }
-
-   .button.primary {
-    background: var(--accent-color);
-    border-color: var(--accent-color);
-    color: #fff
-   }
-
-   .button.primary:hover {
-    background: #2563eb
-   }
-
-   .main-content {
-    flex: 1;
-    display: flex;
-    overflow: hidden
-   }
-
+  @media (max-width:768px) {
    .split-view {
-    display: flex;
-    flex: 1;
-    overflow: hidden;
-    gap: 1px
-   }
-
-   .editors-container {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    min-width: 300px;
-    background: var(--primary-bg)
-   }
-
-   .tab-buttons {
-    display: flex;
-    background: var(--secondary-bg);
-    padding: 0 .5rem;
-    gap: .25rem;
-    overflow-x: auto;
-    scrollbar-width: none;
-    border-bottom: 1px solid var(--border-color)
-   }
-
-   .tab-button {
-    padding: .75rem 1.25rem;
-    background: 0 0;
-    border: none;
-    color: var(--text-secondary);
-    cursor: pointer;
-    font-size: .875rem;
-    transition: all .2s;
-    border-bottom: 2px solid transparent;
-    white-space: nowrap;
-    display: flex;
-    align-items: center;
-    gap: .5rem;
-    position: relative
-   }
-
-   .tab-button::after {
-    content: '';
-    position: absolute;
-    bottom: -1px;
-    left: 0;
-    right: 0;
-    height: 2px;
-    background: var(--accent-color);
-    transform: scaleX(0);
-    transition: transform .2s
-   }
-
-   .tab-button:hover::after {
-    transform: scaleX(.3)
-   }
-
-   .tab-button.active {
-    color: var(--text-primary);
-    background: rgba(255, 255, 255, .05)
-   }
-
-   .tab-button.active::after {
-    transform: scaleX(1)
-   }
-
-   .editor-wrapper {
-    flex: 1;
-    position: relative;
-    overflow: hidden
-   }
-
-   .preview-container {
-    flex: 1;
-    background: #fff;
-    position: relative;
-    min-width: 300px;
-    display: flex;
-    flex-direction: column;
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, .1)
-   }
-
-   .preview-toolbar {
-    background: var(--secondary-bg);
-    padding: .75rem 1rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid var(--border-color);
-    backdrop-filter: blur(8px)
-   }
-
-   .device-selector {
-    display: flex;
-    gap: .5rem
-   }
-
-   .device-button {
-    padding: .25rem .75rem;
-    background: rgba(255, 255, 255, .05);
-    border: 1px solid var(--border-color);
-    color: var(--text-secondary);
-    border-radius: .375rem;
-    cursor: pointer;
-    font-size: .75rem;
-    transition: all .2s
-   }
-
-   .device-button.active {
-    background: var(--accent-color);
-    border-color: var(--accent-color);
-    color: #fff
-   }
-
-   #preview {
-    flex: 1;
-    border: none;
-    background: #fff;
-    transition: all .3s ease
+    flex-direction: column
    }
 
    .resize-handle {
-    width: 4px;
-    background: var(--border-color);
-    cursor: ew-resize;
-    transition: background .2s
+    height: 4px;
+    width: 100%;
+    cursor: ns-resize
    }
 
-   .resize-handle:hover {
-    background: var(--accent-color)
-   }
-
-   .CodeMirror {
-    height: 100%;
-    font-family: 'JetBrains Mono', 'Fira Code', monospace;
-    font-size: .875rem;
-    line-height: 1.6;
-    padding: 1rem
-   }
-
-   .notification {
-    position: fixed;
-    bottom: 1.5rem;
-    right: 1.5rem;
-    padding: 1rem 1.5rem;
-    border-radius: .5rem;
-    color: #fff;
-    font-size: .875rem;
-    display: flex;
-    align-items: center;
-    gap: .5rem;
-    animation: slideIn .3s cubic-bezier(.4, 0, .2, 1);
-    z-index: 1000;
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, .1);
-    backdrop-filter: blur(8px)
-   }
-
-   .notification.success {
-    background: var(--success-color)
-   }
-
-   .notification.error {
-    background: var(--error-color)
-   }
-
-   .notification.warning {
-    background: var(--warning-color)
+   .editors-container,
+   .preview-container {
+    min-height: 300px;
+    width: 100%
    }
 
    .settings-panel {
-    position: fixed;
-    top: 0;
-    right: -400px;
-    width: 400px;
-    height: 100vh;
-    background: rgba(30, 41, 59, .95);
-    backdrop-filter: blur(10px);
-    border-left: 1px solid var(--border-color);
-    padding: 24px;
-    transition: right .3s ease;
-    z-index: 1000;
-    overflow-y: auto
-   }
-
-   .settings-panel.visible {
-    right: 0
-   }
-
-   .settings-section {
-    margin-bottom: 24px
-   }
-
-   .settings-section h3 {
-    color: var(--accent-color);
-    margin-bottom: 16px;
-    font-size: 1.1rem
-   }
-
-   .setting-item {
-    margin-bottom: 16px
-   }
-
-   .setting-item label {
-    display: block;
-    margin-bottom: 8px;
-    color: var(--text-secondary)
-   }
-
-   .setting-item input,
-   .setting-item select {
     width: 100%;
-    padding: 8px 12px;
-    background: var(--primary-bg);
-    border: 1px solid var(--border-color);
-    color: var(--text-primary);
-    border-radius: 6px;
-    font-size: 14px
+    right: -100%
    }
 
-   .keyboard-shortcuts {
-    display: grid;
-    grid-template-columns: auto 1fr;
-    gap: 12px 24px
+   .toolbar {
+    padding: 8px
    }
 
-   .shortcut-key {
-    padding: 4px 8px;
-    background: var(--primary-bg);
-    border-radius: 4px;
-    font-size: 12px;
-    color: var(--text-secondary)
+   .toolbar-group {
+    flex-wrap: wrap
    }
 
-   .console-panel {
-    background: var(--primary-bg);
-    border-top: 1px solid var(--border-color);
+   .button {
+    padding: 6px 12px;
+    font-size: 13px
+   }
+  }
+
+  .project-controls {
+   padding: 1.25rem;
+   border-bottom: 1px solid var(--border-color);
+   background: var(--secondary-bg);
+   display: flex;
+   flex-direction: column;
+   gap: 0.75rem;
+  }
+
+  .project-controls input {
+   width: 100%;
+   padding: 0.75rem 1rem;
+   background: var(--primary-bg);
+   border: 1px solid var(--border-color);
+   color: var(--text-primary);
+   border-radius: 0.375rem;
+   font-size: 0.875rem;
+   transition: border-color 0.2s ease;
+  }
+
+  .project-controls input:focus {
+   outline: none;
+   border-color: var(--accent-color);
+   box-shadow: 0 0 0 2px rgba(var(--accent-color-rgb), 0.1);
+  }
+
+  .project-controls .button {
+   padding: 0.75rem 1rem;
+   border-radius: 0.375rem;
+   border: 1px solid var(--border-color);
+   background: var(--secondary-bg);
+   color: var(--text-primary);
+   cursor: pointer;
+   font-size: 0.875rem;
+   font-weight: 500;
+   transition: all 0.2s ease;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   gap: 0.5rem;
+  }
+
+  .project-controls .button:hover {
+   background: var(--primary-bg);
+   border-color: var(--accent-color);
+  }
+
+  #projectsList {
+   overflow-y: auto;
+   max-height: calc(100vh - 200px);
+  }
+
+  .project-item {
+   display: flex;
+   align-items: center;
+   padding: 1rem 1.25rem;
+   border-bottom: 1px solid var(--border-color);
+   gap: 1rem;
+   background: var(--primary-bg);
+   transition: background-color 0.2s ease;
+  }
+
+  .project-item:hover {
+   background: var(--secondary-bg);
+  }
+
+  .project-name {
+   flex: 1;
+   font-weight: 500;
+   color: var(--text-primary);
+   white-space: nowrap;
+   overflow: hidden;
+   text-overflow: ellipsis;
+  }
+
+  .project-date {
+   color: var(--text-secondary);
+   font-size: 0.75rem;
+   min-width: 85px;
+  }
+
+  .load-project-btn,
+  .delete-project-btn {
+   padding: 0.5rem 0.75rem;
+   border-radius: 0.25rem;
+   border: 1px solid var(--border-color);
+   background: var(--secondary-bg);
+   color: var(--text-primary);
+   cursor: pointer;
+   font-size: 0.75rem;
+   font-weight: 500;
+   transition: all 0.2s ease;
+   min-width: 60px;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+  }
+
+  .load-project-btn:hover {
+   background: var(--accent-color);
+   border-color: var(--accent-color);
+   color: white;
+  }
+
+  .delete-project-btn {
+   color: #ef4444;
+   border-color: #ef4444;
+  }
+
+  .delete-project-btn:hover {
+   background: #ef4444;
+   color: white;
+  }
+
+  .default-project {
+   background: var(--secondary-bg);
+   border-left: 3px solid var(--accent-color);
+  }
+
+  .toolbar-group .button {
+   padding: 0.5rem 0.75rem;
+   border-radius: 0.375rem;
+   border: 1px solid var(--border-color);
+   background: var(--secondary-bg);
+   color: var(--text-primary);
+   cursor: pointer;
+   font-size: 0.875rem;
+   display: flex;
+   align-items: center;
+   gap: 0.5rem;
+   transition: all 0.2s ease;
+  }
+
+  .toolbar-group .button:hover {
+   background: var(--primary-bg);
+   border-color: var(--accent-color);
+  }
+
+  .toolbar-group .button svg {
+   width: 16px;
+   height: 16px;
+  }
+
+  .panel-header {
+   padding: 1rem 1.25rem;
+   border-bottom: 1px solid var(--border-color);
+   background: var(--secondary-bg);
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+  }
+
+  .panel-header h2 {
+   font-size: 1.125rem;
+   font-weight: 600;
+   color: var(--text-primary);
+   margin: 0;
+  }
+
+  .panel-header .button {
+   padding: 0.5rem;
+   border-radius: 0.375rem;
+   border: none;
+   background: transparent;
+   color: var(--text-secondary);
+   cursor: pointer;
+   font-size: 1.25rem;
+   line-height: 1;
+   transition: all 0.2s ease;
+  }
+
+  .panel-header .button:hover {
+   color: var(--text-primary);
+   background: var(--primary-bg);
+  }
+
+  #projectsList::-webkit-scrollbar {
+   width: 8px;
+  }
+
+  #projectsList::-webkit-scrollbar-track {
+   background: var(--primary-bg);
+  }
+
+  #projectsList::-webkit-scrollbar-thumb {
+   background: var(--border-color);
+   border-radius: 4px;
+  }
+
+  #projectsList::-webkit-scrollbar-thumb:hover {
+   background: var(--accent-color);
+  }
+
+  .notification {
+   border-radius: 0.5rem;
+   padding: 1rem 1.25rem;
+   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+   font-size: 0.875rem;
+   font-weight: 500;
+  }
+
+  .notification.success {
+   background: var(--accent-color);
+   color: white;
+  }
+
+  .notification.error {
+   background: #ef4444;
+   color: white;
+  }
+
+  @media (max-width: 768px) {
+   .project-controls {
     padding: 1rem;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: .875rem;
-    max-height: 200px;
-    overflow-y: auto;
-    display: none
    }
 
-   .console-panel.visible {
-    display: block
+   .project-item {
+    flex-wrap: wrap;
+    gap: 0.5rem;
    }
 
-   .console-line {
-    margin-bottom: .5rem;
-    padding: .25rem 0
+   .project-name {
+    width: 100%;
    }
 
-   .console-error {
-    color: var(--error-color)
+   .load-project-btn,
+   .delete-project-btn {
+    padding: 0.375rem 0.5rem;
+    min-width: auto;
    }
 
-   .console-warning {
-    color: var(--warning-color)
+   .project-date {
+    min-width: auto;
    }
+  }
 
-   .console-info {
-    color: var(--accent-color)
-   }
+  .side-panel {
+   transition: transform 0.3s ease, opacity 0.3s ease;
+   transform: translateX(100%);
+   opacity: 0;
+  }
 
-   @keyframes slideIn {
-    from {
-     transform: translateY(100%);
-     opacity: 0
-    }
+  .side-panel.visible {
+   transform: translateX(0);
+   opacity: 1;
+  }
+ </style>
+</head>
 
-    to {
-     transform: translateY(0);
-     opacity: 1
-    }
-   }
-
-   @media (max-width:768px) {
-    .split-view {
-     flex-direction: column
-    }
-
-    .resize-handle {
-     height: 4px;
-     width: 100%;
-     cursor: ns-resize
-    }
-
-    .editors-container,
-    .preview-container {
-     min-height: 300px;
-     width: 100%
-    }
-
-    .settings-panel {
-     width: 100%;
-     right: -100%
-    }
-
-    .toolbar {
-     padding: 8px
-    }
-
-    .toolbar-group {
-     flex-wrap: wrap
-    }
-
-    .button {
-     padding: 6px 12px;
-     font-size: 13px
-    }
-   }
-  </style>
- </head>
- <body>
-  <div class="header">
-   <div class="logo">
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-     <path d="M16 18l6-6-6-6M8 6l-6 6 6 6" />
-    </svg>Synprev
+<body>
+ <div class="header">
+  <div class="logo">
+   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <path d="M16 18l6-6-6-6M8 6l-6 6 6 6" />
+   </svg>Synprev
+  </div>
+  <div class="toolbar-group">
+   <button class="button" id="shareBtn" title="Share">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+     <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
+     <polyline points="16 6 12 2 8 6" />
+     <line x1="12" y1="2" x2="12" y2="15" />
+    </svg>Share </button>
+   <button class="button" id="settingsBtn" title="Settings">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+     <circle cx="12" cy="12" r="3" />
+     <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+    </svg>Settings </button>
+  </div>
+ </div>
+ <div class="toolbar">
+  <div class="toolbar-group">
+   <button class="button primary" id="runBtn" title="Run (Ctrl+Enter)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+     <polygon points="5 3 19 12 5 21 5 3" />
+    </svg>Run </button>
+   <button class="button" id="previewBtn" title="Open in New Window">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+     <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+     <polyline points="15 3 21 3 21 9" />
+     <line x1="10" y1="14" x2="21" y2="3" />
+    </svg>Preview </button>
+  </div>
+  <div class="toolbar-group">
+   <button class="button" id="clearBtn" title="Clear">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+     <path d="M18 6V16.2C18 17.8802 18 18.7202 17.673 19.362C17.3854 19.9265 16.9265 20.3854 16.362 20.673C15.7202 21 14.8802 21 13.2 21H10.8C9.11984 21 8.27976 21 7.63803 20.673C7.07354 20.3854 6.6146 19.9265 6.32698 19.362C6 18.7202 6 17.8802 6 16.2V6M4 6H20M16 6L15.7294 5.18807C15.4671 4.40125 15.3359 4.00784 15.0927 3.71698C14.8779 3.46013 14.6021 3.26132 14.2905 3.13878C13.9376 3 13.523 3 12.6936 3H11.3064C10.477 3 10.0624 3 9.70951 3.13878C9.39792 3.26132 9.12208 3.46013 8.90729 3.71698C8.66405 4.00784 8.53292 4.40125 8.27064 5.18807L8 6" />
+    </svg>Clear </button>
+   <button class="button" id="saveBtn" title="Download">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+     <polyline points="7 10 12 15 17 10" />
+     <line x1="12" y1="15" x2="12" y2="3" />
+    </svg>Download </button>
+   <button class="button" id="consoleBtn" title="Toggle Console">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+     <polyline points="4 17 10 11 4 5" />
+     <line x1="12" y1="19" x2="20" y2="19" />
+    </svg>Console </button>
+  </div>
+ </div>
+ <div class="main-content">
+  <div class="split-view">
+   <div class="editors-container">
+    <div class="tab-buttons">
+     <button class="tab-button active" data-lang="html">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+       <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z" />
+       <polyline points="13 2 13 9 20 9" />
+      </svg>HTML </button>
+     <button class="tab-button" data-lang="css">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+       <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+       <polyline points="14 2 14 8 20 8" />
+       <line x1="16" y1="13" x2="8" y2="13" />
+       <line x1="16" y1="17" x2="8" y2="17" />
+       <polyline points="10 9 9 9 8 9" />
+      </svg>CSS </button>
+     <button class="tab-button" data-lang="javascript">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+       <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+       <polyline points="14 2 14 8 20 8" />
+      </svg>JavaScript </button>
+    </div>
+    <div class="editor-wrapper">
+     <div id="editor"></div>
+    </div>
+    <div class="console-panel" id="consolePanel">
+     <div id="consoleOutput"></div>
+    </div>
    </div>
-   <div class="toolbar-group">
-    <button class="button" id="shareBtn" title="Share">
-     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
-      <polyline points="16 6 12 2 8 6" />
-      <line x1="12" y1="2" x2="12" y2="15" />
-     </svg>Share </button>
-    <button class="button" id="settingsBtn" title="Settings">
-     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <circle cx="12" cy="12" r="3" />
-      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
-     </svg>Settings </button>
+   <div class="resize-handle" id="resizeHandle"></div>
+   <div class="preview-container">
+    <div class="preview-toolbar">
+     <div class="device-selector">
+      <button class="device-button active" data-width="100%" data-height="100%">Desktop</button>
+      <button class="device-button" data-width="768px" data-height="1024px">Tablet</button>
+      <button class="device-button" data-width="375px" data-height="812px">Mobile</button>
+     </div>
+     <span id="previewSize"></span>
+    </div>
+    <iframe id="preview"></iframe>
    </div>
   </div>
-  <div class="toolbar">
-   <div class="toolbar-group">
-    <button class="button primary" id="runBtn" title="Run (Ctrl+Enter)">
-     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <polygon points="5 3 19 12 5 21 5 3" />
-     </svg>Run </button>
-    <button class="button" id="previewBtn" title="Open in New Window">
-     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
-      <polyline points="15 3 21 3 21 9" />
-      <line x1="10" y1="14" x2="21" y2="3" />
-     </svg>Preview </button>
+ </div>
+ <div class="settings-panel" id="settingsPanel">
+  <div class="settings-header">
+   <h2>Settings</h2>
+   <button class="button" id="closeSettings">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+     <line x1="18" y1="6" x2="6" y2="18" />
+     <line x1="6" y1="6" x2="18" y2="18" />
+    </svg>
+   </button>
+  </div>
+  <div class="settings-section">
+   <h3>Editor</h3>
+   <div class="setting-item">
+    <label for="themeSelect">Theme</label>
+    <select id="themeSelect">
+     <option value="default">Default</option>
+     <option value="nord">Nord</option>
+     <option value="monokai">Monokai</option>
+     <option value="material">Material</option>
+     <option value="dracula">Dracula</option>
+     <option value="tomorrow-night-bright">Tomorrow Night</option>
+    </select>
    </div>
-   <div class="toolbar-group">
-    <button class="button" id="clearBtn" title="Clear">
-     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <path d="M18 6V16.2C18 17.8802 18 18.7202 17.673 19.362C17.3854 19.9265 16.9265 20.3854 16.362 20.673C15.7202 21 14.8802 21 13.2 21H10.8C9.11984 21 8.27976 21 7.63803 20.673C7.07354 20.3854 6.6146 19.9265 6.32698 19.362C6 18.7202 6 17.8802 6 16.2V6M4 6H20M16 6L15.7294 5.18807C15.4671 4.40125 15.3359 4.00784 15.0927 3.71698C14.8779 3.46013 14.6021 3.26132 14.2905 3.13878C13.9376 3 13.523 3 12.6936 3H11.3064C10.477 3 10.0624 3 9.70951 3.13878C9.39792 3.26132 9.12208 3.46013 8.90729 3.71698C8.66405 4.00784 8.53292 4.40125 8.27064 5.18807L8 6" />
-     </svg>Clear </button>
-    <button class="button" id="saveBtn" title="Download">
-     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-      <polyline points="7 10 12 15 17 10" />
-      <line x1="12" y1="15" x2="12" y2="3" />
-     </svg>Download </button>
-    <button class="button" id="consoleBtn" title="Toggle Console">
-     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <polyline points="4 17 10 11 4 5" />
-      <line x1="12" y1="19" x2="20" y2="19" />
-     </svg>Console </button>
+   <div class="setting-item">
+    <label for="fontSizeSelect">Font Size</label>
+    <select id="fontSizeSelect">
+     <option value="12">12px</option>
+     <option value="14" selected="selected">14px</option>
+     <option value="16">16px</option>
+     <option value="18">18px</option>
+    </select>
+   </div>
+   <div class="setting-item">
+    <label for="autoSaveSelect">Auto Save</label>
+    <select id="autoSaveSelect">
+     <option value="off">Off</option>
+     <option value="30">Every 30 seconds</option>
+     <option value="60">Every minute</option>
+     <option value="300">Every 5 minutes</option>
+    </select>
    </div>
   </div>
-  <div class="main-content">
-   <div class="split-view">
-    <div class="editors-container">
-     <div class="tab-buttons">
-      <button class="tab-button active" data-lang="html">
-       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z" />
-        <polyline points="13 2 13 9 20 9" />
-       </svg>HTML </button>
-      <button class="tab-button" data-lang="css">
-       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-        <polyline points="14 2 14 8 20 8" />
-        <line x1="16" y1="13" x2="8" y2="13" />
-        <line x1="16" y1="17" x2="8" y2="17" />
-        <polyline points="10 9 9 9 8 9" />
-       </svg>CSS </button>
-      <button class="tab-button" data-lang="javascript">
-       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-        <polyline points="14 2 14 8 20 8" />
-       </svg>JavaScript </button>
-     </div>
-     <div class="editor-wrapper">
-      <div id="editor"></div>
-     </div>
-     <div class="console-panel" id="consolePanel">
-      <div id="consoleOutput"></div>
-     </div>
-    </div>
-    <div class="resize-handle" id="resizeHandle"></div>
-    <div class="preview-container">
-     <div class="preview-toolbar">
-      <div class="device-selector">
-       <button class="device-button active" data-width="100%" data-height="100%">Desktop</button>
-       <button class="device-button" data-width="768px" data-height="1024px">Tablet</button>
-       <button class="device-button" data-width="375px" data-height="812px">Mobile</button>
-      </div>
-      <span id="previewSize"></span>
-     </div>
-     <iframe id="preview"></iframe>
-    </div>
+  <div class="settings-section">
+   <h3>Keyboard Shortcuts</h3>
+   <div class="keyboard-shortcuts">
+    <span class="shortcut-key">Ctrl + Enter</span>
+    <span>Run Code</span>
+    <span class="shortcut-key">Ctrl + S</span>
+    <span>Save Changes</span>
+    <span class="shortcut-key">Ctrl + /</span>
+    <span>Toggle Comment</span>
+    <span class="shortcut-key">Ctrl + Space</span>
+    <span>Show Autocomplete</span>
+    <span class="shortcut-key">Ctrl + F</span>
+    <span>Find</span>
+    <span class="shortcut-key">Ctrl + H</span>
+    <span>Replace</span>
+    <span class="shortcut-key">Alt + Click</span>
+    <span>Add Cursor</span>
    </div>
   </div>
-  <div class="settings-panel" id="settingsPanel">
-   <div class="settings-header">
-    <h2>Settings</h2>
-    <button class="button" id="closeSettings">
-     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <line x1="18" y1="6" x2="6" y2="18" />
-      <line x1="6" y1="6" x2="18" y2="18" />
-     </svg>
-    </button>
-   </div>
-   <div class="settings-section">
-    <h3>Editor</h3>
-    <div class="setting-item">
-     <label for="themeSelect">Theme</label>
-     <select id="themeSelect">
-      <option value="default">Default</option>
-      <option value="nord">Nord</option>
-      <option value="monokai">Monokai</option>
-      <option value="material">Material</option>
-      <option value="dracula">Dracula</option>
-      <option value="tomorrow-night-bright">Tomorrow Night</option>
-     </select>
-    </div>
-    <div class="setting-item">
-     <label for="fontSizeSelect">Font Size</label>
-     <select id="fontSizeSelect">
-      <option value="12">12px</option>
-      <option value="14" selected="selected">14px</option>
-      <option value="16">16px</option>
-      <option value="18">18px</option>
-     </select>
-    </div>
-    <div class="setting-item">
-     <label for="autoSaveSelect">Auto Save</label>
-     <select id="autoSaveSelect">
-      <option value="off">Off</option>
-      <option value="30">Every 30 seconds</option>
-      <option value="60">Every minute</option>
-      <option value="300">Every 5 minutes</option>
-     </select>
-    </div>
-   </div>
-   <div class="settings-section">
-    <h3>Keyboard Shortcuts</h3>
-    <div class="keyboard-shortcuts">
-     <span class="shortcut-key">Ctrl + Enter</span>
-     <span>Run Code</span>
-     <span class="shortcut-key">Ctrl + S</span>
-     <span>Save Changes</span>
-     <span class="shortcut-key">Ctrl + /</span>
-     <span>Toggle Comment</span>
-     <span class="shortcut-key">Ctrl + Space</span>
-     <span>Show Autocomplete</span>
-     <span class="shortcut-key">Ctrl + F</span>
-     <span>Find</span>
-     <span class="shortcut-key">Ctrl + H</span>
-     <span>Replace</span>
-     <span class="shortcut-key">Alt + Click</span>
-     <span>Add Cursor</span>
-    </div>
-   </div>
-  </div>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/xml/xml.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/javascript/javascript.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/css/css.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/htmlmixed/htmlmixed.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closetag.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/hint/show-hint.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/hint/html-hint.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/hint/css-hint.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/hint/javascript-hint.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/comment/comment.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.14.9/beautify.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.14.9/beautify-css.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.14.9/beautify-html.min.js"></script>
-  <script>
-   (function() {
-    const state = {
-     code: {
-      html: '',
-      css: '',
-      javascript: ''
+ </div>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/xml/xml.min.js"></script>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/javascript/javascript.min.js"></script>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/css/css.min.js"></script>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/htmlmixed/htmlmixed.min.js"></script>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closetag.min.js"></script>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/hint/show-hint.min.js"></script>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/hint/html-hint.min.js"></script>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/hint/css-hint.min.js"></script>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/hint/javascript-hint.min.js"></script>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/comment/comment.min.js"></script>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.14.9/beautify.min.js"></script>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.14.9/beautify-css.min.js"></script>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.14.9/beautify-html.min.js"></script>
+ <script>
+  (function() {
+   const state = {
+    code: {
+     html: '',
+     css: '',
+     javascript: ''
+    },
+    currentLang: 'html',
+    editor: null,
+    isUpdating: false,
+    settings: {
+     theme: 'default',
+     fontSize: '14'
+    }
+   };
+   state.editor = CodeMirror(document.getElementById('editor'), {
+    mode: 'htmlmixed',
+    theme: state.settings.theme,
+    lineNumbers: true,
+    autoCloseTags: true,
+    autoCloseBrackets: true,
+    matchBrackets: true,
+    lineWrapping: true,
+    tabSize: 2,
+    indentWithTabs: false,
+    extraKeys: {
+     'Ctrl-Enter': () => document.getElementById('runBtn').click(),
+     'Ctrl-S': (cm) => {
+      showNotification('Changes saved!', 'success');
+      return false;
      },
-     currentLang: 'html',
-     editor: null,
-     isUpdating: false,
-     settings: {
-      theme: 'default',
-      fontSize: '14'
-     }
-    };
-    state.editor = CodeMirror(document.getElementById('editor'), {
-     mode: 'htmlmixed',
-     theme: state.settings.theme,
-     lineNumbers: true,
-     autoCloseTags: true,
-     autoCloseBrackets: true,
-     matchBrackets: true,
-     lineWrapping: true,
-     tabSize: 2,
-     indentWithTabs: false,
-     extraKeys: {
-      'Ctrl-Enter': () => document.getElementById('runBtn').click(),
-      'Ctrl-S': (cm) => {
-       showNotification('Changes saved!', 'success');
-       return false;
-      },
-      'Ctrl-Space': 'autocomplete',
-      'Ctrl-/': 'toggleComment'
-     }
-    });
-    document.querySelector('.CodeMirror').style.fontSize = `${state.settings.fontSize}px`;
-
-    function showNotification(message, type = 'success') {
-     const notification = document.createElement('div');
-     notification.className = `notification ${type}`;
-     notification.textContent = message;
-     document.body.appendChild(notification);
-     setTimeout(() => {
-      notification.remove();
-     }, 3000);
+     'Ctrl-Space': 'autocomplete',
+     'Ctrl-/': 'toggleComment'
     }
+   });
+   document.querySelector('.CodeMirror').style.fontSize = `${state.settings.fontSize}px`;
 
-    function updatePreview(force = false) {
-     if (state.isUpdating && !force) return;
-     state.isUpdating = true;
-     requestAnimationFrame(() => {
-      try {
-       const previewContent = `
+   function showNotification(message, type = 'success') {
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    notification.textContent = message;
+    document.body.appendChild(notification);
+    setTimeout(() => {
+     notification.remove();
+    }, 3000);
+   }
+
+   function updatePreview(force = false) {
+    if (state.isUpdating && !force) return;
+    state.isUpdating = true;
+    requestAnimationFrame(() => {
+     try {
+      const previewContent = `
 
 													<!DOCTYPE html>
 													<html>
@@ -691,83 +940,83 @@
 																	<script>${state.code.javascript || ''}<\/script>
 																	</body>
 																</html>`;
-       const preview = document.getElementById('preview');
-       const previewDoc = preview.contentDocument || preview.contentWindow.document;
-       previewDoc.open();
-       previewDoc.write(previewContent);
-       previewDoc.close();
-       updatePreviewSize();
-       state.isUpdating = false;
-      } catch (err) {
-       console.error('Preview update error:', err);
-       state.isUpdating = false;
-       showNotification('Error updating preview', 'error');
-      }
-     });
-    }
-
-    function updatePreviewSize() {
-     const preview = document.getElementById('preview');
-     const previewSize = document.getElementById('previewSize');
-     previewSize.textContent = `${preview.offsetWidth}x${preview.offsetHeight}`;
-    }
-    document.querySelectorAll('.tab-button').forEach(button => {
-     button.addEventListener('click', () => {
-      const lang = button.dataset.lang;
-      if (state.currentLang === lang) return;
-      state.code[state.currentLang] = state.editor.getValue();
-      document.querySelector('.tab-button.active').classList.remove('active');
-      button.classList.add('active');
-      state.currentLang = lang;
-      state.editor.setOption('mode', lang === 'html' ? 'htmlmixed' : lang);
-      state.editor.setValue(state.code[lang] || '');
-     });
-    });
-    state.editor.on('change', (cm) => {
-     state.code[state.currentLang] = cm.getValue();
-     updatePreview();
-    });
-    document.querySelectorAll('.device-button').forEach(button => {
-     button.addEventListener('click', () => {
-      document.querySelector('.device-button.active').classList.remove('active');
-      button.classList.add('active');
       const preview = document.getElementById('preview');
-      preview.style.width = button.dataset.width;
-      preview.style.height = button.dataset.height;
+      const previewDoc = preview.contentDocument || preview.contentWindow.document;
+      previewDoc.open();
+      previewDoc.write(previewContent);
+      previewDoc.close();
       updatePreviewSize();
-     });
+      state.isUpdating = false;
+     } catch (err) {
+      console.error('Preview update error:', err);
+      state.isUpdating = false;
+      showNotification('Error updating preview', 'error');
+     }
     });
-    const settingsPanel = document.getElementById('settingsPanel');
-    const settingsBtn = document.getElementById('settingsBtn');
-    const closeSettings = document.getElementById('closeSettings');
-    settingsBtn.addEventListener('click', () => {
-     settingsPanel.classList.add('visible');
-    });
-    closeSettings.addEventListener('click', () => {
-     settingsPanel.classList.remove('visible');
-    });
-    const themeSelect = document.getElementById('themeSelect');
-    themeSelect.value = state.settings.theme;
-    themeSelect.addEventListener('change', (e) => {
-     const theme = e.target.value;
-     applyTheme(theme);
-     state.settings.theme = theme;
-    });
-    const fontSizeSelect = document.getElementById('fontSizeSelect');
-    fontSizeSelect.value = state.settings.fontSize;
-    fontSizeSelect.addEventListener('change', (e) => {
-     const fontSize = e.target.value;
-     document.querySelector('.CodeMirror').style.fontSize = `${fontSize}px`;
-     state.settings.fontSize = fontSize;
-    });
-    document.getElementById('runBtn').addEventListener('click', () => {
+   }
+
+   function updatePreviewSize() {
+    const preview = document.getElementById('preview');
+    const previewSize = document.getElementById('previewSize');
+    previewSize.textContent = `${preview.offsetWidth}x${preview.offsetHeight}`;
+   }
+   document.querySelectorAll('.tab-button').forEach(button => {
+    button.addEventListener('click', () => {
+     const lang = button.dataset.lang;
+     if (state.currentLang === lang) return;
      state.code[state.currentLang] = state.editor.getValue();
-     updatePreview(true);
-     showNotification('Code executed!', 'success');
+     document.querySelector('.tab-button.active').classList.remove('active');
+     button.classList.add('active');
+     state.currentLang = lang;
+     state.editor.setOption('mode', lang === 'html' ? 'htmlmixed' : lang);
+     state.editor.setValue(state.code[lang] || '');
     });
-    document.getElementById('previewBtn').addEventListener('click', () => {
-     const win = window.open('', '_blank');
-     win.document.write(`
+   });
+   state.editor.on('change', (cm) => {
+    state.code[state.currentLang] = cm.getValue();
+    updatePreview();
+   });
+   document.querySelectorAll('.device-button').forEach(button => {
+    button.addEventListener('click', () => {
+     document.querySelector('.device-button.active').classList.remove('active');
+     button.classList.add('active');
+     const preview = document.getElementById('preview');
+     preview.style.width = button.dataset.width;
+     preview.style.height = button.dataset.height;
+     updatePreviewSize();
+    });
+   });
+   const settingsPanel = document.getElementById('settingsPanel');
+   const settingsBtn = document.getElementById('settingsBtn');
+   const closeSettings = document.getElementById('closeSettings');
+   settingsBtn.addEventListener('click', () => {
+    settingsPanel.classList.add('visible');
+   });
+   closeSettings.addEventListener('click', () => {
+    settingsPanel.classList.remove('visible');
+   });
+   const themeSelect = document.getElementById('themeSelect');
+   themeSelect.value = state.settings.theme;
+   themeSelect.addEventListener('change', (e) => {
+    const theme = e.target.value;
+    applyTheme(theme);
+    state.settings.theme = theme;
+   });
+   const fontSizeSelect = document.getElementById('fontSizeSelect');
+   fontSizeSelect.value = state.settings.fontSize;
+   fontSizeSelect.addEventListener('change', (e) => {
+    const fontSize = e.target.value;
+    document.querySelector('.CodeMirror').style.fontSize = `${fontSize}px`;
+    state.settings.fontSize = fontSize;
+   });
+   document.getElementById('runBtn').addEventListener('click', () => {
+    state.code[state.currentLang] = state.editor.getValue();
+    updatePreview(true);
+    showNotification('Code executed!', 'success');
+   });
+   document.getElementById('previewBtn').addEventListener('click', () => {
+    const win = window.open('', '_blank');
+    win.document.write(`
 
 																<!DOCTYPE html>
 																<html>
@@ -782,323 +1031,323 @@
 																				<script>${state.code.javascript || ''}<\/script>
 																				</body>
 																			</html>`);
+   });
+   document.getElementById('clearBtn').addEventListener('click', () => {
+    state.code = {
+     html: '',
+     css: '',
+     javascript: ''
+    };
+    state.editor.setValue('');
+    updatePreview(true);
+    showNotification('All content cleared!', 'success');
+   });
+   document.getElementById('saveBtn').addEventListener('click', () => {
+    const htmlContent = state.code.html || '';
+    const cssContent = state.code.css || '';
+    const javascriptContent = state.code.javascript || '';
+    const zip = new JSZip();
+    if (htmlContent) {
+     zip.file('index.html', htmlContent);
+    }
+    if (cssContent) {
+     zip.file('styles.css', cssContent);
+    }
+    if (javascriptContent) {
+     zip.file('script.js', javascriptContent);
+    }
+    zip.generateAsync({
+     type: 'blob'
+    }).then(function(content) {
+     const link = document.createElement('a');
+     const url = URL.createObjectURL(content);
+     link.href = url;
+     link.download = 'project.zip';
+     link.click();
+     URL.revokeObjectURL(url);
+     showNotification('Your files are being downloaded as a zip!', 'success');
+    }).catch(function(err) {
+     console.error('Error generating zip file:', err);
+     showNotification('Error generating zip file', 'error');
     });
-    document.getElementById('clearBtn').addEventListener('click', () => {
-     state.code = {
-      html: '',
-      css: '',
-      javascript: ''
-     };
-     state.editor.setValue('');
-     updatePreview(true);
-     showNotification('All content cleared!', 'success');
-    });
-    document.getElementById('saveBtn').addEventListener('click', () => {
-     const htmlContent = state.code.html || '';
-     const cssContent = state.code.css || '';
-     const javascriptContent = state.code.javascript || '';
-     const zip = new JSZip();
-     if (htmlContent) {
-      zip.file('index.html', htmlContent);
-     }
-     if (cssContent) {
-      zip.file('styles.css', cssContent);
-     }
-     if (javascriptContent) {
-      zip.file('script.js', javascriptContent);
-     }
-     zip.generateAsync({
-      type: 'blob'
-     }).then(function(content) {
-      const link = document.createElement('a');
-      const url = URL.createObjectURL(content);
-      link.href = url;
-      link.download = 'project.zip';
-      link.click();
-      URL.revokeObjectURL(url);
-      showNotification('Your files are being downloaded as a zip!', 'success');
-     }).catch(function(err) {
-      console.error('Error generating zip file:', err);
-      showNotification('Error generating zip file', 'error');
-     });
-    });
-    document.getElementById('shareBtn').addEventListener('click', async () => {
-     try {
-      const shareUrl = window.location.origin;
-      await navigator.clipboard.writeText(shareUrl);
-      showNotification('Domain URL copied to clipboard!', 'success');
-     } catch (err) {
-      showNotification('Error copying domain URL', 'error');
-     }
-    });
+   });
+   document.getElementById('shareBtn').addEventListener('click', async () => {
+    try {
+     const shareUrl = window.location.origin;
+     await navigator.clipboard.writeText(shareUrl);
+     showNotification('Domain URL copied to clipboard!', 'success');
+    } catch (err) {
+     showNotification('Error copying domain URL', 'error');
+    }
+   });
 
-    function applyTheme(theme) {
-     const themeColors = {
-      nord: {
-       '--primary-bg': '#2E3440',
-       '--secondary-bg': '#3B4252',
-       '--accent-color': '#88C0D0',
-       '--text-primary': '#ECEFF4',
-       '--text-secondary': '#D8DEE9',
-       '--border-color': '#434C5E'
-      },
-      monokai: {
-       '--primary-bg': '#272822',
-       '--secondary-bg': '#383830',
-       '--accent-color': '#F92672',
-       '--text-primary': '#F8F8F2',
-       '--text-secondary': '#75715E',
-       '--border-color': '#3E3D32'
-      },
-      material: {
-       '--primary-bg': '#263238',
-       '--secondary-bg': '#37474F',
-       '--accent-color': '#FF4081',
-       '--text-primary': '#ECEFF1',
-       '--text-secondary': '#B0BEC5',
-       '--border-color': '#455A64'
-      },
-      dracula: {
-       '--primary-bg': '#282a36',
-       '--secondary-bg': '#44475a',
-       '--accent-color': '#ff79c6',
-       '--text-primary': '#f8f8f2',
-       '--text-secondary': '#6272a4',
-       '--border-color': '#6272a4'
-      },
-      'tomorrow-night-bright': {
-       '--primary-bg': '#1d1f21',
-       '--secondary-bg': '#282c34',
-       '--accent-color': '#e0e0e0',
-       '--text-primary': '#f0f0f0',
-       '--text-secondary': '#b0b0b0',
-       '--border-color': '#4e5b67'
-      },
-      default: {
-       '--primary-bg': '#1a1b26',
-       '--secondary-bg': '#24283b',
-       '--accent-color': '#7aa2f7',
-       '--text-primary': '#c0caf5',
-       '--text-secondary': '#9aa5ce',
-       '--border-color': '#414868'
-      }
-     };
-     localStorage.setItem('selectedTheme', theme);
-     state.editor.setOption('theme', theme);
-    }
-    const consoleBtn = document.getElementById("consoleBtn");
-    const consolePanel = document.getElementById("consolePanel");
-    const consoleOutput = document.getElementById("consoleOutput");
-    const originalConsole = {
-     error: console.error,
-     log: console.log,
-     warn: console.warn,
-     info: console.info
+   function applyTheme(theme) {
+    const themeColors = {
+     nord: {
+      '--primary-bg': '#2E3440',
+      '--secondary-bg': '#3B4252',
+      '--accent-color': '#88C0D0',
+      '--text-primary': '#ECEFF4',
+      '--text-secondary': '#D8DEE9',
+      '--border-color': '#434C5E'
+     },
+     monokai: {
+      '--primary-bg': '#272822',
+      '--secondary-bg': '#383830',
+      '--accent-color': '#F92672',
+      '--text-primary': '#F8F8F2',
+      '--text-secondary': '#75715E',
+      '--border-color': '#3E3D32'
+     },
+     material: {
+      '--primary-bg': '#263238',
+      '--secondary-bg': '#37474F',
+      '--accent-color': '#FF4081',
+      '--text-primary': '#ECEFF1',
+      '--text-secondary': '#B0BEC5',
+      '--border-color': '#455A64'
+     },
+     dracula: {
+      '--primary-bg': '#282a36',
+      '--secondary-bg': '#44475a',
+      '--accent-color': '#ff79c6',
+      '--text-primary': '#f8f8f2',
+      '--text-secondary': '#6272a4',
+      '--border-color': '#6272a4'
+     },
+     'tomorrow-night-bright': {
+      '--primary-bg': '#1d1f21',
+      '--secondary-bg': '#282c34',
+      '--accent-color': '#e0e0e0',
+      '--text-primary': '#f0f0f0',
+      '--text-secondary': '#b0b0b0',
+      '--border-color': '#4e5b67'
+     },
+     default: {
+      '--primary-bg': '#1a1b26',
+      '--secondary-bg': '#24283b',
+      '--accent-color': '#7aa2f7',
+      '--text-primary': '#c0caf5',
+      '--text-secondary': '#9aa5ce',
+      '--border-color': '#414868'
+     }
     };
-    console.log = function(...args) {
-     originalConsole.log(...args);
-     appendToConsole("log", args);
-    };
-    console.error = function(...args) {
-     originalConsole.error(...args);
-     appendToConsole("error", args);
-    };
-    console.warn = function(...args) {
-     originalConsole.warn(...args);
-     appendToConsole("warning", args);
-    };
-    console.info = function(...args) {
-     originalConsole.info(...args);
-     appendToConsole("info", args);
-    };
+    localStorage.setItem('selectedTheme', theme);
+    state.editor.setOption('theme', theme);
+   }
+   const consoleBtn = document.getElementById("consoleBtn");
+   const consolePanel = document.getElementById("consolePanel");
+   const consoleOutput = document.getElementById("consoleOutput");
+   const originalConsole = {
+    error: console.error,
+    log: console.log,
+    warn: console.warn,
+    info: console.info
+   };
+   console.log = function(...args) {
+    originalConsole.log(...args);
+    appendToConsole("log", args);
+   };
+   console.error = function(...args) {
+    originalConsole.error(...args);
+    appendToConsole("error", args);
+   };
+   console.warn = function(...args) {
+    originalConsole.warn(...args);
+    appendToConsole("warning", args);
+   };
+   console.info = function(...args) {
+    originalConsole.info(...args);
+    appendToConsole("info", args);
+   };
 
-    function appendToConsole(type, args) {
-     const line = document.createElement("div");
-     line.className = `console-line console-${type}`;
-     const output = args.map(function(arg) {
-      if (typeof arg === "object") {
-       return JSON.stringify(arg, null, 2);
-      }
-      return String(arg);
-     }).join(" ");
-     const timestamp = new Date().toLocaleTimeString();
-     line.innerHTML = `[${timestamp}] ${output}`;
-     consoleOutput.appendChild(line);
-     consoleOutput.scrollTop = consoleOutput.scrollHeight;
-    }
-    consoleBtn.addEventListener("click", function() {
-     consolePanel.classList.toggle("visible");
-     const editorWrapper = document.querySelector(".editor-wrapper");
-     if (consolePanel.classList.contains("visible")) {
-      editorWrapper.style.height = "calc(100% - 200px)";
-     } else {
-      editorWrapper.style.height = "100%";
+   function appendToConsole(type, args) {
+    const line = document.createElement("div");
+    line.className = `console-line console-${type}`;
+    const output = args.map(function(arg) {
+     if (typeof arg === "object") {
+      return JSON.stringify(arg, null, 2);
      }
-    });
-    document.getElementById("clearBtn").addEventListener("click", function() {
-     consoleOutput.innerHTML = "";
-    });
-    document.addEventListener("keydown", function(e) {
-     if (e.ctrlKey && e.key === "`") {
-      e.preventDefault();
-      consoleBtn.click();
-     }
-    });
-    let autoSaveInterval;
-
-    function setupAutoSave() {
-     const autoSaveSelect = document.getElementById('autoSaveSelect');
-     clearInterval(autoSaveInterval);
-     if (autoSaveSelect.value !== 'off') {
-      const seconds = parseInt(autoSaveSelect.value);
-      autoSaveInterval = setInterval(() => {
-       localStorage.setItem('synprev_autosave', JSON.stringify(state.code));
-       showNotification('Auto-saved', 'success');
-      }, seconds * 1000);
-     }
+     return String(arg);
+    }).join(" ");
+    const timestamp = new Date().toLocaleTimeString();
+    line.innerHTML = `[${timestamp}] ${output}`;
+    consoleOutput.appendChild(line);
+    consoleOutput.scrollTop = consoleOutput.scrollHeight;
+   }
+   consoleBtn.addEventListener("click", function() {
+    consolePanel.classList.toggle("visible");
+    const editorWrapper = document.querySelector(".editor-wrapper");
+    if (consolePanel.classList.contains("visible")) {
+     editorWrapper.style.height = "calc(100% - 200px)";
+    } else {
+     editorWrapper.style.height = "100%";
     }
-    const savedContent = localStorage.getItem('synprev_autosave');
-    if (savedContent) {
-     state.code = JSON.parse(savedContent);
-     state.editor.setValue(state.code[state.currentLang] || '');
-    }
-    document.getElementById('autoSaveSelect').addEventListener('change', setupAutoSave);
-    const editorWrapper = document.querySelector('.editor-wrapper');
-    editorWrapper.addEventListener('dragover', (e) => {
+   });
+   document.getElementById("clearBtn").addEventListener("click", function() {
+    consoleOutput.innerHTML = "";
+   });
+   document.addEventListener("keydown", function(e) {
+    if (e.ctrlKey && e.key === "`") {
      e.preventDefault();
-     e.stopPropagation();
-     editorWrapper.classList.add('drag-over');
-    });
-    editorWrapper.addEventListener('dragleave', () => {
-     editorWrapper.classList.remove('drag-over');
-    });
-    editorWrapper.addEventListener('drop', async (e) => {
-     e.preventDefault();
-     e.stopPropagation();
-     editorWrapper.classList.remove('drag-over');
-     const file = e.dataTransfer.files[0];
-     if (!file) return;
-     const content = await file.text();
-     const extension = file.name.split('.').pop().toLowerCase();
-     switch (extension) {
-      case 'html':
-       state.code.html = content;
-       break;
-      case 'css':
-       state.code.css = content;
-       break;
-      case 'js':
-       state.code.javascript = content;
-       break;
-      default:
-       showNotification('Unsupported file type', 'error');
-       return;
+     consoleBtn.click();
+    }
+   });
+   let autoSaveInterval;
+
+   function setupAutoSave() {
+    const autoSaveSelect = document.getElementById('autoSaveSelect');
+    clearInterval(autoSaveInterval);
+    if (autoSaveSelect.value !== 'off') {
+     const seconds = parseInt(autoSaveSelect.value);
+     autoSaveInterval = setInterval(() => {
+      localStorage.setItem('synprev_autosave', JSON.stringify(state.code));
+      showNotification('Auto-saved', 'success');
+     }, seconds * 1000);
+    }
+   }
+   const savedContent = localStorage.getItem('synprev_autosave');
+   if (savedContent) {
+    state.code = JSON.parse(savedContent);
+    state.editor.setValue(state.code[state.currentLang] || '');
+   }
+   document.getElementById('autoSaveSelect').addEventListener('change', setupAutoSave);
+   const editorWrapper = document.querySelector('.editor-wrapper');
+   editorWrapper.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    editorWrapper.classList.add('drag-over');
+   });
+   editorWrapper.addEventListener('dragleave', () => {
+    editorWrapper.classList.remove('drag-over');
+   });
+   editorWrapper.addEventListener('drop', async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    editorWrapper.classList.remove('drag-over');
+    const file = e.dataTransfer.files[0];
+    if (!file) return;
+    const content = await file.text();
+    const extension = file.name.split('.').pop().toLowerCase();
+    switch (extension) {
+     case 'html':
+      state.code.html = content;
+      break;
+     case 'css':
+      state.code.css = content;
+      break;
+     case 'js':
+      state.code.javascript = content;
+      break;
+     default:
+      showNotification('Unsupported file type', 'error');
+      return;
+    }
+    if (extension === state.currentLang || (extension === 'js' && state.currentLang === 'javascript')) {
+     state.editor.setValue(content);
+    }
+    updatePreview(true);
+    showNotification(`${file.name} loaded successfully`, 'success');
+   });
+   const undoManager = {
+    stack: [],
+    position: -1,
+    maxSize: 100,
+    push(state) {
+     this.position++;
+     this.stack.splice(this.position);
+     this.stack.push(JSON.stringify(state));
+     if (this.stack.length > this.maxSize) {
+      this.stack.shift();
+      this.position--;
      }
-     if (extension === state.currentLang || (extension === 'js' && state.currentLang === 'javascript')) {
-      state.editor.setValue(content);
+    },
+    undo() {
+     if (this.position > 0) {
+      this.position--;
+      return JSON.parse(this.stack[this.position]);
      }
-     updatePreview(true);
-     showNotification(`${file.name} loaded successfully`, 'success');
-    });
-    const undoManager = {
-     stack: [],
-     position: -1,
-     maxSize: 100,
-     push(state) {
+     return null;
+    },
+    redo() {
+     if (this.position < this.stack.length - 1) {
       this.position++;
-      this.stack.splice(this.position);
-      this.stack.push(JSON.stringify(state));
-      if (this.stack.length > this.maxSize) {
-       this.stack.shift();
-       this.position--;
-      }
-     },
-     undo() {
-      if (this.position > 0) {
-       this.position--;
-       return JSON.parse(this.stack[this.position]);
-      }
-      return null;
-     },
-     redo() {
-      if (this.position < this.stack.length - 1) {
-       this.position++;
-       return JSON.parse(this.stack[this.position]);
-      }
-      return null;
+      return JSON.parse(this.stack[this.position]);
      }
+     return null;
+    }
+   };
+
+   function setupErrorHandling() {
+    const preview = document.getElementById('preview');
+    const previewWindow = preview.contentWindow;
+    previewWindow.onerror = (msg, url, lineNo, columnNo, error) => {
+     console.error(`${msg}\nLine: ${lineNo}, Column: ${columnNo}`);
+     showNotification('JavaScript error detected', 'error');
+     return false;
     };
+   }
 
-    function setupErrorHandling() {
-     const preview = document.getElementById('preview');
-     const previewWindow = preview.contentWindow;
-     previewWindow.onerror = (msg, url, lineNo, columnNo, error) => {
-      console.error(`${msg}\nLine: ${lineNo}, Column: ${columnNo}`);
-      showNotification('JavaScript error detected', 'error');
-      return false;
-     };
-    }
-
-    function setupResizeHandle() {
-     const handle = document.getElementById('resizeHandle');
-     const editorsContainer = document.querySelector('.editors-container');
-     const previewContainer = document.querySelector('.preview-container');
-     let isResizing = false;
-     let startX, startWidth;
-     handle.addEventListener('mousedown', (e) => {
-      isResizing = true;
-      startX = e.pageX;
-      startWidth = editorsContainer.offsetWidth;
-      document.body.classList.add('resizing');
-     });
-     document.addEventListener('mousemove', (e) => {
-      if (!isResizing) return;
-      const diff = e.pageX - startX;
-      const newWidth = Math.max(300, Math.min(startWidth + diff, document.body.offsetWidth - 300));
-      editorsContainer.style.width = `${newWidth}px`;
-      previewContainer.style.width = `calc(100% - ${newWidth}px - 4px)`;
-      updatePreviewSize();
-     });
-     document.addEventListener('mouseup', () => {
-      isResizing = false;
-      document.body.classList.remove('resizing');
-     });
-    }
-    const keyboardShortcuts = {
-     'Ctrl-Z': (cm) => {
-      const previousState = undoManager.undo();
-      if (previousState) {
-       state.code = previousState;
-       cm.setValue(state.code[state.currentLang]);
-       updatePreview(true);
-      }
-     },
-     'Ctrl-Y': (cm) => {
-      const nextState = undoManager.redo();
-      if (nextState) {
-       state.code = nextState;
-       cm.setValue(state.code[state.currentLang]);
-       updatePreview(true);
-      }
-     },
-     'Alt-F': () => {
-      document.getElementById('preview').requestFullscreen();
+   function setupResizeHandle() {
+    const handle = document.getElementById('resizeHandle');
+    const editorsContainer = document.querySelector('.editors-container');
+    const previewContainer = document.querySelector('.preview-container');
+    let isResizing = false;
+    let startX, startWidth;
+    handle.addEventListener('mousedown', (e) => {
+     isResizing = true;
+     startX = e.pageX;
+     startWidth = editorsContainer.offsetWidth;
+     document.body.classList.add('resizing');
+    });
+    document.addEventListener('mousemove', (e) => {
+     if (!isResizing) return;
+     const diff = e.pageX - startX;
+     const newWidth = Math.max(300, Math.min(startWidth + diff, document.body.offsetWidth - 300));
+     editorsContainer.style.width = `${newWidth}px`;
+     previewContainer.style.width = `calc(100% - ${newWidth}px - 4px)`;
+     updatePreviewSize();
+    });
+    document.addEventListener('mouseup', () => {
+     isResizing = false;
+     document.body.classList.remove('resizing');
+    });
+   }
+   const keyboardShortcuts = {
+    'Ctrl-Z': (cm) => {
+     const previousState = undoManager.undo();
+     if (previousState) {
+      state.code = previousState;
+      cm.setValue(state.code[state.currentLang]);
+      updatePreview(true);
      }
-    };
-    Object.assign(state.editor.options.extraKeys, keyboardShortcuts);
-
-    function initializeNewFeatures() {
-     setupAutoSave();
-     setupErrorHandling();
-     setupResizeHandle();
-     state.editor.on('change', () => {
-      undoManager.push({
-       ...state.code
-      });
-     });
+    },
+    'Ctrl-Y': (cm) => {
+     const nextState = undoManager.redo();
+     if (nextState) {
+      state.code = nextState;
+      cm.setValue(state.code[state.currentLang]);
+      updatePreview(true);
+     }
+    },
+    'Alt-F': () => {
+     document.getElementById('preview').requestFullscreen();
     }
-    initializeNewFeatures();
-    const newStyles = `
+   };
+   Object.assign(state.editor.options.extraKeys, keyboardShortcuts);
+
+   function initializeNewFeatures() {
+    setupAutoSave();
+    setupErrorHandling();
+    setupResizeHandle();
+    state.editor.on('change', () => {
+     undoManager.push({
+      ...state.code
+     });
+    });
+   }
+   initializeNewFeatures();
+   const newStyles = `
   .drag-over {
     border: 2px dashed var(--accent-color);
     background: rgba(59, 130, 246, 0.1);
@@ -1131,9 +1380,9 @@
     }
   }
 `;
-    const newToolbar = document.createElement('div');
-    newToolbar.className = 'toolbar-group advanced-features';
-    newToolbar.innerHTML = `
+   const newToolbar = document.createElement('div');
+   newToolbar.className = 'toolbar-group advanced-features';
+   newToolbar.innerHTML = `
 
 																			<button class="button" id="formatBtn" title="Format Code">
 																				<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -1158,10 +1407,10 @@
 
 																			</button>
 `;
-    document.querySelector('.toolbar').appendChild(newToolbar);
-    const snippetsPanel = document.createElement('div');
-    snippetsPanel.className = 'side-panel snippets-panel';
-    snippetsPanel.innerHTML = `
+   document.querySelector('.toolbar').appendChild(newToolbar);
+   const snippetsPanel = document.createElement('div');
+   snippetsPanel.className = 'side-panel snippets-panel';
+   snippetsPanel.innerHTML = `
 
 																			<div class="panel-header">
 																				<h2>Code Snippets</h2>
@@ -1181,10 +1430,10 @@
 																				<div class="snippet-list"></div>
 																			</div>
 `;
-    document.body.appendChild(snippetsPanel);
-    const searchPanel = document.createElement('div');
-    searchPanel.className = 'search-panel';
-    searchPanel.innerHTML = `
+   document.body.appendChild(snippetsPanel);
+   const searchPanel = document.createElement('div');
+   searchPanel.className = 'search-panel';
+   searchPanel.innerHTML = `
 
 																			<div class="search-header">
 																				<input type="text" id="searchInput" placeholder="Search in files...">
@@ -1201,8 +1450,8 @@
 																						</div>
 																						<div class="search-results"></div>
 `;
-    document.body.appendChild(searchPanel);
-    const additionalStyles = `
+   document.body.appendChild(searchPanel);
+   const additionalStyles = `
   .side-panel {
     position: fixed;
     top: 0;
@@ -1393,64 +1642,64 @@
     pointer-events: none;
   }
 `;
-    const styleSheet = document.createElement('style');
-    styleSheet.textContent = additionalStyles;
-    document.head.appendChild(styleSheet);
+   const styleSheet = document.createElement('style');
+   styleSheet.textContent = additionalStyles;
+   document.head.appendChild(styleSheet);
 
-    function initializeNewUI() {
-     const snippets = {
-      html: [{
-       title: 'Responsive Container',
-       description: 'A container with responsive breakpoints',
-       code: ' < div class = "container mx-auto px-4" > ... < /div>'
-      }, ],
-      css: [{
-       title: 'Flex Center',
-       description: 'Center elements using flexbox',
-       code: '.center {\n  display: flex;\n  justify-content: center;\n  align-items: center;\n}'
-      }, ],
-      js: [{
-       title: 'Fetch API Template',
-       description: 'Basic fetch API with error handling',
-       code: 'async function fetchData(url) {\n  try {\n    const response = await fetch(url);\n    return await response.json();\n  } catch (error) {\n    console.error("Error:", error);\n  }\n}'
-      }, ]
-     };
+   function initializeNewUI() {
+    const snippets = {
+     html: [{
+      title: 'Responsive Container',
+      description: 'A container with responsive breakpoints',
+      code: ' < div class = "container mx-auto px-4" > ... < /div>'
+     }, ],
+     css: [{
+      title: 'Flex Center',
+      description: 'Center elements using flexbox',
+      code: '.center {\n  display: flex;\n  justify-content: center;\n  align-items: center;\n}'
+     }, ],
+     js: [{
+      title: 'Fetch API Template',
+      description: 'Basic fetch API with error handling',
+      code: 'async function fetchData(url) {\n  try {\n    const response = await fetch(url);\n    return await response.json();\n  } catch (error) {\n    console.error("Error:", error);\n  }\n}'
+     }, ]
+    };
 
-     function showSnippets(category) {
-      const snippetList = document.querySelector('.snippet-list');
-      snippetList.innerHTML = '';
-      snippets[category].forEach(snippet => {
-       const snippetEl = document.createElement('div');
-       snippetEl.className = 'snippet-item';
-       snippetEl.innerHTML = `
+    function showSnippets(category) {
+     const snippetList = document.querySelector('.snippet-list');
+     snippetList.innerHTML = '';
+     snippets[category].forEach(snippet => {
+      const snippetEl = document.createElement('div');
+      snippetEl.className = 'snippet-item';
+      snippetEl.innerHTML = `
 
 																						<div class="snippet-title">${snippet.title}</div>
 																						<div class="snippet-description">${snippet.description}</div>
       `;
-       snippetEl.addEventListener('click', () => {
-        state.editor.replaceSelection(snippet.code);
-        showNotification('Snippet inserted!', 'success');
-       });
-       snippetList.appendChild(snippetEl);
+      snippetEl.addEventListener('click', () => {
+       state.editor.replaceSelection(snippet.code);
+       showNotification('Snippet inserted!', 'success');
       });
-     }
-     document.getElementById('snippetsBtn').addEventListener('click', () => {
-      document.querySelector('.snippets-panel').classList.add('visible');
-      showSnippets('html');
+      snippetList.appendChild(snippetEl);
      });
-     document.getElementById('closeSnippets').addEventListener('click', () => {
-      document.querySelector('.snippets-panel').classList.remove('visible');
+    }
+    document.getElementById('snippetsBtn').addEventListener('click', () => {
+     document.querySelector('.snippets-panel').classList.add('visible');
+     showSnippets('html');
+    });
+    document.getElementById('closeSnippets').addEventListener('click', () => {
+     document.querySelector('.snippets-panel').classList.remove('visible');
+    });
+    document.querySelectorAll('.snippet-categories button').forEach(button => {
+     button.addEventListener('click', () => {
+      document.querySelector('.snippet-categories .active').classList.remove('active');
+      button.classList.add('active');
+      showSnippets(button.dataset.category);
      });
-     document.querySelectorAll('.snippet-categories button').forEach(button => {
-      button.addEventListener('click', () => {
-       document.querySelector('.snippet-categories .active').classList.remove('active');
-       button.classList.add('active');
-       showSnippets(button.dataset.category);
-      });
-     });
-     const statusBar = document.createElement('div');
-     statusBar.className = 'status-bar';
-     statusBar.innerHTML = `
+    });
+    const statusBar = document.createElement('div');
+    statusBar.className = 'status-bar';
+    statusBar.innerHTML = `
 
 																						<div class="status-left">
 																							<span class="status-item" id="cursorPosition">Ln 1, Col 1</span>
@@ -1461,131 +1710,473 @@
 																							<span class="status-item" id="encodingType">UTF-8</span>
 																						</div>
   `;
-     document.querySelector('.editors-container').appendChild(statusBar);
-     state.editor.on('cursorActivity', () => {
-      const pos = state.editor.getCursor();
-      document.getElementById('cursorPosition').textContent = `Ln ${pos.line + 1}, Col ${pos.ch + 1}`;
-     });
-     state.editor.on('change', () => {
-      const size = new Blob([state.editor.getValue()]).size;
-      document.getElementById('fileSize').textContent = `${size} bytes`;
-     });
-     document.getElementById('formatBtn').addEventListener('click', () => {
-      const value = state.editor.getValue();
-      let formatted = value;
-      try {
-       if (state.currentLang === 'javascript') {
-        formatted = js_beautify(value, {
-         indent_size: 1,
-         space_in_empty_paren: true
-        });
-       } else if (state.currentLang === 'html') {
-        formatted = html_beautify(value, {
-         indent_size: 1,
-         max_preserve_newlines: 2
-        });
-       } else if (state.currentLang === 'css') {
-        formatted = css_beautify(value, {
-         indent_size: 1
-        });
-       }
-       state.editor.setValue(formatted);
-       showNotification('Code formatted!', 'success');
-      } catch (error) {
-       console.error('Formatting error:', error);
-       showNotification('Error formatting code', 'error');
-      }
-     });
-    }
-    initializeNewUI();
-
-    function performSearch(query, options = {}) {
-     const searchResults = document.querySelector('.search-results');
-     searchResults.innerHTML = '';
-     if (!query) return;
-     const files = {
-      'HTML': state.code.html,
-      'CSS': state.code.css,
-      'JavaScript': state.code.javascript
-     };
+    document.querySelector('.editors-container').appendChild(statusBar);
+    state.editor.on('cursorActivity', () => {
+     const pos = state.editor.getCursor();
+     document.getElementById('cursorPosition').textContent = `Ln ${pos.line + 1}, Col ${pos.ch + 1}`;
+    });
+    state.editor.on('change', () => {
+     const size = new Blob([state.editor.getValue()]).size;
+     document.getElementById('fileSize').textContent = `${size} bytes`;
+    });
+    document.getElementById('formatBtn').addEventListener('click', () => {
+     const value = state.editor.getValue();
+     let formatted = value;
      try {
-      let regex;
-      if (options.isRegex) {
-       regex = new RegExp(query, options.caseSensitive ? 'g' : 'gi');
-      } else {
-       regex = new RegExp(escapeRegExp(query), options.caseSensitive ? 'g' : 'gi');
+      if (state.currentLang === 'javascript') {
+       formatted = js_beautify(value, {
+        indent_size: 1,
+        space_in_empty_paren: true
+       });
+      } else if (state.currentLang === 'html') {
+       formatted = html_beautify(value, {
+        indent_size: 1,
+        max_preserve_newlines: 2
+       });
+      } else if (state.currentLang === 'css') {
+       formatted = css_beautify(value, {
+        indent_size: 1
+       });
       }
-      Object.entries(files).forEach(([fileName, content]) => {
-       if (!content) return;
-       const matches = [...content.matchAll(regex)];
-       if (matches.length > 0) {
-        matches.forEach(match => {
-         const start = Math.max(0, match.index - 40);
-         const end = Math.min(content.length, match.index + match[0].length + 40);
-         const preview = content.substring(start, end);
-         const resultElement = document.createElement('div');
-         resultElement.className = 'search-result';
-         resultElement.innerHTML = `
+      state.editor.setValue(formatted);
+      showNotification('Code formatted!', 'success');
+     } catch (error) {
+      console.error('Formatting error:', error);
+      showNotification('Error formatting code', 'error');
+     }
+    });
+   }
+   initializeNewUI();
+
+   function performSearch(query, options = {}) {
+    const searchResults = document.querySelector('.search-results');
+    searchResults.innerHTML = '';
+    if (!query) return;
+    const files = {
+     'HTML': state.code.html,
+     'CSS': state.code.css,
+     'JavaScript': state.code.javascript
+    };
+    try {
+     let regex;
+     if (options.isRegex) {
+      regex = new RegExp(query, options.caseSensitive ? 'g' : 'gi');
+     } else {
+      regex = new RegExp(escapeRegExp(query), options.caseSensitive ? 'g' : 'gi');
+     }
+     Object.entries(files).forEach(([fileName, content]) => {
+      if (!content) return;
+      const matches = [...content.matchAll(regex)];
+      if (matches.length > 0) {
+       matches.forEach(match => {
+        const start = Math.max(0, match.index - 40);
+        const end = Math.min(content.length, match.index + match[0].length + 40);
+        const preview = content.substring(start, end);
+        const resultElement = document.createElement('div');
+        resultElement.className = 'search-result';
+        resultElement.innerHTML = `
 
 																						<div class="search-result-file">${fileName}</div>
 																						<div class="search-result-preview">${highlightMatch(preview, match[0])}</div>
           `;
-         resultElement.addEventListener('click', () => {
-          const langMap = {
-           'HTML': 'html',
-           'CSS': 'css',
-           'JavaScript': 'javascript'
-          };
-          document.querySelector(`[data-lang="${langMap[fileName]}"]`).click();
-          state.editor.setCursor(state.editor.posFromIndex(match.index));
-          state.editor.focus();
-         });
-         searchResults.appendChild(resultElement);
+        resultElement.addEventListener('click', () => {
+         const langMap = {
+          'HTML': 'html',
+          'CSS': 'css',
+          'JavaScript': 'javascript'
+         };
+         document.querySelector(`[data-lang="${langMap[fileName]}"]`).click();
+         state.editor.setCursor(state.editor.posFromIndex(match.index));
+         state.editor.focus();
         });
-       }
-      });
-      if (searchResults.children.length === 0) {
-       searchResults.innerHTML = ' < div class = "search-no-results" > No results found < /div>';
+        searchResults.appendChild(resultElement);
+       });
       }
-     } catch (error) {
-      console.error('Search error:', error);
-      showNotification('Invalid search pattern', 'error');
+     });
+     if (searchResults.children.length === 0) {
+      searchResults.innerHTML = ' < div class = "search-no-results" > No results found < /div>';
      }
+    } catch (error) {
+     console.error('Search error:', error);
+     showNotification('Invalid search pattern', 'error');
     }
+   }
 
-    function escapeRegExp(string) {
-     return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    }
+   function escapeRegExp(string) {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+   }
 
-    function highlightMatch(text, match) {
-     return text.replace(new RegExp(escapeRegExp(match), 'gi'), `
+   function highlightMatch(text, match) {
+    return text.replace(new RegExp(escapeRegExp(match), 'gi'), `
 
 																						<span class="highlight">${match}</span>`);
-    }
+   }
 
-    function toggleSearchPanel() {
-     const searchPanel = document.querySelector('.search-panel');
-     searchPanel.classList.toggle('visible');
-     if (searchPanel.classList.contains('visible')) {
-      document.getElementById('searchInput').focus();
+   function toggleSearchPanel() {
+    const searchPanel = document.querySelector('.search-panel');
+    searchPanel.classList.toggle('visible');
+    if (searchPanel.classList.contains('visible')) {
+     document.getElementById('searchInput').focus();
+    }
+   }
+   document.getElementById('searchBtn').addEventListener('click', toggleSearchPanel);
+   document.getElementById('searchInput').addEventListener('input', (e) => {
+    const caseSensitive = document.getElementById('caseSensitive').checked;
+    const isRegex = document.getElementById('regexSearch').checked;
+    performSearch(e.target.value, {
+     caseSensitive,
+     isRegex
+    });
+   });
+   document.addEventListener('keydown', (e) => {
+    if (e.ctrlKey && e.key === 'f') {
+     e.preventDefault();
+     toggleSearchPanel();
+    }
+   });
+
+   const additionalShortcuts = {
+    'Ctrl-B': (cm) => {
+     document.getElementById('snippetsBtn').click();
+    },
+    'Ctrl-P': (cm) => {
+     const currentValue = cm.getValue();
+     navigator.clipboard.writeText(currentValue);
+     showNotification('Code copied to clipboard!', 'success');
+    },
+    'Alt-S': (cm) => {
+     const lines = cm.getValue().split('\n');
+     const sorted = lines.sort();
+     cm.setValue(sorted.join('\n'));
+     showNotification('Lines sorted alphabetically', 'success');
+    }
+   };
+   Object.assign(state.editor.options.extraKeys, additionalShortcuts);
+
+   window.addEventListener('load', () => {
+    const lastEditTime = localStorage.getItem('lastEditTime');
+    if (lastEditTime) {
+     const hoursSinceEdit = (Date.now() - lastEditTime) / (1000 * 60 * 60);
+     if (hoursSinceEdit < 24) {
+      const autosavedContent = localStorage.getItem('synprev_autosave');
+      if (autosavedContent) {
+       const recover = confirm('Found unsaved changes from your last session. Would you like to recover them?');
+       if (recover) {
+        const savedCode = JSON.parse(autosavedContent);
+        state.code = savedCode;
+        state.editor.setValue(state.code[state.currentLang] || '');
+        updatePreview(true);
+       }
+      }
      }
     }
-    document.getElementById('searchBtn').addEventListener('click', toggleSearchPanel);
-    document.getElementById('searchInput').addEventListener('input', (e) => {
-     const caseSensitive = document.getElementById('caseSensitive').checked;
-     const isRegex = document.getElementById('regexSearch').checked;
-     performSearch(e.target.value, {
-      caseSensitive,
-      isRegex
-     });
-    });
-    document.addEventListener('keydown', (e) => {
-     if (e.ctrlKey && e.key === 'f') {
-      e.preventDefault();
-      toggleSearchPanel();
+   });
+
+   function toggleLineWrapping() {
+    const isWrapped = state.editor.getOption('lineWrapping');
+    state.editor.setOption('lineWrapping', !isWrapped);
+    showNotification(`Line wrapping ${!isWrapped ? 'enabled' : 'disabled'}`, 'success');
+   }
+
+   function getWordCount() {
+    const content = state.editor.getValue();
+    const wordCount = content.trim().split(/\s+/).length;
+    const charCount = content.length;
+    showNotification(`Words: ${wordCount}, Characters: ${charCount}`, 'info');
+   }
+
+   function indentSelectedLines() {
+    const selections = state.editor.getSelections();
+    const indentedSelections = selections.map(text =>
+     text.split('\n').map(line => '  ' + line).join('\n')
+    );
+    state.editor.replaceSelections(indentedSelections);
+   }
+
+   function outdentSelectedLines() {
+    const selections = state.editor.getSelections();
+    const outdentedSelections = selections.map(text =>
+     text.split('\n')
+     .map(line => line.startsWith('  ') ? line.substring(2) : line)
+     .join('\n')
+    );
+    state.editor.replaceSelections(outdentedSelections);
+   }
+
+   Object.assign(state.editor.options.extraKeys, {
+    'Ctrl-W': toggleLineWrapping,
+    'Ctrl-Shift-C': getWordCount,
+    'Tab': indentSelectedLines,
+    'Shift-Tab': outdentSelectedLines
+   });
+
+   let lastSavedContent = state.editor.getValue();
+   setInterval(() => {
+    const currentContent = state.editor.getValue();
+    if (currentContent !== lastSavedContent) {
+     document.title = '* ' + document.title.replace('* ', '');
+    } else {
+     document.title = document.title.replace('* ', '');
+    }
+   }, 1000);
+
+   const projectManager = {
+    currentProject: {
+     name: 'Untitled Project',
+     id: Date.now().toString(),
+     lastModified: new Date()
+    },
+
+    saveCurrentProject() {
+     const projectData = {
+      name: this.currentProject.name,
+      id: this.currentProject.id,
+      lastModified: new Date(),
+      code: state.code,
+      settings: state.settings
+     };
+
+     localStorage.setItem(`project_${this.currentProject.id}`, JSON.stringify(projectData));
+
+     this.updateProjectsList();
+     showNotification(`Project "${this.currentProject.name}" saved`, 'success');
+    },
+
+    loadProject(projectId) {
+     const projectData = localStorage.getItem(`project_${projectId}`);
+     if (projectData) {
+      const project = JSON.parse(projectData);
+      this.currentProject = {
+       name: project.name,
+       id: project.id,
+       lastModified: new Date(project.lastModified)
+      };
+      state.code = project.code;
+      state.settings = project.settings;
+
+      state.editor.setValue(state.code[state.currentLang] || '');
+
+      document.getElementById('projectName').value = project.name;
+      updatePreview(true);
+      showNotification(`Project "${project.name}" loaded`, 'success');
      }
-    });
-   })();
-  </script>
- </body>
+    },
+
+    createNewProject() {
+     this.currentProject = {
+      name: 'Untitled Project',
+      id: Date.now().toString(),
+      lastModified: new Date()
+     };
+     state.code = {
+      html: '',
+      css: '',
+      javascript: ''
+     };
+     state.editor.setValue('');
+     document.getElementById('projectName').value = 'Untitled Project';
+     updatePreview(true);
+     this.saveCurrentProject();
+    },
+
+    getAllProjects() {
+     const projects = [];
+     for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key.startsWith('project_')) {
+       const projectData = JSON.parse(localStorage.getItem(key));
+       projects.push({
+        id: projectData.id,
+        name: projectData.name,
+        lastModified: new Date(projectData.lastModified)
+       });
+      }
+     }
+     return projects.sort((a, b) => b.lastModified - a.lastModified);
+    },
+
+    updateProjectsList() {
+     const projectsList = document.getElementById('projectsList');
+     const projects = this.getAllProjects();
+
+     projectsList.innerHTML = `
+      <div class="project-item default-project">
+        <span class="project-name">Default (Clear All)</span>
+        <button class="load-project-btn">Load</button>
+      </div>
+    `;
+
+     projects.forEach(project => {
+      const projectItem = document.createElement('div');
+      projectItem.className = 'project-item';
+      projectItem.innerHTML = `
+        <span class="project-name">${project.name}</span>
+        <span class="project-date">${project.lastModified.toLocaleDateString()}</span>
+        <button class="load-project-btn">Load</button>
+        <button class="delete-project-btn">Delete</button>
+      `;
+
+      projectItem.querySelector('.load-project-btn').addEventListener('click', () => {
+       this.loadProject(project.id);
+       document.getElementById('projectsPanel').classList.remove('visible');
+      });
+
+      projectItem.querySelector('.delete-project-btn').addEventListener('click', () => {
+       if (confirm(`Delete project "${project.name}"?`)) {
+        localStorage.removeItem(`project_${project.id}`);
+        this.updateProjectsList();
+       }
+      });
+
+      projectsList.appendChild(projectItem);
+     });
+    }
+   };
+
+   const projectsBtn = document.createElement('button');
+   projectsBtn.className = 'button';
+   projectsBtn.innerHTML = `
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <path d="M3 6h18M3 12h18M3 18h18"/>
+  </svg>
+  Projects
+`;
+   document.querySelector('.toolbar-group').appendChild(projectsBtn);
+
+   const projectsPanel = document.createElement('div');
+   projectsPanel.id = 'projectsPanel';
+   projectsPanel.className = 'side-panel';
+   projectsPanel.innerHTML = `
+  <div class="panel-header">
+    <h2>Projects</h2>
+    <button class="button" id="closeProjects">×</button>
+  </div>
+  <div class="panel-content">
+    <div class="project-controls">
+      <input type="text" id="projectName" placeholder="Project name">
+      <button id="saveProjectBtn" class="button">Save Project</button>
+      <button id="newProjectBtn" class="button">New Project</button>
+    </div>
+    <div id="projectsList"></div>
+  </div>
+`;
+   document.body.appendChild(projectsPanel);
+
+   const autosave = {
+    interval: null,
+
+    start(intervalSeconds = 30) {
+     this.stop();
+     this.interval = setInterval(() => {
+      projectManager.saveCurrentProject();
+      localStorage.setItem('lastEditTime', Date.now());
+     }, intervalSeconds * 1000);
+    },
+
+    stop() {
+     if (this.interval) {
+      clearInterval(this.interval);
+      this.interval = null;
+     }
+    },
+
+    updateInterval(seconds) {
+     if (seconds === 'off') {
+      this.stop();
+     } else {
+      this.start(parseInt(seconds));
+     }
+    }
+   };
+
+   projectsBtn.addEventListener('click', () => {
+    projectsPanel.classList.add('visible');
+    projectManager.updateProjectsList();
+   });
+
+   document.getElementById('closeProjects').addEventListener('click', () => {
+    projectsPanel.classList.remove('visible');
+   });
+
+   document.getElementById('saveProjectBtn').addEventListener('click', () => {
+    projectManager.currentProject.name = document.getElementById('projectName').value;
+    projectManager.saveCurrentProject();
+   });
+
+   document.getElementById('newProjectBtn').addEventListener('click', () => {
+    if (confirm('Create new project? Current changes will be saved first.')) {
+     projectManager.saveCurrentProject();
+     projectManager.createNewProject();
+    }
+   });
+
+   document.querySelector('.default-project .load-project-btn').addEventListener('click', () => {
+    if (confirm('Load default empty project? Current changes will be lost.')) {
+     projectManager.createNewProject();
+     document.getElementById('projectsPanel').classList.remove('visible');
+    }
+   });
+
+   document.getElementById('autoSaveSelect').addEventListener('change', (e) => {
+    autosave.updateInterval(e.target.value);
+   });
+
+   const projectStyles = document.createElement('style');
+   projectStyles.textContent = `
+  .project-controls {
+    padding: 1rem;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .project-controls input {
+    width: 100%;
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+    background: var(--primary-bg);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    border-radius: 0.375rem;
+  }
+
+  .project-item {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    border-bottom: 1px solid var(--border-color);
+    gap: 1rem;
+  }
+
+  .project-name {
+    flex: 1;
+    font-weight: 500;
+  }
+
+  .project-date {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+  }
+
+  .load-project-btn,
+  .delete-project-btn {
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    border: 1px solid var(--border-color);
+    background: var(--primary-bg);
+    color: var(--text-primary);
+    cursor: pointer;
+  }
+
+  .delete-project-btn {
+    color: #ef4444;
+    border-color: #ef4444;
+  }
+`;
+   document.head.appendChild(projectStyles);
+
+   autosave.start(30);
+   projectManager.updateProjectsList();
+  })();
+ </script>
+</body>
+
 </html>
