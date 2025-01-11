@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Synprev</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/nord.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/material.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/dracula.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/tomorrow-night-bright.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/hint/show-hint.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/lint/lint.min.css" rel="stylesheet">
-    <style>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Synprev</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/nord.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/material.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/dracula.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/tomorrow-night-bright.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/hint/show-hint.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/lint/lint.min.css" rel="stylesheet">
+  <style>
       :root {
         --primary-bg: #0f172a;
         --secondary-bg: #1e293b;
@@ -721,184 +721,235 @@
         outline: none;
         box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
       }
-    </style>
-  </head>
-  <body>
-    <div class="header">
-      <div class="logo">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M16 18l6-6-6-6M8 6l-6 6 6 6" />
-        </svg>Synprev
+  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+  <div class="header">
+    <div class="logo">
+      <svg width="24" height="24" viewbox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2">
+      <path d="M16 18l6-6-6-6M8 6l-6 6 6 6"></path></svg>Synprev
+    </div>
+    <div class="toolbar-group">
+      <button class="button" aria-label="Open projects panel"><svg viewbox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2">
+      <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>Projects</button> <button class="button" id="shareBtn" title="Share"><svg viewbox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2">
+      <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path>
+      <polyline points="16 6 12 2 8 6"></polyline>
+      <line x1="12" y1="2" x2="12" y2="15"></line></svg>Share</button> <button class="button" id="settingsBtn" title="Settings"><svg viewbox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2">
+      <circle cx="12" cy="12" r="3"></circle>
+      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>Settings</button>
+    </div>
+  </div>
+  <div class="toolbar">
+    <div class="toolbar-group">
+      <button class="button primary" id="runBtn" title="Run (Ctrl+Enter)"><svg viewbox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2">
+      <polygon points="5 3 19 12 5 21 5 3"></polygon></svg>Run</button> <button class="button" id="previewBtn" title="Open in New Window"><svg viewbox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2">
+      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+      <polyline points="15 3 21 3 21 9"></polyline>
+      <line x1="10" y1="14" x2="21" y2="3"></line></svg>Preview</button>
+    </div>
+    <div class="toolbar-group">
+      <button class="button" id="clearBtn" title="Clear"><svg viewbox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2">
+      <path d="M18 6V16.2C18 17.8802 18 18.7202 17.673 19.362C17.3854 19.9265 16.9265 20.3854 16.362 20.673C15.7202 21 14.8802 21 13.2 21H10.8C9.11984 21 8.27976 21 7.63803 20.673C7.07354 20.3854 6.6146 19.9265 6.32698 19.362C6 18.7202 6 17.8802 6 16.2V6M4 6H20M16 6L15.7294 5.18807C15.4671 4.40125 15.3359 4.00784 15.0927 3.71698C14.8779 3.46013 14.6021 3.26132 14.2905 3.13878C13.9376 3 13.523 3 12.6936 3H11.3064C10.477 3 10.0624 3 9.70951 3.13878C9.39792 3.26132 9.12208 3.46013 8.90729 3.71698C8.66405 4.00784 8.53292 4.40125 8.27064 5.18807L8 6"></path></svg>Clear</button> <button class="button" id="saveBtn" title="Download"><svg viewbox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2">
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+      <polyline points="7 10 12 15 17 10"></polyline>
+      <line x1="12" y1="15" x2="12" y2="3"></line></svg>Download</button> <button class="button" id="consoleBtn" title="Toggle Console"><svg viewbox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2">
+      <polyline points="4 17 10 11 4 5"></polyline>
+      <line x1="12" y1="19" x2="20" y2="19"></line></svg>Console</button>
+    </div>
+  </div>
+  <div class="main-content">
+    <div class="split-view">
+      <div class="editors-container">
+        <div class="tab-buttons">
+          <button class="tab-button active" data-lang="html"><svg width="16" height="16" viewbox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2">
+          <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path>
+          <polyline points="13 2 13 9 20 9"></polyline></svg>HTML</button> <button class="tab-button" data-lang="css"><svg width="16" height="16" viewbox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+          <polyline points="14 2 14 8 20 8"></polyline>
+          <line x1="16" y1="13" x2="8" y2="13"></line>
+          <line x1="16" y1="17" x2="8" y2="17"></line>
+          <polyline points="10 9 9 9 8 9"></polyline></svg>CSS</button> <button class="tab-button" data-lang="javascript"><svg width="16" height="16" viewbox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+          <polyline points="14 2 14 8 20 8"></polyline></svg>JavaScript</button>
+        </div>
+        <div class="editor-wrapper">
+          <div id="editor"></div>
+        </div>
+        <div class="console-panel" id="consolePanel">
+          <div id="consoleOutput"></div>
+        </div>
       </div>
-      <div class="toolbar-group">
-        <button class="button" id="shareBtn" title="Share">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
-            <polyline points="16 6 12 2 8 6" />
-            <line x1="12" y1="2" x2="12" y2="15" />
-          </svg>Share </button>
-        <button class="button" id="settingsBtn" title="Settings">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="3" />
-            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
-          </svg>Settings </button>
+      <div class="resize-handle" id="resizeHandle"></div>
+      <div class="preview-container">
+        <div class="preview-toolbar">
+          <div class="device-selector">
+            <button class="device-button active" data-width="100%" data-height="100%">Desktop</button> <button class="device-button" data-width="768px" data-height="1024px">Tablet</button> <button class="device-button" data-width="375px" data-height="812px">Mobile</button>
+          </div><span id="previewSize"></span>
+        </div><iframe id="preview" name="preview"></iframe>
       </div>
     </div>
-    <div class="toolbar">
-      <div class="toolbar-group">
-        <button class="button primary" id="runBtn" title="Run (Ctrl+Enter)">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <polygon points="5 3 19 12 5 21 5 3" />
-          </svg>Run </button>
-        <button class="button" id="previewBtn" title="Open in New Window">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
-            <polyline points="15 3 21 3 21 9" />
-            <line x1="10" y1="14" x2="21" y2="3" />
-          </svg>Preview </button>
+  </div>
+  <div class="settings-panel" id="projectsPanel">
+    <div class="settings-header">
+      <h2>Projects</h2><button class="button" id="closeProjects"><svg viewbox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2">
+      <line x1="18" y1="6" x2="6" y2="18"></line>
+      <line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
+    </div>
+    <div class="settings-section">
+      <div class="project-controls">
+        <input type="text" id="projectName" placeholder="Project Name" value="Untitled Project"> <button class="button" id="saveProjectBtn">Save Project</button> <button class="button" id="newProjectBtn">New Project</button>
       </div>
-      <div class="toolbar-group">
-        <button class="button" id="clearBtn" title="Clear">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M18 6V16.2C18 17.8802 18 18.7202 17.673 19.362C17.3854 19.9265 16.9265 20.3854 16.362 20.673C15.7202 21 14.8802 21 13.2 21H10.8C9.11984 21 8.27976 21 7.63803 20.673C7.07354 20.3854 6.6146 19.9265 6.32698 19.362C6 18.7202 6 17.8802 6 16.2V6M4 6H20M16 6L15.7294 5.18807C15.4671 4.40125 15.3359 4.00784 15.0927 3.71698C14.8779 3.46013 14.6021 3.26132 14.2905 3.13878C13.9376 3 13.523 3 12.6936 3H11.3064C10.477 3 10.0624 3 9.70951 3.13878C9.39792 3.26132 9.12208 3.46013 8.90729 3.71698C8.66405 4.00784 8.53292 4.40125 8.27064 5.18807L8 6" />
-          </svg>Clear </button>
-        <button class="button" id="saveBtn" title="Download">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-            <polyline points="7 10 12 15 17 10" />
-            <line x1="12" y1="15" x2="12" y2="3" />
-          </svg>Download </button>
-        <button class="button" id="consoleBtn" title="Toggle Console">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <polyline points="4 17 10 11 4 5" />
-            <line x1="12" y1="19" x2="20" y2="19" />
-          </svg>Console </button>
+      <div class="projects-list" id="projectsList"></div>
+    </div>
+  </div>
+  <div class="settings-panel" id="settingsPanel">
+    <div class="settings-header">
+      <h2>Settings</h2><button class="button" id="closeSettings"><svg viewbox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2">
+      <line x1="18" y1="6" x2="6" y2="18"></line>
+      <line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
+    </div>
+    <div class="settings-section">
+      <h3>Editor</h3>
+      <div class="setting-item">
+        <label for="themeSelect">Theme</label> <select id="themeSelect">
+          <option value="default">
+            Default
+          </option>
+          <option value="nord">
+            Nord
+          </option>
+          <option value="monokai">
+            Monokai
+          </option>
+          <option value="material">
+            Material
+          </option>
+          <option value="dracula">
+            Dracula
+          </option>
+          <option value="tomorrow-night-bright">
+            Tomorrow Night
+          </option>
+        </select>
+      </div>
+      <div class="setting-item">
+        <label for="fontSizeSelect">Font Size</label> <select id="fontSizeSelect">
+          <option value="12">
+            12px
+          </option>
+          <option value="14" selected="selected">
+            14px
+          </option>
+          <option value="16">
+            16px
+          </option>
+          <option value="18">
+            18px
+          </option>
+        </select>
+      </div>
+      <div class="setting-item">
+        <label for="autoSaveSelect">Auto Save</label> <select id="autoSaveSelect">
+          <option value="off">
+            Off
+          </option>
+          <option value="30">
+            Every 30 seconds
+          </option>
+          <option value="60">
+            Every minute
+          </option>
+          <option value="300">
+            Every 5 minutes
+          </option>
+        </select>
       </div>
     </div>
-    <div class="main-content">
-      <div class="split-view">
-        <div class="editors-container">
-          <div class="tab-buttons">
-            <button class="tab-button active" data-lang="html">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z" />
-                <polyline points="13 2 13 9 20 9" />
-              </svg>HTML </button>
-            <button class="tab-button" data-lang="css">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                <polyline points="14 2 14 8 20 8" />
-                <line x1="16" y1="13" x2="8" y2="13" />
-                <line x1="16" y1="17" x2="8" y2="17" />
-                <polyline points="10 9 9 9 8 9" />
-              </svg>CSS </button>
-            <button class="tab-button" data-lang="javascript">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                <polyline points="14 2 14 8 20 8" />
-              </svg>JavaScript </button>
-          </div>
-          <div class="editor-wrapper">
-            <div id="editor"></div>
-          </div>
-          <div class="console-panel" id="consolePanel">
-            <div id="consoleOutput"></div>
-          </div>
-        </div>
-        <div class="resize-handle" id="resizeHandle"></div>
-        <div class="preview-container">
-          <div class="preview-toolbar">
-            <div class="device-selector">
-              <button class="device-button active" data-width="100%" data-height="100%">Desktop</button>
-              <button class="device-button" data-width="768px" data-height="1024px">Tablet</button>
-              <button class="device-button" data-width="375px" data-height="812px">Mobile</button>
-            </div>
-            <span id="previewSize"></span>
-          </div>
-          <iframe id="preview"></iframe>
-        </div>
+    <div class="settings-section">
+      <h3>Editor</h3>
+      <div class="setting-item">
+        <label for="themeSelect">Theme</label> <select id="themeSelect">
+          <option value="default">
+            Default
+          </option>
+          <option value="nord">
+            Nord
+          </option>
+          <option value="monokai">
+            Monokai
+          </option>
+          <option value="material">
+            Material
+          </option>
+          <option value="dracula">
+            Dracula
+          </option>
+          <option value="tomorrow-night-bright">
+            Tomorrow Night
+          </option>
+        </select>
+      </div>
+      <div class="setting-item">
+        <label for="fontSizeSelect">Font Size</label> <select id="fontSizeSelect">
+          <option value="12">
+            12px
+          </option>
+          <option value="14" selected="selected">
+            14px
+          </option>
+          <option value="16">
+            16px
+          </option>
+          <option value="18">
+            18px
+          </option>
+        </select>
+      </div>
+      <div class="setting-item">
+        <label for="autoSaveSelect">Auto Save</label> <select id="autoSaveSelect">
+          <option value="off">
+            Off
+          </option>
+          <option value="30">
+            Every 30 seconds
+          </option>
+          <option value="60">
+            Every minute
+          </option>
+          <option value="300">
+            Every 5 minutes
+          </option>
+        </select>
       </div>
     </div>
-    <div class="settings-panel" id="settingsPanel">
-      <div class="settings-header">
-        <h2>Settings</h2>
-        <button class="button" id="closeSettings">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <line x1="18" y1="6" x2="6" y2="18" />
-            <line x1="6" y1="6" x2="18" y2="18" />
-          </svg>
-        </button>
-      </div>
-      <div class="settings-section">
-        <h3>Editor</h3>
-        <div class="setting-item">
-          <label for="themeSelect">Theme</label>
-          <select id="themeSelect">
-            <option value="default">Default</option>
-            <option value="nord">Nord</option>
-            <option value="monokai">Monokai</option>
-            <option value="material">Material</option>
-            <option value="dracula">Dracula</option>
-            <option value="tomorrow-night-bright">Tomorrow Night</option>
-          </select>
-        </div>
-        <div class="setting-item">
-          <label for="fontSizeSelect">Font Size</label>
-          <select id="fontSizeSelect">
-            <option value="12">12px</option>
-            <option value="14" selected="selected">14px</option>
-            <option value="16">16px</option>
-            <option value="18">18px</option>
-          </select>
-        </div>
-        <div class="setting-item">
-          <label for="autoSaveSelect">Auto Save</label>
-          <select id="autoSaveSelect">
-            <option value="off">Off</option>
-            <option value="30">Every 30 seconds</option>
-            <option value="60">Every minute</option>
-            <option value="300">Every 5 minutes</option>
-          </select>
-        </div>
-      </div>
-      <div class="settings-section">
-        <h3>Keyboard Shortcuts</h3>
-        <div class="keyboard-shortcuts">
-          <span class="shortcut-key">Ctrl + Enter</span>
-          <span>Run Code</span>
-          <span class="shortcut-key">Ctrl + S</span>
-          <span>Save Changes</span>
-          <span class="shortcut-key">Ctrl + /</span>
-          <span>Toggle Comment</span>
-          <span class="shortcut-key">Ctrl + Space</span>
-          <span>Show Autocomplete</span>
-          <span class="shortcut-key">Ctrl + F</span>
-          <span>Find</span>
-          <span class="shortcut-key">Ctrl + H</span>
-          <span>Replace</span>
-          <span class="shortcut-key">Alt + Click</span>
-          <span>Add Cursor</span>
-        </div>
+    <div class="settings-section">
+      <h3>Keyboard Shortcuts</h3>
+      <div class="keyboard-shortcuts">
+        <span class="shortcut-key">Ctrl + Enter</span> <span>Run Code</span> <span class="shortcut-key">Ctrl + S</span> <span>Save Changes</span> <span class="shortcut-key">Ctrl + /</span> <span>Toggle Comment</span> <span class="shortcut-key">Ctrl + Space</span> <span>Show Autocomplete</span> <span class="shortcut-key">Ctrl + F</span> <span>Find</span> <span class="shortcut-key">Ctrl + H</span> <span>Replace</span> <span class="shortcut-key">Alt + Click</span> <span>Add Cursor</span>
       </div>
     </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/xml/xml.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/javascript/javascript.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/css/css.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/htmlmixed/htmlmixed.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closetag.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/hint/show-hint.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/hint/html-hint.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/hint/css-hint.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/hint/javascript-hint.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/comment/comment.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.14.9/beautify.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.14.9/beautify-css.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.14.9/beautify-html.min.js"></script>
-    <script>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script> 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/xml/xml.min.js"></script> 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/javascript/javascript.min.js"></script> 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/css/css.min.js"></script> 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/htmlmixed/htmlmixed.min.js"></script> 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closetag.min.js"></script> 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script> 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script> 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/hint/show-hint.min.js"></script> 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/hint/html-hint.min.js"></script> 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/hint/css-hint.min.js"></script> 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/hint/javascript-hint.min.js"></script> 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/comment/comment.min.js"></script> 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script> 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.14.9/beautify.min.js"></script> 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.14.9/beautify-css.min.js"></script> 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.14.9/beautify-html.min.js"></script> 
+  <script>
+
+
       (function() {
         const state = {
           code: {
@@ -953,21 +1004,19 @@
             try {
               const previewContent = `
 
-													
-													<!DOCTYPE html>
-													<html>
-														<head>
-															<meta charset="UTF-8">
-																<meta name="viewport" content="width=device-width, initial-scale=1.0">
-																	<style>${state.code.css || ''}</style>
-																</head>
-																<body>
+                                                                                                                                                <!DOCTYPE html>
+                                                                                                                                                <html>
+                                                                                                                                                        <head>
+                                                                                                                                                                <meta charset="UTF-8">
+                                                                                                                                                                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                                                                                                                                                                                <style>${state.code.css || ''}</style>
+                                                                                                                                                                        </head>
+                                                                                                                                                                        <body>
               ${state.code.html || ''}
 
-																	
-																	<script>${state.code.javascript || ''}<\/script>
-																	</body>
-																</html>`;
+                                                                                                                                                                                <script>${state.code.javascript || ''}<\/script>
+                                                                                                                                                                                </body>
+                                                                                                                                                                        </html>`;
               const preview = document.getElementById('preview');
               const previewDoc = preview.contentDocument || preview.contentWindow.document;
               previewDoc.open();
@@ -1046,21 +1095,19 @@
           const win = window.open('', '_blank');
           win.document.write(`
 
-																
-																<!DOCTYPE html>
-																<html>
-																	<head>
-																		<meta charset="UTF-8">
-																			<meta name="viewport" content="width=device-width, initial-scale=1.0">
-																				<style>${state.code.css || ''}</style>
-																			</head>
-																			<body>
+                                                                                                                                                                        <!DOCTYPE html>
+                                                                                                                                                                        <html>
+                                                                                                                                                                                <head>
+                                                                                                                                                                                        <meta charset="UTF-8">
+                                                                                                                                                                                                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                                                                                                                                                                                                        <style>${state.code.css || ''}</style>
+                                                                                                                                                                                                </head>
+                                                                                                                                                                                                <body>
               ${state.code.html || ''}
 
-																				
-																				<script>${state.code.javascript || ''}<\/script>
-																				</body>
-																			</html>`);
+                                                                                                                                                                                                        <script>${state.code.javascript || ''}<\/script>
+                                                                                                                                                                                                        </body>
+                                                                                                                                                                                                </html>`);
         });
         document.getElementById('clearBtn').addEventListener('click', () => {
           state.code = {
@@ -1409,85 +1456,77 @@
       display: flex;
     }
   }
-`;
+  `;
         const newToolbar = document.createElement('div');
         newToolbar.className = 'toolbar-group advanced-features';
         newToolbar.innerHTML = `
 
-																			
-																			<button class="button" id="formatBtn" title="Format Code">
-																				<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-																					<path d="M21 10H3M21 6H3M21 14H3M21 18H3"/>
-																				</svg>
+                                                                                                                                                                                                <button class="button" id="formatBtn" title="Format Code">
+                                                                                                                                                                                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                                                                                                                                                                                <path d="M21 10H3M21 6H3M21 14H3M21 18H3"/>
+                                                                                                                                                                                                        </svg>
     Format
 
-																			
-																			</button>
-																			<button class="button" id="snippetsBtn" title="Code Snippets">
-																				<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-																					<path d="M16 18l6-6-6-6M8 6l-6 6 6 6"/>
-																				</svg>
+                                                                                                                                                                                                </button>
+                                                                                                                                                                                                <button class="button" id="snippetsBtn" title="Code Snippets">
+                                                                                                                                                                                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                                                                                                                                                                                <path d="M16 18l6-6-6-6M8 6l-6 6 6 6"/>
+                                                                                                                                                                                                        </svg>
     Snippets
 
-																			
-																			</button>
-																			<button class="button" id="searchBtn" title="Search in Files">
-																				<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-																					<circle cx="11" cy="11" r="8"/>
-																					<line x1="21" y1="21" x2="16.65" y2="16.65"/>
-																				</svg>
+                                                                                                                                                                                                </button>
+                                                                                                                                                                                                <button class="button" id="searchBtn" title="Search in Files">
+                                                                                                                                                                                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                                                                                                                                                                                <circle cx="11" cy="11" r="8"/>
+                                                                                                                                                                                                                <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                                                                                                                                                                                                        </svg>
     Search
 
-																			
-																			</button>
-`;
+                                                                                                                                                                                                </button>
+  `;
         document.querySelector('.toolbar').appendChild(newToolbar);
         const snippetsPanel = document.createElement('div');
         snippetsPanel.className = 'side-panel snippets-panel';
         snippetsPanel.innerHTML = `
 
-																			
-																			<div class="panel-header">
-																				<h2>Code Snippets</h2>
-																				<button class="button" id="closeSnippets">
-																					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-																						<line x1="18" y1="6" x2="6" y2="18"/>
-																						<line x1="6" y1="6" x2="18" y2="18"/>
-																					</svg>
-																				</button>
-																			</div>
-																			<div class="panel-content">
-																				<div class="snippet-categories">
-																					<button class="active" data-category="html">HTML</button>
-																					<button data-category="css">CSS</button>
-																					<button data-category="js">JavaScript</button>
-																				</div>
-																				<div class="snippet-list"></div>
-																			</div>
-`;
+                                                                                                                                                                                                <div class="panel-header">
+                                                                                                                                                                                                        <h2>Code Snippets</h2>
+                                                                                                                                                                                                        <button class="button" id="closeSnippets">
+                                                                                                                                                                                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                                                                                                                                                                                        <line x1="18" y1="6" x2="6" y2="18"/>
+                                                                                                                                                                                                                        <line x1="6" y1="6" x2="18" y2="18"/>
+                                                                                                                                                                                                                </svg>
+                                                                                                                                                                                                        </button>
+                                                                                                                                                                                                </div>
+                                                                                                                                                                                                <div class="panel-content">
+                                                                                                                                                                                                        <div class="snippet-categories">
+                                                                                                                                                                                                                <button class="active" data-category="html">HTML</button>
+                                                                                                                                                                                                                <button data-category="css">CSS</button>
+                                                                                                                                                                                                                <button data-category="js">JavaScript</button>
+                                                                                                                                                                                                        </div>
+                                                                                                                                                                                                        <div class="snippet-list"></div>
+                                                                                                                                                                                                </div>
+  `;
         document.body.appendChild(snippetsPanel);
         const searchPanel = document.createElement('div');
         searchPanel.className = 'search-panel';
         searchPanel.innerHTML = `
 
-																			
-																			<div class="search-header">
-																				<input type="text" id="searchInput" placeholder="Search in files...">
-																					<div class="search-options">
-																						<label>
-																							<input type="checkbox" id="caseSensitive"> Case sensitive
+                                                                                                                                                                                                <div class="search-header">
+                                                                                                                                                                                                        <input type="text" id="searchInput" placeholder="Search in files...">
+                                                                                                                                                                                                                <div class="search-options">
+                                                                                                                                                                                                                        <label>
+                                                                                                                                                                                                                                <input type="checkbox" id="caseSensitive"> Case sensitive
 
-																							
-																							</label>
-																							<label>
-																								<input type="checkbox" id="regexSearch"> Regular expression
+                                                                                                                                                                                                                                </label>
+                                                                                                                                                                                                                                <label>
+                                                                                                                                                                                                                                        <input type="checkbox" id="regexSearch"> Regular expression
 
-																								
-																								</label>
-																							</div>
-																						</div>
-																						<div class="search-results"></div>
-`;
+                                                                                                                                                                                                                                        </label>
+                                                                                                                                                                                                                                </div>
+                                                                                                                                                                                                                        </div>
+                                                                                                                                                                                                                        <div class="search-results"></div>
+  `;
         document.body.appendChild(searchPanel);
         const additionalStyles = `
   .side-panel {
@@ -1679,7 +1718,7 @@
     opacity: 0.6;
     pointer-events: none;
   }
-`;
+  `;
         const styleSheet = document.createElement('style');
         styleSheet.textContent = additionalStyles;
         document.head.appendChild(styleSheet);
@@ -1711,9 +1750,8 @@
               snippetEl.className = 'snippet-item';
               snippetEl.innerHTML = `
 
-																						
-																						<div class="snippet-title">${snippet.title}</div>
-																						<div class="snippet-description">${snippet.description}</div>
+                                                                                                                                                                                                                        <div class="snippet-title">${snippet.title}</div>
+                                                                                                                                                                                                                        <div class="snippet-description">${snippet.description}</div>
       `;
               snippetEl.addEventListener('click', () => {
                 state.editor.replaceSelection(snippet.code);
@@ -1740,15 +1778,14 @@
           statusBar.className = 'status-bar';
           statusBar.innerHTML = `
 
-																						
-																						<div class="status-left">
-																							<span class="status-item" id="cursorPosition">Ln 1, Col 1</span>
-																							<span class="status-item" id="fileSize">0 bytes</span>
-																						</div>
-																						<div class="status-right">
-																							<span class="status-item" id="syntaxMode">HTML</span>
-																							<span class="status-item" id="encodingType">UTF-8</span>
-																						</div>
+                                                                                                                                                                                                                        <div class="status-left">
+                                                                                                                                                                                                                                <span class="status-item" id="cursorPosition">Ln 1, Col 1</span>
+                                                                                                                                                                                                                                <span class="status-item" id="fileSize">0 bytes</span>
+                                                                                                                                                                                                                        </div>
+                                                                                                                                                                                                                        <div class="status-right">
+                                                                                                                                                                                                                                <span class="status-item" id="syntaxMode">HTML</span>
+                                                                                                                                                                                                                                <span class="status-item" id="encodingType">UTF-8</span>
+                                                                                                                                                                                                                        </div>
   `;
           document.querySelector('.editors-container').appendChild(statusBar);
           state.editor.on('cursorActivity', () => {
@@ -1816,9 +1853,8 @@
                   resultElement.className = 'search-result';
                   resultElement.innerHTML = `
 
-																						
-																						<div class="search-result-file">${fileName}</div>
-																						<div class="search-result-preview">${highlightMatch(preview, match[0])}</div>
+                                                                                                                                                                                                                        <div class="search-result-file">${fileName}</div>
+                                                                                                                                                                                                                        <div class="search-result-preview">${highlightMatch(preview, match[0])}</div>
           `;
                   resultElement.addEventListener('click', () => {
                     const langMap = {
@@ -1850,8 +1886,7 @@
         function highlightMatch(text, match) {
           return text.replace(new RegExp(escapeRegExp(match), 'gi'), `
 
-																						
-																						<span class="highlight">${match}</span>`);
+                                                                                                                                                                                                                        <span class="highlight">${match}</span>`);
         }
 
         function toggleSearchPanel() {
@@ -1958,7 +1993,7 @@
             lastModified: new Date()
           },
           validateProjectData(projectData) {
-            return projectData && typeof projectData === 'object' && projectData.name && projectData.id && projectData.lastModified && projectData.code && projectData.settings;
+            return projectData && typeof projectData === 'object' && projectData.name && projectData.id && projectData.lastModified && projectData.code;
           },
           sanitizeProjectName(name) {
             return name.trim() || 'Untitled Project';
@@ -1973,8 +2008,7 @@
                   html: '',
                   css: '',
                   javascript: ''
-                },
-                settings: state.settings || {}
+                }
               };
               localStorage.setItem(`project_${this.currentProject.id}`, JSON.stringify(projectData));
               this.updateProjectsList();
@@ -1982,7 +2016,7 @@
               return true;
             } catch (error) {
               console.error('Error saving project:', error);
-              showNotification('Failed to save project. Storage might be full.', 'error');
+              showNotification('Failed to save project', 'error');
               return false;
             }
           },
@@ -2004,15 +2038,12 @@
                 lastModified: new Date(project.lastModified)
               };
               state.code = project.code;
-              state.settings = project.settings;
               state.editor.setValue(state.code[state.currentLang] || '');
               const projectNameInput = document.getElementById('projectName');
               if (projectNameInput) {
                 projectNameInput.value = this.currentProject.name;
               }
-              if (typeof updatePreview === 'function') {
-                updatePreview(true);
-              }
+              updatePreview(true);
               showNotification(`Project "${this.currentProject.name}" loaded`, 'success');
               return true;
             } catch (error) {
@@ -2027,30 +2058,19 @@
               id: Date.now().toString(),
               lastModified: new Date()
             };
-            const defaultState = {
-              code: {
+            try {
+              this.currentProject = defaultProject;
+              state.code = {
                 html: '',
                 css: '',
                 javascript: ''
-              }
-            };
-            try {
-              if (this.currentProject.id !== defaultProject.id) {
-                this.saveCurrentProject();
-              }
-              this.currentProject = defaultProject;
-              state.code = defaultState.code;
-              if (state.editor) {
-                state.editor.setValue('');
-              }
+              };
+              state.editor.setValue('');
               const projectNameInput = document.getElementById('projectName');
               if (projectNameInput) {
                 projectNameInput.value = defaultProject.name;
               }
-              if (typeof updatePreview === 'function') {
-                updatePreview(true);
-              }
-              this.saveCurrentProject();
+              updatePreview(true);
               return true;
             } catch (error) {
               console.error('Error creating new project:', error);
@@ -2085,22 +2105,22 @@
             if (!projectsList) return;
             const projects = this.getAllProjects();
             projectsList.innerHTML = `
-            
-																						<div class="project-item default-project">
-																							<span class="project-name">Default (Clear All)</span>
-																							<button class="load-project-btn" aria-label="Load default project">Load</button>
-																						</div>
-        `;
+
+                                                                                                                                                                                                                        <div class="project-item default-project">
+                                                                                                                                                                                                                                <span class="project-name">Default (Clear All)</span>
+                                                                                                                                                                                                                                <button class="load-project-btn" aria-label="Load default project">Load</button>
+                                                                                                                                                                                                                        </div>
+    `;
             projects.forEach(project => {
               const projectItem = document.createElement('div');
               projectItem.className = 'project-item';
               projectItem.innerHTML = `
-                
-																						<span class="project-name">${this.sanitizeProjectName(project.name)}</span>
-																						<span class="project-date">${project.lastModified.toLocaleDateString()}</span>
-																						<button class="load-project-btn" aria-label="Load project">Load</button>
-																						<button class="delete-project-btn" aria-label="Delete project">Delete</button>
-            `;
+
+                                                                                                                                                                                                                        <span class="project-name">${this.sanitizeProjectName(project.name)}</span>
+                                                                                                                                                                                                                        <span class="project-date">${project.lastModified.toLocaleDateString()}</span>
+                                                                                                                                                                                                                        <button class="load-project-btn" aria-label="Load project">Load</button>
+                                                                                                                                                                                                                        <button class="delete-project-btn" aria-label="Delete project">Delete</button>
+      `;
               const loadBtn = projectItem.querySelector('.load-project-btn');
               const deleteBtn = projectItem.querySelector('.delete-project-btn');
               if (loadBtn) {
@@ -2130,175 +2150,14 @@
             });
           }
         };
-        const createProjectsButton = () => {
-          const projectsBtn = document.createElement('button');
-          projectsBtn.className = 'button';
-          projectsBtn.setAttribute('aria-label', 'Open projects panel');
-          projectsBtn.innerHTML = `
-        
-																						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-																							<path d="M3 6h18M3 12h18M3 18h18"/>
-																						</svg>
-        Projects
-    `;
-          return projectsBtn;
-        };
-        const createProjectsPanel = () => {
-          const projectsPanel = document.createElement('div');
-          projectsPanel.id = 'projectsPanel';
-          projectsPanel.className = 'side-panel';
-          projectsPanel.setAttribute('aria-label', 'Projects panel');
-          projectsPanel.innerHTML = `
-        
-																						<div class="panel-header">
-																							<h2>Projects</h2>
-																							<button class="button" id="closeProjects" aria-label="Close projects panel">×</button>
-																						</div>
-																						<div class="panel-content">
-																							<div class="project-controls">
-																								<input type="text" id="projectName" placeholder="Project name" aria-label="Project name">
-																									<button id="saveProjectBtn" class="button" aria-label="Save project">Save Project</button>
-																									<button id="newProjectBtn" class="button" aria-label="Create new project">New Project</button>
-																								</div>
-																								<div id="projectsList" role="list" aria-label="Projects list"></div>
-																							</div>
-    `;
-          return projectsPanel;
-        };
-        const autosave = {
-          interval: null,
-          minInterval: 5,
-          maxInterval: 300,
-          start(intervalSeconds = 30) {
-            this.stop();
-            const interval = Math.max(this.minInterval, Math.min(parseInt(intervalSeconds) || 30, this.maxInterval));
-            this.interval = setInterval(() => {
-              if (projectManager.saveCurrentProject()) {
-                localStorage.setItem('lastEditTime', Date.now().toString());
-              }
-            }, interval * 1000);
-          },
-          stop() {
-            if (this.interval) {
-              clearInterval(this.interval);
-              this.interval = null;
-            }
-          },
-          updateInterval(seconds) {
-            if (seconds === 'off') {
-              this.stop();
-            } else {
-              this.start(parseInt(seconds));
-            }
-          }
-        };
-        const projectStyles = `
-    .project-controls {
-        padding: 1rem;
-        border-bottom: 1px solid var(--border-color);
-    }
 
-    .project-controls input {
-        width: 100%;
-        padding: 0.5rem;
-        margin-bottom: 1rem;
-        background: var(--primary-bg);
-        border: 1px solid var(--border-color);
-        color: var(--text-primary);
-        border-radius: 0.375rem;
-        font-size: 1rem;
-    }
-
-    .project-item {
-        display: flex;
-        align-items: center;
-        padding: 1rem;
-        border-bottom: 1px solid var(--border-color);
-        gap: 1rem;
-    }
-
-    .project-name {
-        flex: 1;
-        font-weight: 500;
-        word-break: break-word;
-    }
-
-    .project-date {
-        color: var(--text-secondary);
-        font-size: 0.875rem;
-        white-space: nowrap;
-    }
-
-    .load-project-btn,
-    .delete-project-btn {
-        padding: 0.25rem 0.5rem;
-        border-radius: 0.25rem;
-        border: 1px solid var(--border-color);
-        background: var(--primary-bg);
-        color: var(--text-primary);
-        cursor: pointer;
-        transition: background-color 0.2s, transform 0.1s;
-        min-width: 60px;
-    }
-
-    .load-project-btn:hover,
-    .delete-project-btn:hover {
-        background: var(--secondary-bg);
-    }
-
-    .load-project-btn:active,
-    .delete-project-btn:active {
-        transform: scale(0.98);
-    }
-
-    .delete-project-btn {
-        color: #ef4444;
-        border-color: #ef4444;
-    }
-
-    .delete-project-btn:hover {
-        background: rgba(239, 68, 68, 0.1);
-    }
-
-    .button:focus,
-    .load-project-btn:focus,
-    .delete-project-btn:focus,
-    .project-controls input:focus {
-        outline: 2px solid var(--focus-color, #3b82f6);
-        outline-offset: 2px;
-    }
-
-    @media (max-width: 640px) {
-        .project-item {
-            flex-wrap: wrap;
-        }
-
-        .project-name {
-            width: 100%;
-        }
-    }
-`;
-        const initializeUI = () => {
-          const toolbarGroup = document.querySelector('.toolbar-group');
-          if (toolbarGroup) {
-            const projectsBtn = createProjectsButton();
-            toolbarGroup.appendChild(projectsBtn);
-          }
-          const projectsPanel = createProjectsPanel();
-          document.body.appendChild(projectsPanel);
-          const styleElement = document.createElement('style');
-          styleElement.textContent = projectStyles;
-          document.head.appendChild(styleElement);
-          initializeEventListeners();
-        };
-        const initializeEventListeners = () => {
+        const initializeProjectEventListeners = () => {
           const projectsBtn = document.querySelector('.button[aria-label="Open projects panel"]');
           const projectsPanel = document.getElementById('projectsPanel');
           const closeProjectsBtn = document.getElementById('closeProjects');
           const saveProjectBtn = document.getElementById('saveProjectBtn');
           const newProjectBtn = document.getElementById('newProjectBtn');
           const projectNameInput = document.getElementById('projectName');
-          const autoSaveSelect = document.getElementById('autoSaveSelect');
           if (projectsBtn && projectsPanel) {
             projectsBtn.addEventListener('click', () => {
               projectsPanel.classList.add('visible');
@@ -2318,33 +2177,27 @@
           }
           if (newProjectBtn) {
             newProjectBtn.addEventListener('click', () => {
-              if (confirm('Create new project? Current changes will be saved first.')) {
-                projectManager.saveCurrentProject();
+              if (confirm('Create new project? Any unsaved changes will be lost.')) {
                 projectManager.createNewProject();
               }
-            });
-          }
-          if (autoSaveSelect) {
-            autoSaveSelect.addEventListener('change', (e) => {
-              autosave.updateInterval(e.target.value);
             });
           }
           const defaultProjectBtn = document.querySelector('.default-project .load-project-btn');
           if (defaultProjectBtn) {
             defaultProjectBtn.addEventListener('click', () => {
-              if (confirm('Load default empty project? Current changes will be lost.')) {
+              if (confirm('Load default empty project? Any unsaved changes will be lost.')) {
                 projectManager.createNewProject();
                 projectsPanel.classList.remove('visible');
               }
             });
           }
         };
+
         document.addEventListener('DOMContentLoaded', () => {
-          initializeUI();
-          autosave.start(30);
+          initializeProjectEventListeners();
           projectManager.updateProjectsList();
         });
       })();
-    </script>
-  </body>
+  </script>
+</body>
 </html>
