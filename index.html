@@ -1765,7 +1765,7 @@
             try {
               if (state.currentLang === 'javascript') {
                 formatted = js_beautify(value, {
-                  indent_size: 1,
+                  indent_size: 2,
                   space_in_empty_paren: true
                 });
               } else if (state.currentLang === 'html') {
@@ -1775,7 +1775,7 @@
                 });
               } else if (state.currentLang === 'css') {
                 formatted = css_beautify(value, {
-                  indent_size: 1
+                  indent_size: 2
                 });
               }
               state.editor.setValue(formatted);
