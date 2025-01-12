@@ -1,12 +1,203 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="refresh" content="0;url=/">
-    <title>Redirecting...</title>
-</head>
-<body>
-    <p>If you are not redirected automatically, <a href="home">click here</a>.</p>
-</body>
+    <title>Welcome to Our Site</title>
+    <link rel="icon" href="/favicon.png">
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: #4C6EF5;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        color: white;
+        animation: fadeIn 2s ease-out forwards;
+        overflow: hidden; /* Prevent scrolling on the main page */
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      .container {
+        display: flex;
+        flex-direction: column; /* Stacks the content vertically */
+        justify-content: space-between; /* Pushes the footer to the bottom */
+        text-align: center;
+        background-color: #2D3A58;
+        padding: 120px 240px;
+        border-radius: 12px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        animation: slideUp 1s ease-out forwards;
+        opacity: 0;
+        max-width: 100%;
+        box-sizing: border-box;
+      }
+
+      @keyframes slideUp {
+        from {
+          transform: translateY(50px);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+
+      .logo {
+        font-size: 4.5rem;
+        margin-bottom: 90px;
+        font-weight: bold;
+        letter-spacing: 2px;
+        animation: logoAnimation 2s ease-out;
+      }
+
+      @keyframes logoAnimation {
+        0% {
+          opacity: 0;
+          transform: scale(0.9);
+        }
+        100% {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+
+      .button, .discord-button {
+        display: inline-block;
+        padding: 14px 24px;
+        margin: 10px auto;
+        border-radius: 8px;
+        font-size: 1.1rem;
+        font-weight: 500;
+        text-decoration: none;
+        transition: transform 0.3s, background-color 0.3s;
+      }
+
+      .button {
+        background: #3B82F6;
+        color: white;
+      }
+
+      .button:hover {
+        transform: scale(1.05);
+        background-color: #2563EB;
+      }
+
+      .button:active {
+        transform: scale(0.98);
+        background-color: #1D4ED8;
+      }
+
+      .discord-button {
+        background: #7289DA;
+        color: white;
+      }
+
+      .discord-button img {
+        width: 20px;
+        height: 20px;
+        margin-right: 10px;
+      }
+
+      .discord-button:hover {
+        transform: scale(1.05);
+        background-color: #5E6CB3;
+      }
+
+      .discord-button:active {
+        transform: scale(0.98);
+        background-color: #4F5A91;
+      }
+
+      .footer {
+        font-size: 0.9rem;
+        color: #B4C6E7;
+        text-align: center;
+        margin-top: 40px;
+        animation: footerAnimation 1s ease-in-out forwards;
+      }
+
+      @keyframes footerAnimation {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .footer a {
+        color: #B4C6E7;
+        text-decoration: none;
+        font-weight: bold;
+      }
+
+      .footer a:hover {
+        text-decoration: underline;
+      }
+
+      @media (max-width: 768px) {
+        body {
+          font-size: 14px;
+        }
+
+        .container {
+          padding: 40px 60px;
+          text-align: center;
+        }
+
+        .logo {
+          font-size: 2rem;
+        }
+
+        .button, .discord-button {
+          width: 100%;
+          font-size: 1rem;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .container {
+          padding: 30px 20px;
+        }
+
+        .logo {
+          font-size: 1.5rem;
+        }
+
+        .footer {
+          font-size: 0.8rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="logo">Welcome</div>
+      <a href="/home" class="button" role="button" aria-label="Enter the site">Enter</a>
+      <a href="https://discord.gg/FhhJ2UedgU" target="_blank" class="discord-button" aria-label="Join our Discord channel">
+        <img src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/discord-white-icon.png" alt="Discord Logo">Join Discord</a>
+      <div class="footer">
+        <p>&copy; 2025 Synprev. All rights reserved. <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p>
+      </div>
+    </div>
+  </body>
 </html>
