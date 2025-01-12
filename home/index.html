@@ -1,9 +1,16 @@
-<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>Synprev</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/nord.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/material.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/dracula.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/tomorrow-night-bright.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/hint/show-hint.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/lint/lint.min.css" rel="stylesheet">
     <link href="/home/style.css" rel="stylesheet">
     <style>
     </style>
@@ -55,12 +62,158 @@
         <button class="button" id="saveBtn" title="Download">
           <svg viewbox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2">
             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-            <polyline points="17 10 12 15 7 10"></polyline>
-          </svg> Save </button>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+          </svg> Download </button>
+        <button class="button" id="consoleBtn" title="Toggle Console">
+          <svg viewbox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2">
+            <polyline points="4 17 10 11 4 5"></polyline>
+            <line x1="12" y1="19" x2="20" y2="19"></line>
+          </svg> Console </button>
       </div>
     </div>
-    <div id="editor"></div>
-
+    <div class="main-content">
+      <div class="split-view">
+        <div class="editors-container">
+          <div class="tab-buttons">
+            <button class="tab-button active" data-lang="html">
+              <svg width="16" height="16" viewbox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2">
+                <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path>
+                <polyline points="13 2 13 9 20 9"></polyline>
+              </svg> HTML </button>
+            <button class="tab-button" data-lang="css">
+              <svg width="16" height="16" viewbox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+                <polyline points="10 9 9 9 8 9"></polyline>
+              </svg> CSS </button>
+            <button class="tab-button" data-lang="javascript">
+              <svg width="16" height="16" viewbox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+              </svg> JavaScript </button>
+          </div>
+          <div class="editor-wrapper">
+            <div id="editor"></div>
+          </div>
+          <div class="console-panel" id="consolePanel">
+            <div id="consoleOutput"></div>
+          </div>
+        </div>
+        <div class="resize-handle" id="resizeHandle"></div>
+        <div class="preview-container">
+          <div class="preview-toolbar">
+            <div class="device-selector">
+              <button class="device-button active" data-width="100%" data-height="100%">Desktop</button>
+              <button class="device-button" data-width="768px" data-height="1024px">Tablet</button>
+              <button class="device-button" data-width="375px" data-height="812px">Mobile</button>
+            </div>
+            <span id="previewSize"></span>
+          </div>
+          <iframe id="preview" name="preview"></iframe>
+        </div>
+      </div>
+    </div>
+    <div class="settings-panel" id="projectsPanel">
+      <div class="settings-header">
+        <h2>Projects</h2>
+        <button class="button" id="closeProjects">
+          <svg viewbox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <div class="settings-section">
+        <div class="project-controls">
+          <input type="text" id="projectName" placeholder="Project Name" value="Untitled Project">
+          <button class="button" id="saveProjectBtn">Save Current Project</button>
+          <button class="button" id="newProjectBtn">New Project</button>
+        </div>
+        <div class="projects-list" id="projectsList"></div>
+      </div>
+    </div>
+    <div class="settings-panel" id="settingsPanel">
+      <div class="settings-header">
+        <h2>Settings</h2>
+        <button class="button" id="closeSettings">
+          <svg viewbox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <div class="settings-section">
+        <h3>Editor</h3>
+        <div class="setting-item">
+          <label for="themeSelect">Theme</label>
+          <select id="themeSelect">
+            <option value="default"> Default </option>
+            <option value="nord"> Nord </option>
+            <option value="monokai"> Monokai </option>
+            <option value="material"> Material </option>
+            <option value="dracula"> Dracula </option>
+            <option value="tomorrow-night-bright"> Tomorrow Night </option>
+          </select>
+        </div>
+        <div class="setting-item">
+          <label for="fontSizeSelect">Font Size</label>
+          <select id="fontSizeSelect">
+            <option value="12"> 12px </option>
+            <option value="14" selected="selected"> 14px </option>
+            <option value="16"> 16px </option>
+            <option value="18"> 18px </option>
+          </select>
+        </div>
+        <div class="setting-item">
+          <label for="autoSaveSelect">Auto Save</label>
+          <select id="autoSaveSelect">
+            <option value="off"> Off </option>
+            <option value="30"> Every 30 seconds </option>
+            <option value="60"> Every minute </option>
+            <option value="300"> Every 5 minutes </option>
+          </select>
+        </div>
+      </div>
+      <div class="settings-section">
+        <h3>Keyboard Shortcuts</h3>
+        <div class="keyboard-shortcuts">
+          <span class="shortcut-key">Ctrl + Enter</span>
+          <span>Run Code</span>
+          <span class="shortcut-key">Ctrl + S</span>
+          <span>Save Changes</span>
+          <span class="shortcut-key">Ctrl + /</span>
+          <span>Toggle Comment</span>
+          <span class="shortcut-key">Ctrl + Space</span>
+          <span>Show Autocomplete</span>
+          <span class="shortcut-key">Ctrl + F</span>
+          <span>Find</span>
+          <span class="shortcut-key">Ctrl + H</span>
+          <span>Replace</span>
+          <span class="shortcut-key">Alt + Click</span>
+          <span>Add Cursor</span>
+        </div>
+      </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/xml/xml.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/javascript/javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/css/css.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/htmlmixed/htmlmixed.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closetag.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchbrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/hint/show-hint.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/hint/html-hint.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/hint/css-hint.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/hint/javascript-hint.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/comment/comment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.14.9/beautify.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.14.9/beautify-css.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.14.9/beautify-html.min.js"></script>
     <script src="/home/script.js"></script>
   </body>
 </html>
