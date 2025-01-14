@@ -1087,21 +1087,15 @@
           notification.className = `notification ${type}`;
           notification.textContent = message;
           document.body.appendChild(notification);
-          setTimeout(() => {
-            notification.remove();
-          }, 3000);
+          setTimeout(() => notification.remove(), 3000);
         }
 
         function updatePreview(force = false) {
           if (state.isUpdating && !force) return;
           state.isUpdating = true;
-          requestAnimationFrame(() => {
-            try {
-              const previewContent = `
-
-															
-															
-															
+          try {
+            const previewContent = `
+        
 																<!DOCTYPE html>
 																<html>
 																	<head>
@@ -1110,95 +1104,102 @@
 																				<style>${state.code.css || ''}</style>
 																			</head>
 																			<body>
-              ${state.code.html || ''}
-
-																			
-																			
-																			
+            ${state.code.html || ''}
+            
 																				<script>${state.code.javascript || ''}<\/script>
 																				</body>
-																			</html>`;
-              const preview = document.getElementById('preview');
-              const previewDoc = preview.contentDocument || preview.contentWindow.document;
-              previewDoc.open();
-              previewDoc.write(previewContent);
-              previewDoc.close();
-              updatePreviewSize();
-              state.isUpdating = false;
-            } catch (err) {
-              console.error('Preview update error:', err);
-              state.isUpdating = false;
-              showNotification('Error updating preview', 'error');
-            }
-          });
+																			</html>
+      `;
+            const preview = document.getElementById('preview');
+            if (!preview) throw new Error('Preview element not found.');
+            const previewDoc = preview.contentDocument || preview.contentWindow.document;
+            previewDoc.open();
+            previewDoc.write(previewContent);
+            previewDoc.close();
+            updatePreviewSize();
+          } catch (error) {
+            console.error('Preview update error:', error);
+            showNotification('Error updating preview. Check console for details.', 'error');
+          } finally {
+            state.isUpdating = false;
+          }
         }
 
         function updatePreviewSize() {
           const preview = document.getElementById('preview');
           const previewSize = document.getElementById('previewSize');
-          previewSize.textContent = `${preview.offsetWidth}x${preview.offsetHeight}`;
+          if (preview && previewSize) {
+            previewSize.textContent = `${preview.offsetWidth}x${preview.offsetHeight}`;
+          }
         }
-        document.querySelectorAll('.tab-button').forEach(button => {
-          button.addEventListener('click', () => {
-            const lang = button.dataset.lang;
-            if (state.currentLang === lang) return;
-            state.code[state.currentLang] = state.editor.getValue();
-            document.querySelector('.tab-button.active').classList.remove('active');
-            button.classList.add('active');
-            state.currentLang = lang;
-            state.editor.setOption('mode', lang === 'html' ? 'htmlmixed' : lang);
-            state.editor.setValue(state.code[lang] || '');
-          });
-        });
-        state.editor.on('change', (cm) => {
-          state.code[state.currentLang] = cm.getValue();
-          updatePreview();
-        });
-        document.querySelectorAll('.device-button').forEach(button => {
-          button.addEventListener('click', () => {
-            document.querySelector('.device-button.active').classList.remove('active');
-            button.classList.add('active');
-            const preview = document.getElementById('preview');
-            preview.style.width = button.dataset.width;
-            preview.style.height = button.dataset.height;
-            updatePreviewSize();
-          });
-        });
-        const settingsPanel = document.getElementById('settingsPanel');
-        const settingsBtn = document.getElementById('settingsBtn');
-        const closeSettings = document.getElementById('closeSettings');
-        settingsBtn.addEventListener('click', () => {
-          settingsPanel.classList.add('visible');
-        });
-        closeSettings.addEventListener('click', () => {
-          settingsPanel.classList.remove('visible');
-        });
-        const themeSelect = document.getElementById('themeSelect');
-        themeSelect.value = state.settings.theme;
-        themeSelect.addEventListener('change', (e) => {
-          const theme = e.target.value;
-          applyTheme(theme);
-          state.settings.theme = theme;
-        });
-        const fontSizeSelect = document.getElementById('fontSizeSelect');
-        fontSizeSelect.value = state.settings.fontSize;
-        fontSizeSelect.addEventListener('change', (e) => {
-          const fontSize = e.target.value;
-          document.querySelector('.CodeMirror').style.fontSize = `${fontSize}px`;
-          state.settings.fontSize = fontSize;
-        });
-        document.getElementById('runBtn').addEventListener('click', () => {
-          state.code[state.currentLang] = state.editor.getValue();
-          updatePreview(true);
-          showNotification('Code executed!', 'success');
-        });
-        document.getElementById('previewBtn').addEventListener('click', () => {
-          const win = window.open('', '_blank');
-          win.document.write(`
 
-																		
-																		
-																		
+        function setupTabButtons() {
+          document.querySelectorAll('.tab-button').forEach(button => {
+            button.addEventListener('click', () => {
+              const lang = button.dataset.lang;
+              if (state.currentLang === lang) return;
+              state.code[state.currentLang] = state.editor.getValue();
+              document.querySelector('.tab-button.active')?.classList.remove('active');
+              button.classList.add('active');
+              state.currentLang = lang;
+              state.editor.setOption('mode', lang === 'html' ? 'htmlmixed' : lang);
+              state.editor.setValue(state.code[lang] || '');
+            });
+          });
+        }
+
+        function setupDeviceButtons() {
+          document.querySelectorAll('.device-button').forEach(button => {
+            button.addEventListener('click', () => {
+              document.querySelector('.device-button.active')?.classList.remove('active');
+              button.classList.add('active');
+              const preview = document.getElementById('preview');
+              if (preview) {
+                preview.style.width = button.dataset.width || '100%';
+                preview.style.height = button.dataset.height || '100%';
+              }
+              updatePreviewSize();
+            });
+          });
+        }
+
+        function setupSettingsPanel() {
+          const settingsPanel = document.getElementById('settingsPanel');
+          const settingsBtn = document.getElementById('settingsBtn');
+          const closeSettings = document.getElementById('closeSettings');
+          const themeSelect = document.getElementById('themeSelect');
+          const fontSizeSelect = document.getElementById('fontSizeSelect');
+          settingsBtn?.addEventListener('click', () => settingsPanel?.classList.add('visible'));
+          closeSettings?.addEventListener('click', () => settingsPanel?.classList.remove('visible'));
+          if (themeSelect) {
+            themeSelect.value = state.settings.theme;
+            themeSelect.addEventListener('change', (e) => {
+              const theme = e.target.value;
+              state.editor.setOption('theme', theme);
+              state.settings.theme = theme;
+            });
+          }
+          if (fontSizeSelect) {
+            fontSizeSelect.value = state.settings.fontSize;
+            fontSizeSelect.addEventListener('change', (e) => {
+              const fontSize = e.target.value;
+              document.querySelector('.CodeMirror').style.fontSize = `${fontSize}px`;
+              state.settings.fontSize = fontSize;
+            });
+          }
+        }
+
+        function setupRunButtons() {
+          document.getElementById('runBtn')?.addEventListener('click', () => {
+            state.code[state.currentLang] = state.editor.getValue();
+            updatePreview(true);
+            showNotification('Code executed!', 'success');
+          });
+          document.getElementById('previewBtn')?.addEventListener('click', () => {
+            const win = window.open('', '_blank');
+            if (win) {
+              win.document.write(`
+          
 																			<!DOCTYPE html>
 																			<html>
 																				<head>
@@ -1208,14 +1209,22 @@
 																						</head>
 																						<body>
               ${state.code.html || ''}
-
-																						
-																						
-																						
+              
 																							<script>${state.code.javascript || ''}<\/script>
 																							</body>
-																						</html>`);
+																						</html>
+        `);
+            }
+          });
+        }
+        state.editor.on('change', () => {
+          state.code[state.currentLang] = state.editor.getValue();
+          updatePreview();
         });
+        setupTabButtons();
+        setupDeviceButtons();
+        setupSettingsPanel();
+        setupRunButtons();
         document.getElementById('clearBtn').addEventListener('click', () => {
           state.code = {
             html: '',
@@ -1577,18 +1586,14 @@
         newToolbar.className = 'toolbar-group advanced-features';
         newToolbar.innerHTML = `
 
-																					
-																					
-																					
+																						
 																						<button class="button" id="formatBtn" title="Format Code">
 																							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 																								<path d="M21 10H3M21 6H3M21 14H3M21 18H3"/>
 																							</svg>
       Format
 
-																					
-																					
-																					
+																						
 																						</button>
 																						<button class="button" id="snippetsBtn" title="Code Snippets">
 																							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -1596,9 +1601,7 @@
 																							</svg>
       Snippets
 
-																					
-																					
-																					
+																						
 																						</button>
 																						<button class="button" id="searchBtn" title="Search in Files">
 																							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -1607,9 +1610,7 @@
 																							</svg>
       Search
 
-																					
-																					
-																					
+																						
 																						</button>
       `;
         document.querySelector('.toolbar').appendChild(newToolbar);
@@ -1617,9 +1618,7 @@
         snippetsPanel.className = 'side-panel snippets-panel';
         snippetsPanel.innerHTML = `
 
-																					
-																					
-																					
+																						
 																						<div class="panel-header">
 																							<h2>Code Snippets</h2>
 																							<button class="button" id="closeSnippets">
@@ -1643,25 +1642,19 @@
         searchPanel.className = 'search-panel';
         searchPanel.innerHTML = `
 
-																					
-																					
-																					
+																						
 																						<div class="search-header">
 																							<input type="text" id="searchInput" placeholder="Search in files...">
 																								<div class="search-options">
 																									<label>
 																										<input type="checkbox" id="caseSensitive"> Case sensitive
 
-																									
-																									
-																									
+																										
 																										</label>
 																										<label>
 																											<input type="checkbox" id="regexSearch"> Regular expression
 
-																										
-																										
-																										
+																											
 																											</label>
 																										</div>
 																									</div>
@@ -1890,9 +1883,7 @@
               snippetEl.className = 'snippet-item';
               snippetEl.innerHTML = `
 
-																								
-																								
-																								
+																									
 																									<div class="snippet-title">${snippet.title}</div>
 																									<div class="snippet-description">${snippet.description}</div>
       `;
@@ -1921,9 +1912,7 @@
           statusBar.className = 'status-bar';
           statusBar.innerHTML = `
 
-																								
-																								
-																								
+																									
 																									<div class="status-left">
 																										<span class="status-item" id="cursorPosition">Ln 1, Col 1</span>
 																										<span class="status-item" id="fileSize">0 bytes</span>
@@ -1973,9 +1962,7 @@
                   resultElement.className = 'search-result';
                   resultElement.innerHTML = `
 
-																								
-																								
-																								
+																									
 																									<div class="search-result-file">${fileName}</div>
 																									<div class="search-result-preview">${highlightMatch(preview, match[0])}</div>
           `;
@@ -2009,9 +1996,7 @@
         function highlightMatch(text, match) {
           return text.replace(new RegExp(escapeRegExp(match), 'gi'), `
 
-																								
-																								
-																								
+																									
 																									<span class="highlight">${match}</span>`);
         }
 
@@ -2240,7 +2225,8 @@
             if (!projectsList) return;
             const projects = this.getAllProjects();
             projectsList.innerHTML = `
-        
+
+																									
 																									<div class="project-item default-project">
 																										<span class="project-name">Default (Clear All)</span>
 																										<button class="load-project-btn" aria-label="Load default project">Load</button>
@@ -2250,7 +2236,8 @@
               const projectItem = document.createElement('div');
               projectItem.className = 'project-item';
               projectItem.innerHTML = `
-          
+
+																									
 																									<span class="project-name">${this.sanitizeProjectName(project.name)}</span>
 																									<span class="project-date">${project.lastModified.toLocaleDateString()}</span>
 																									<button class="load-project-btn" aria-label="Load project">Load</button>
